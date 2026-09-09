@@ -1,216 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Inquiry Form</title>
-    <!-- Bootstrap 5 CSS for Clean Responsive UI -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .form-card { max-width: 800px; margin: 30px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 30px; }
-        .form-header { background: linear-gradient(135deg, #128C7E, #075E54); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; }
-        .btn-whatsapp { background-color: #25D366; color: white; font-weight: bold; font-size: 1.1rem; padding: 12px 25px; border-radius: 8px; border: none; width: 100%; cursor: pointer; transition: 0.3s; }
-        .btn-whatsapp:hover { background-color: #1ebd56; color: white; }
-        .section-title { font-size: 1.1rem; font-weight: 600; color: #075E54; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; margin-top: 20px; margin-bottom: 15px; }
-        .readonly-box { background-color: #e9ecef !important; font-weight: bold; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Inquiry Form - The Warehouse Guruz</title>
+  <!-- html2pdf Library for PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --secondary: #198754;
+      --dark: #212529;
+      --light: #f8f9fa;
+      --border: #ced4da;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef2f5;
+      margin: 0;
+      padding: 20px;
+      color: var(--dark);
+    }
+    .container {
+      max-width: 750px;
+      background: #ffffff;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 20px;
+      margin-bottom: 25px;
+    }
+    .header img {
+      max-width: 280px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+    .company-address {
+      font-size: 13px;
+      color: #6c757d;
+      line-height: 1.4;
+    }
+    h2 {
+      text-align: center;
+      color: #111;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+    }
+    .row {
+      display: flex;
+      gap: 15px;
+    }
+    .row .form-group {
+      flex: 1;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 25px;
+    }
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: white;
+      transition: opacity 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .btn-company {
+      background-color: #075E54;
+    }
+    .btn-customer {
+      background-color: #25D366;
+    }
+    .btn-pdf {
+      background-color: #d9534f;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="form-card">
-        <div class="form-header">
-            <h2 class="m-0">PROPERTY INQUIRY FORM</h2>
-            <p class="m-0 small text-light mt-1">Fill out the details below to submit via WhatsApp</p>
-        </div>
-
-        <form id="propertyForm">
-            <!-- Auto-Generated Fields -->
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Property ID</label>
-                    <input type="text" class="form-control readonly-box" id="propertyId" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Inquiry Date</label>
-                    <input type="date" class="form-control" id="inquiryDate" required>
-                </div>
-            </div>
-
-            <!-- Client Info -->
-            <div class="section-title">Client & Contact Details</div>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Person Name *</label>
-                    <input type="text" class="form-control" id="personName" placeholder="Enter Full Name" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Contact Number *</label>
-                    <input type="tel" class="form-control" id="contactNumber" placeholder="Enter Mobile Number" required>
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label fw-bold">Company Name</label>
-                    <input type="text" class="form-control" id="companyName" placeholder="Enter Company Name (Optional)">
-                </div>
-            </div>
-
-            <!-- Property Specification -->
-            <div class="section-title">Property Details</div>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Type of Property *</label>
-                    <select class="form-select" id="propertyType" required>
-                        <option value="" selected disabled>Select From List</option>
-                        <option value="WAREHOUSE">WAREHOUSE</option>
-                        <option value="LANDLORD">LANDLORD</option>
-                        <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
-                        <option value="NA LAND">NA LAND</option>
-                        <option value="AGRICULTURE LAND">AGRICULTURE LAND</option>
-                        <option value="COMMERCIAL">COMMERCIAL</option>
-                        <option value="RESIDENTIAL">RESIDENTIAL</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Deal For *</label>
-                    <select class="form-select" id="dealFor" required>
-                        <option value="" selected disabled>Select From List</option>
-                        <option value="BUYER">BUYER</option>
-                        <option value="SELLER">SELLER</option>
-                        <option value="LANDLORD">LANDLORD</option>
-                        <option value="TENANT">TENANT</option>
-                        <option value="BTS">BTS (Build-to-Suit)</option>
-                        <option value="PRE-LEASE">PRE-LEASE</option>
-                    </select>
-                </div>
-                <div class="col-md-8">
-                    <label class="form-label fw-bold">Property Size *</label>
-                    <input type="number" class="form-control" id="propertySize" placeholder="Enter size" required>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Unit *</label>
-                    <select class="form-select" id="sizeUnit" required>
-                        <option value="SQ.FT.">SQ.FT.</option>
-                        <option value="SQ.YARD">SQ.YARD</option>
-                        <option value="VIGHA">VIGHA</option>
-                        <option value="ACRE">ACRE</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Area / City / Village *</label>
-                    <input type="text" class="form-control" id="area" placeholder="e.g. Changodar, Sanand, Ahmedabad" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Fire NOC *</label>
-                    <select class="form-select" id="fireNoc" required>
-                        <option value="YES">YES</option>
-                        <option value="NO">NO</option>
-                        <option value="PENDING">PENDING</option>
-                    </select>
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label fw-bold">Address *</label>
-                    <textarea class="form-control" id="address" rows="2" placeholder="Enter complete property address" required></textarea>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Purpose</label>
-                    <input type="text" class="form-control" id="purpose" placeholder="e.g. Storage, Manufacturing, Investment">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Budget</label>
-                    <input type="text" class="form-control" id="budget" placeholder="e.g. 50 Lakhs / 2 Lacs per month">
-                </div>
-            </div>
-
-            <!-- Links & Media -->
-            <div class="section-title">Location & Media Links</div>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Location Link (Google Maps)</label>
-                    <input type="url" class="form-control" id="locationLink" placeholder="https://maps.google.com/...">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Photo / Document Link (Drive/Cloud)</label>
-                    <input type="url" class="form-control" id="photoLink" placeholder="https://drive.google.com/...">
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label fw-bold">Remark</label>
-                    <textarea class="form-control" id="remark" rows="2" placeholder="Additional notes or requirements"></textarea>
-                </div>
-            </div>
-
-            <hr class="my-4">
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-whatsapp">
-                📲 SUBMIT & SEND VIA WHATSAPP
-            </button>
-        </form>
+<div class="container" id="printable-area">
+  <!-- Header with Logo and Address -->
+  <div class="header">
+    <img src="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png" alt="The Warehouse Guruz Logo">
+    <div class="company-address">
+      <strong>THE WAREHOUSE GURUZ</strong><br>
+      A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210<br>
+      Mobile: +91 6351207989
     </div>
+  </div>
+
+  <h2>PROPERTY INQUIRY FORM</h2>
+
+  <form id="inquiryForm">
+    <div class="row">
+      <div class="form-group">
+        <label for="personName">Person Name *</label>
+        <input type="text" id="personName" required placeholder="Enter full name">
+      </div>
+      <div class="form-group">
+        <label for="contactNumber">Contact Mobile Number *</label>
+        <input type="tel" id="contactNumber" required placeholder="e.g. 9876543210">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="companyName">Company Name</label>
+      <input type="text" id="companyName" placeholder="Enter company name (optional)">
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="propertyType">Property Type *</label>
+        <select id="propertyType" required>
+          <option value="">Select Type</option>
+          <option value="Warehouse / Godown">Warehouse / Godown</option>
+          <option value="Industrial Shed">Industrial Shed</option>
+          <option value="Commercial Land / Plot">Commercial Land / Plot</option>
+          <option value="Office Space">Office Space</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="dealType">Deal For *</label>
+        <select id="dealType" required>
+          <option value="">Select Option</option>
+          <option value="Rent / Lease">Rent / Lease</option>
+          <option value="Outright Purchase">Outright Purchase</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="requiredArea">Required Area (Sq.Ft) *</label>
+        <input type="text" id="requiredArea" required placeholder="e.g. 10,000 Sq.Ft">
+      </div>
+      <div class="form-group">
+        <label for="preferredLocation">Preferred Location *</label>
+        <input type="text" id="preferredLocation" required placeholder="e.g. Changodar, Sanand">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="remarks">Additional Requirements / Remarks</label>
+      <textarea id="remarks" rows="3" placeholder="Enter additional details..."></textarea>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="btn-group">
+      <button type="button" class="btn btn-company" onclick="sendWhatsApp('company')">
+        📱 Send to Company (+91 6351207989)
+      </button>
+      <button type="button" class="btn btn-customer" onclick="sendWhatsApp('customer')">
+        💬 Send to Customer WhatsApp
+      </button>
+      <button type="button" class="btn btn-pdf" onclick="generatePDF()">
+        📄 Download PDF Summary
+      </button>
+    </div>
+  </form>
 </div>
 
 <script>
-    // ⚠️ REPLACE THIS WITH YOUR WHATSAPP NUMBER (With Country Code, No + or spaces)
-    // Example for India (+91 9876543210) -> "919876543210"
-    const MY_WHATSAPP_NUMBER = "919876543210"; 
+  function formatMobileNumber(number) {
+    let cleaned = number.replace(/\D/g, '');
+    if (cleaned.length === 10) {
+      return '91' + cleaned;
+    }
+    return cleaned;
+  }
 
-    // Auto-generate Property ID and Set Today's Date
-    document.addEventListener("DOMContentLoaded", function() {
-        const randomNum = Math.floor(100000 + Math.random() * 900000);
-        document.getElementById("propertyId").value = "PROP-" + randomNum;
-        
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById("inquiryDate").value = today;
-    });
+  function getFormMessage() {
+    const name = document.getElementById('personName').value;
+    const phone = document.getElementById('contactNumber').value;
+    const company = document.getElementById('companyName').value || 'N/A';
+    const type = document.getElementById('propertyType').value;
+    const deal = document.getElementById('dealType').value;
+    const area = document.getElementById('requiredArea').value;
+    const location = document.getElementById('preferredLocation').value;
+    const remarks = document.getElementById('remarks').value || 'None';
 
-    // Handle Form Submission
-    document.getElementById("propertyForm").addEventListener("submit", function(e) {
-        e.preventDefault();
+    if (!name || !phone || !type || !deal || !area || !location) {
+      alert('Please fill in all required fields marked with *');
+      return null;
+    }
 
-        const propId = document.getElementById("propertyId").value;
-        const inqDate = document.getElementById("inquiryDate").value;
-        const personName = document.getElementById("personName").value;
-        const contactNum = document.getElementById("contactNumber").value;
-        const companyName = document.getElementById("companyName").value || "N/A";
-        const propType = document.getElementById("propertyType").value;
-        const dealFor = document.getElementById("dealFor").value;
-        const propSize = document.getElementById("propertySize").value + " " + document.getElementById("sizeUnit").value;
-        const area = document.getElementById("area").value;
-        const fireNoc = document.getElementById("fireNoc").value;
-        const address = document.getElementById("address").value;
-        const purpose = document.getElementById("purpose").value || "N/A";
-        const budget = document.getElementById("budget").value || "N/A";
-        const locLink = document.getElementById("locationLink").value || "N/A";
-        const photoLink = document.getElementById("photoLink").value || "N/A";
-        const remark = document.getElementById("remark").value || "N/A";
+    let text = `*PROPERTY INQUIRY DETAILS*\n`;
+    text += `---------------------------------\n`;
+    text += `*Name:* ${name}\n`;
+    text += `*Contact:* ${phone}\n`;
+    text += `*Company:* ${company}\n`;
+    text += `*Property Type:* ${type}\n`;
+    text += `*Deal For:* ${deal}\n`;
+    text += `*Required Area:* ${area}\n`;
+    text += `*Location:* ${location}\n`;
+    text += `*Remarks:* ${remarks}\n`;
+    text += `---------------------------------\n`;
+    text += `*The Warehouse Guruz*\n`;
+    text += `A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210\n`;
+    text += `Mobile: +91 6351207989`;
 
-        // Format WhatsApp Message
-        let message = `*🏢 PROPERTY INQUIRY FORM DETAILS*\n`;
-        message += `------------------------------------\n`;
-        message += `*🆔 Property ID:* ${propId}\n`;
-        message += `*📅 Inquiry Date:* ${inqDate}\n\n`;
-        message += `*👤 Person Name:* ${personName}\n`;
-        message += `*📞 Contact Number:* ${contactNum}\n`;
-        message += `*🏢 Company Name:* ${companyName}\n\n`;
-        message += `*🏡 Property Type:* ${propType}\n`;
-        message += `*🤝 Deal For:* ${dealFor}\n`;
-        message += `*📐 Property Size:* ${propSize}\n`;
-        message += `*📍 Area/City:* ${area}\n`;
-        message += `*🔥 Fire NOC:* ${fireNoc}\n`;
-        message += `*📌 Address:* ${address}\n`;
-        message += `*🎯 Purpose:* ${purpose}\n`;
-        message += `*💰 Budget:* ${budget}\n\n`;
-        message += `*🗺️ Location Link:* ${locLink}\n`;
-        message += `*🖼️ Photo/Document Link:* ${photoLink}\n`;
-        message += `*📝 Remark:* ${remark}\n`;
-        message += `------------------------------------`;
+    return { text, phone };
+  }
 
-        // Open WhatsApp Web/App
-        const encodedMessage = encodeURIComponent(message);
-        const waUrl = `https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodedMessage}`;
+  function sendWhatsApp(target) {
+    const data = getFormMessage();
+    if (!data) return;
 
-        window.open(waUrl, "_blank");
-    });
+    let targetPhone = '';
+    if (target === 'company') {
+      targetPhone = '916351207989';
+    } else {
+      targetPhone = formatMobileNumber(data.phone);
+    }
+
+    const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(data.text)}`;
+    window.open(url, '_blank');
+  }
+
+  function generatePDF() {
+    const name = document.getElementById('personName').value || 'Inquiry';
+    const element = document.getElementById('printable-area');
+    const opt = {
+      margin:       0.5,
+      filename:     `Property_Inquiry_${name}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+  }
 </script>
 
 </body>
