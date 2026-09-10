@@ -94,9 +94,7 @@
 
     /* Target printable area */
     #pdf-printable-container {
-      position: absolute;
-      left: -9999px;
-      top: -9999px;
+      display: none;
       width: 700px;
       background: #ffffff;
       padding: 20px;
@@ -257,7 +255,7 @@
         </button>
       </div>
       <div class="col-6">
-        <button type="button" class="btn btn-warning btn-action w-100 fw-bold" onclick="saveToCloud()">
+        <button type="button" class="btn btn-warning btn-action w-100 fw-bold" onclick="manualSave()">
           ☁️ Save Record
         </button>
       </div>
@@ -286,17 +284,16 @@
     <table style="width:100%;">
       <tr>
         <td style="width:50%;">
-          <img src="TWG LOGO PNG.png" style="max-height:55px;" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
+          <strong style="color:#004d40; font-size:16px;">THE WAREHOUSE GURUZ</strong>
         </td>
         <td style="width:50%; text-align:right; font-size:10px; color:#444;">
-          <strong style="color:#004d40; font-size:12px;">THE WAREHOUSE GURUZ</strong><br>
           A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
           SARKHEJ, AHMEDABAD-382210<br>
           <strong>Mobile:</strong> +91 6351207989
         </td>
       </tr>
     </table>
-    <h4 style="text-align:center; color:#004d40; margin-top:6px; margin-bottom:0; font-size:14px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
+    <h4 style="text-align:center; color:#004d40; margin-top:8px; margin-bottom:0; font-size:14px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
   </div>
 
   <table class="pdf-table">
@@ -328,7 +325,6 @@
     console.warn("Firebase running in offline mode.");
   }
 
-  // Sync entries automatically with LocalStorage for desktop view
   if (db) {
     db.ref('inquiries').on('value', (snapshot) => {
       const data = snapshot.val();
@@ -359,11 +355,10 @@
       navigator.geolocation.getCurrentPosition((position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
-        document.getElementById('locationLink').value = mapsUrl;
+        document.getElementById('locationLink').value = `https://maps.google.com/?q=${lat},${lng}`;
         alert("📍 Location captured successfully!");
       }, (error) => {
-        alert("Unable to fetch location. Please grant GPS permissions in your browser.");
+        alert("Unable to fetch location. Grant GPS permissions in browser.");
       });
     } else {
       alert("Geolocation is not supported by your browser.");
@@ -397,21 +392,21 @@
     };
   }
 
-  function saveToCloud() {
+  function saveSilent() {
+    const data = collectFormData();
+    if (db && data.personName && data.contactNumber) {
+      db.ref('inquiries/' + data.propId).set(data);
+    }
+  }
+
+  function manualSave() {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
-      return false;
+      return;
     }
-
-    const data = collectFormData();
-
-    if (db) {
-      db.ref('inquiries/' + data.propId).set(data);
-    }
-
+    saveSilent();
     alert("Record Saved Successfully!");
-    return true;
   }
 
   function downloadPDF() {
@@ -421,7 +416,7 @@
       return;
     }
 
-    saveToCloud();
+    saveSilent();
     const data = collectFormData();
 
     for (let key in data) {
@@ -431,16 +426,21 @@
     }
 
     const element = document.getElementById('pdf-printable-container');
-    
+    element.style.display = 'block';
+
     const pdfOpt = {
       margin: 0.2,
       filename: `${data.propId}_${data.personName.replace(/\s+/g, '_')}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(pdfOpt).from(element).save();
+    html2pdf().set(pdfOpt).from(element).save().then(() => {
+      element.style.display = 'none';
+    }).catch(() => {
+      element.style.display = 'none';
+    });
   }
 
   function sendWhatsApp(target) {
@@ -450,7 +450,7 @@
       return;
     }
 
-    saveToCloud();
+    saveSilent();
     const data = collectFormData();
 
     let waText = `*PROPERTY INQUIRY DETAILS*\n`;
@@ -477,7 +477,7 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
     
-    window.open(`https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`, '_blank');
+    window.location.href = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`;
   }
 </script>
 
