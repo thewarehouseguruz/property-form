@@ -92,7 +92,6 @@
       gap: 6px;
     }
 
-    /* Container to hide PDF render off-screen cleanly */
     #pdf-wrapper {
       position: absolute;
       left: -9999px;
@@ -142,7 +141,7 @@
 
   <h5 class="text-center fw-bold text-success mb-3">PROPERTY INQUIRY FORM</h5>
 
-  <form id="mainForm">
+  <form id="mainForm" onsubmit="event.preventDefault();">
     <!-- Auto Fields -->
     <div class="row g-2 mb-2">
       <div class="col-6">
@@ -285,7 +284,7 @@
   </form>
 </div>
 
-<!-- Off-Screen Printable PDF Area -->
+<!-- Printable Area -->
 <div id="pdf-wrapper">
   <div id="pdf-render-area">
     <div style="border-bottom: 2px solid #004d40; padding-bottom:8px; margin-bottom:8px;">
@@ -322,7 +321,6 @@
 </div>
 
 <script>
-  // Firebase Configuration
   const firebaseConfig = {
     databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
   };
@@ -334,7 +332,18 @@
     }
     db = firebase.database();
   } catch (e) {
-    console.warn("Firebase running in offline storage mode.");
+    console.warn("Firebase offline mode.");
+  }
+
+  // Real-time Cloud-to-Desktop LocalStorage Sync
+  if (db) {
+    db.ref('inquiries').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const recordsList = Object.values(data);
+        localStorage.setItem('twg_inquiries', JSON.stringify(recordsList));
+      }
+    });
   }
 
   function generateID() {
@@ -390,12 +399,6 @@
 
     const data = collectFormData();
 
-    // Local Storage
-    let localDB = JSON.parse(localStorage.getItem('twg_inquiries') || '[]');
-    localDB.push(data);
-    localStorage.setItem('twg_inquiries', JSON.stringify(localDB));
-
-    // Firebase
     if (db) {
       db.ref('inquiries/' + data.propId).set(data);
     }
@@ -469,7 +472,9 @@
     if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
-    window.location.href = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
+    
+    // Smooth window opening prevents screen flicker
+    window.open(`https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`, '_blank');
   }
 </script>
 
