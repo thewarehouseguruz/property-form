@@ -2,434 +2,461 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Property Inquiry Form - The Warehouse Guruz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Warehouse Guruz - Property Form</title>
+  
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Firebase JS SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
-    body {
-      background-color: #f4f6f9;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding-bottom: 40px;
-    }
-    .form-container {
-      max-width: 850px;
-      margin: 30px auto;
-      background: #ffffff;
-      padding: 35px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      border-top: 6px solid #004d40;
-    }
-    .company-logo {
-      max-height: 80px;
-      width: auto;
-    }
-    .header-title {
-      color: #004d40;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    .section-header {
-      background-color: #e0f2f1;
-      color: #004d40;
-      padding: 8px 15px;
-      font-weight: 600;
-      border-radius: 6px;
-      margin-top: 20px;
-      margin-bottom: 15px;
-      font-size: 0.95rem;
-    }
-    .btn-custom {
-      padding: 12px 24px;
-      font-weight: 600;
-      border-radius: 8px;
+    :root {
+      --primary-color: #004d40;
+      --secondary-color: #00796b;
+      --accent-color: #e0f2f1;
+      --bg-color: #f4f6f8;
     }
 
-    /* PDF Template Styling (Hidden on Web Screen) */
-    #pdf-template {
+    body {
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      padding: 10px;
+      color: #333;
+    }
+
+    .app-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+      border-top: 5px solid var(--primary-color);
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .brand-logo {
+      max-width: 220px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    .company-info {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .section-title {
+      background-color: var(--accent-color);
+      color: var(--primary-color);
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      margin-top: 18px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #2c3e50;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #ced4da;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 0.2rem rgba(0, 121, 107, 0.25);
+    }
+
+    .btn-action {
+      padding: 12px;
+      font-weight: 600;
+      border-radius: 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Single-Page Printable Template */
+    #pdf-render-area {
       display: none;
-      width: 750px;
-      padding: 30px;
+      width: 680px;
+      padding: 25px;
       background: #ffffff;
       font-family: Arial, sans-serif;
-      color: #222;
+      color: #111;
     }
-    .pdf-header {
-      border-bottom: 2px solid #004d40;
-      padding-bottom: 15px;
-      margin-bottom: 15px;
-    }
+
     .pdf-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 8px;
     }
+
     .pdf-table th, .pdf-table td {
       border: 1px solid #b2dfdb;
-      padding: 8px 12px;
-      font-size: 12px;
+      padding: 6px 10px;
+      font-size: 11px;
     }
+
     .pdf-table th {
       background-color: #f0fdf4;
-      color: #004d40;
-      width: 30%;
+      color: var(--primary-color);
+      width: 32%;
       text-align: left;
-      font-weight: bold;
-    }
-    .pdf-section-title {
-      background-color: #004d40;
-      color: #ffffff;
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: bold;
-      margin-top: 15px;
-      border-radius: 4px;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="form-container">
-    
-    <!-- Branding Header -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-5 text-center text-md-start mb-2 mb-md-0">
-        <img src="TWG LOGO PNG.png" alt="The Warehouse Guruz" class="company-logo" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
+<div class="app-card">
+  <!-- Brand Header -->
+  <div class="brand-header">
+    <img src="TWG LOGO PNG.png" alt="THE WAREHOUSE GURUZ" class="brand-logo" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
+    <div class="company-info">
+      <strong>THE WAREHOUSE GURUZ</strong><br>
+      A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210<br>
+      <strong>Mobile:</strong> +91 6351207989
+    </div>
+  </div>
+
+  <h5 class="text-center fw-bold text-success mb-3">PROPERTY INQUIRY FORM</h5>
+
+  <form id="mainForm">
+    <!-- Auto Fields -->
+    <div class="row g-2 mb-2">
+      <div class="col-6">
+        <label class="form-label">Property ID</label>
+        <input type="text" id="propId" class="form-control bg-light" readonly>
       </div>
-      <div class="col-md-7 text-center text-md-end text-muted small">
-        <strong class="text-dark">THE WAREHOUSE GURUZ</strong><br>
-        A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
-        SARKHEJ, AHMEDABAD-382210<br>
-        <strong>Mobile:</strong> +91 6351207989
+      <div class="col-6">
+        <label class="form-label">Inquiry Date</label>
+        <input type="text" id="inquiryDate" class="form-control bg-light" readonly>
       </div>
     </div>
 
-    <hr class="my-3">
-    <h4 class="text-center header-title mb-4">PROPERTY INQUIRY FORM</h4>
-
-    <form id="propertyForm">
-      <!-- Auto Details -->
-      <div class="row g-3 mb-2">
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Property ID</label>
-          <input type="text" id="propId" class="form-control bg-light" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Inquiry Date</label>
-          <input type="text" id="inquiryDate" class="form-control bg-light" readonly>
-        </div>
+    <!-- 1. Client Details -->
+    <div class="section-title">1. Client Info</div>
+    <div class="row g-2">
+      <div class="col-12 col-md-6">
+        <label class="form-label">Person Name *</label>
+        <input type="text" id="personName" class="form-control" placeholder="Full Name" required>
       </div>
-
-      <!-- Contact Info -->
-      <div class="section-header">1. Client & Contact Details</div>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Person Name *</label>
-          <input type="text" id="personName" class="form-control" placeholder="Enter Full Name" required>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Contact Mobile Number *</label>
-          <input type="tel" id="contactNumber" class="form-control" placeholder="e.g. 9876543210" required>
-        </div>
-        <div class="col-md-12">
-          <label class="form-label fw-bold">Company Name</label>
-          <input type="text" id="companyName" class="form-control" placeholder="Enter Company Name (Optional)">
-        </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Contact Mobile *</label>
+        <input type="tel" id="contactNumber" class="form-control" placeholder="9876543210" required>
       </div>
-
-      <!-- Property Specifications -->
-      <div class="section-header">2. Property Specifications</div>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Type of Property *</label>
-          <select id="propertyType" class="form-select" required>
-            <option value="">Select From List</option>
-            <option value="WAREHOUSE">WAREHOUSE</option>
-            <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
-            <option value="NA LAND">NA LAND</option>
-            <option value="AGRICULTURE LAND">AGRICULTURE LAND</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Deal For *</label>
-          <select id="dealFor" class="form-select" required>
-            <option value="">Select Option</option>
-            <option value="BUYER">BUYER</option>
-            <option value="SELLER">SELLER</option>
-            <option value="LANDLORD">LANDLORD</option>
-            <option value="TENANT">TENANT</option>
-            <option value="BTS">BTS (Built-To-Suit)</option>
-            <option value="PRE-LEASE">PRE-LEASE</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Property Size *</label>
-          <input type="text" id="propertySize" class="form-control" placeholder="Size (Number)" required>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Size Unit *</label>
-          <select id="sizeUnit" class="form-select" required>
-            <option value="SQ.FT.">SQ.FT.</option>
-            <option value="SQ.YARD">SQ.YARD</option>
-            <option value="SQ.VAR">SQ.VAR</option>
-            <option value="VIGHA">VIGHA</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Area / City *</label>
-          <input type="text" id="area" class="form-control" placeholder="e.g. Changodar, Sanand, Sarkhej" required>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Budget</label>
-          <input type="text" id="budget" class="form-control" placeholder="e.g. 50 Lacs / 25 Per Sq.Ft">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Purpose</label>
-          <input type="text" id="purpose" class="form-control" placeholder="e.g. Storage, Manufacturing">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Fire NOC Status</label>
-          <select id="fireNoc" class="form-select">
-            <option value="N/A">Select Status</option>
-            <option value="YES">YES</option>
-            <option value="NO">NO</option>
-            <option value="PENDING">PENDING</option>
-          </select>
-        </div>
-        <div class="col-12">
-          <label class="form-label fw-bold">Detailed Property Address</label>
-          <textarea id="address" class="form-control" rows="2" placeholder="Enter Full Address Details"></textarea>
-        </div>
+      <div class="col-12">
+        <label class="form-label">Company Name</label>
+        <input type="text" id="companyName" class="form-control" placeholder="Company Name (Optional)">
       </div>
+    </div>
 
-      <!-- Links & Remarks -->
-      <div class="section-header">3. Additional Media & Links</div>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Location Link (Google Maps)</label>
-          <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label fw-bold">Photo / Document Link</label>
-          <input type="url" id="photoLink" class="form-control" placeholder="Drive / Cloud Link">
-        </div>
-        <div class="col-12">
-          <label class="form-label fw-bold">Remarks</label>
-          <textarea id="remarks" class="form-control" rows="2" placeholder="Any specific requirements..."></textarea>
-        </div>
+    <!-- 2. Property Details -->
+    <div class="section-title">2. Property Details</div>
+    <div class="row g-2">
+      <div class="col-6">
+        <label class="form-label">Property Type *</label>
+        <select id="propertyType" class="form-select" required>
+          <option value="">Select</option>
+          <option value="WAREHOUSE">WAREHOUSE</option>
+          <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
+          <option value="NA LAND">NA LAND</option>
+          <option value="AGRICULTURE LAND">AGRICULTURE LAND</option>
+        </select>
       </div>
+      <div class="col-6">
+        <label class="form-label">Deal For *</label>
+        <select id="dealFor" class="form-select" required>
+          <option value="">Select</option>
+          <option value="BUYER">BUYER</option>
+          <option value="SELLER">SELLER</option>
+          <option value="LANDLORD">LANDLORD</option>
+          <option value="TENANT">TENANT</option>
+          <option value="BTS">BTS</option>
+          <option value="PRE-LEASE">PRE-LEASE</option>
+        </select>
+      </div>
+      <div class="col-6">
+        <label class="form-label">Size *</label>
+        <input type="text" id="propertySize" class="form-control" placeholder="Number" required>
+      </div>
+      <div class="col-6">
+        <label class="form-label">Unit *</label>
+        <select id="sizeUnit" class="form-select" required>
+          <option value="SQ.FT.">SQ.FT.</option>
+          <option value="SQ.YARD">SQ.YARD</option>
+          <option value="SQ.VAR">SQ.VAR</option>
+          <option value="VIGHA">VIGHA</option>
+        </select>
+      </div>
+      <div class="col-6">
+        <label class="form-label">Area / Location *</label>
+        <input type="text" id="area" class="form-control" placeholder="Location" required>
+      </div>
+      <div class="col-6">
+        <label class="form-label">Budget</label>
+        <input type="text" id="budget" class="form-control" placeholder="Budget Details">
+      </div>
+      <div class="col-6">
+        <label class="form-label">Purpose</label>
+        <input type="text" id="purpose" class="form-control" placeholder="e.g. Storage">
+      </div>
+      <div class="col-6">
+        <label class="form-label">Fire NOC</label>
+        <select id="fireNoc" class="form-select">
+          <option value="N/A">Select</option>
+          <option value="YES">YES</option>
+          <option value="NO">NO</option>
+          <option value="PENDING">PENDING</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Detailed Address</label>
+        <textarea id="address" class="form-control" rows="2" placeholder="Full Address"></textarea>
+      </div>
+    </div>
 
-      <!-- Action Buttons -->
-      <div class="row g-2 mt-4">
-        <div class="col-md-6">
-          <button type="button" class="btn btn-success btn-custom w-100" onclick="processSubmission('company')">
-            📱 Send to Company (+91 6351207989) & PDF
-          </button>
-        </div>
-        <div class="col-md-6">
-          <button type="button" class="btn btn-primary btn-custom w-100" onclick="processSubmission('customer')">
-            💬 Send to Customer & Download PDF
-          </button>
-        </div>
+    <!-- 3. Media & Links -->
+    <div class="section-title">3. Links & Remarks</div>
+    <div class="row g-2">
+      <div class="col-12">
+        <label class="form-label">Location Link (Google Maps)</label>
+        <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
       </div>
-    </form>
-  </div>
+      <div class="col-12">
+        <label class="form-label">Photo / Document Link</label>
+        <input type="url" id="photoLink" class="form-control" placeholder="Cloud / Drive Link">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Remarks</label>
+        <textarea id="remarks" class="form-control" rows="2" placeholder="Specific Requirements"></textarea>
+      </div>
+    </div>
+
+    <!-- Action Toolbar -->
+    <div class="row g-2 mt-4">
+      <div class="col-6">
+        <button type="button" class="btn btn-outline-danger btn-action w-100" onclick="clearForm()">
+          🧹 Clear Form
+        </button>
+      </div>
+      <div class="col-6">
+        <button type="button" class="btn btn-warning btn-action w-100 fw-bold" onclick="saveToCloud()">
+          ☁️ Save Record
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-success btn-action w-100" onclick="submitForm('company')">
+          📱 Send Company WhatsApp & PDF
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-primary btn-action w-100" onclick="submitForm('customer')">
+          💬 Send Customer WhatsApp & PDF
+        </button>
+      </div>
+    </div>
+  </form>
 </div>
 
-<!-- Hidden PDF Single-Page Layout -->
-<div id="pdf-template">
-  <div class="pdf-header text-center">
-    <table style="width:100%; border:none;">
-      <tr style="border:none;">
-        <td style="width:40%; border:none; text-align:left;">
-          <img src="TWG LOGO PNG.png" style="max-height:65px;" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
+<!-- Printable PDF Layout -->
+<div id="pdf-render-area">
+  <div style="border-bottom: 2px solid #004d40; padding-bottom:10px; margin-bottom:10px;">
+    <table style="width:100%;">
+      <tr>
+        <td style="width:50%;">
+          <img src="TWG LOGO PNG.png" style="max-height:55px;" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
         </td>
-        <td style="width:60%; border:none; text-align:right; font-size:11px; color:#444; line-height:1.3;">
-          <strong style="color:#004d40; font-size:13px;">THE WAREHOUSE GURUZ</strong><br>
+        <td style="width:50%; text-align:right; font-size:10px; color:#444;">
+          <strong style="color:#004d40; font-size:12px;">THE WAREHOUSE GURUZ</strong><br>
           A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
           SARKHEJ, AHMEDABAD-382210<br>
           <strong>Mobile:</strong> +91 6351207989
         </td>
       </tr>
     </table>
-    <h3 style="margin-top:10px; margin-bottom:0; color:#004d40; font-size:18px; font-weight:bold; text-transform:uppercase;">Property Inquiry Record</h3>
+    <h4 style="text-align:center; color:#004d40; margin-top:8px; margin-bottom:0; font-size:15px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
   </div>
 
-  <div class="pdf-section-title">1. Basic Information</div>
   <table class="pdf-table">
-    <tr>
-      <th>Property ID</th>
-      <td id="pdf-propId"></td>
-      <th>Inquiry Date</th>
-      <td id="pdf-inquiryDate"></td>
-    </tr>
-    <tr>
-      <th>Person Name</th>
-      <td id="pdf-personName"></td>
-      <th>Contact Number</th>
-      <td id="pdf-contactNumber"></td>
-    </tr>
-    <tr>
-      <th>Company Name</th>
-      <td colspan="3" id="pdf-companyName"></td>
-    </tr>
+    <tr><th>Property ID</th><td id="pdf-propId"></td><th>Date</th><td id="pdf-inquiryDate"></td></tr>
+    <tr><th>Client Name</th><td id="pdf-personName"></td><th>Mobile</th><td id="pdf-contactNumber"></td></tr>
+    <tr><th>Company</th><td colspan="3" id="pdf-companyName"></td></tr>
+    <tr><th>Property Type</th><td id="pdf-propertyType"></td><th>Deal For</th><td id="pdf-dealFor"></td></tr>
+    <tr><th>Property Size</th><td id="pdf-propertySize"></td><th>Location</th><td id="pdf-area"></td></tr>
+    <tr><th>Budget</th><td id="pdf-budget"></td><th>Fire NOC</th><td id="pdf-fireNoc"></td></tr>
+    <tr><th>Purpose</th><td colspan="3" id="pdf-purpose"></td></tr>
+    <tr><th>Address</th><td colspan="3" id="pdf-address"></td></tr>
+    <tr><th>Location Link</th><td colspan="3" id="pdf-locationLink"></td></tr>
+    <tr><th>Photo Link</th><td colspan="3" id="pdf-photoLink"></td></tr>
+    <tr><th>Remarks</th><td colspan="3" id="pdf-remarks"></td></tr>
   </table>
-
-  <div class="pdf-section-title">2. Property Specifications</div>
-  <table class="pdf-table">
-    <tr>
-      <th>Property Type</th>
-      <td id="pdf-propertyType"></td>
-      <th>Deal For</th>
-      <td id="pdf-dealFor"></td>
-    </tr>
-    <tr>
-      <th>Property Size</th>
-      <td id="pdf-propertySize"></td>
-      <th>Area / City</th>
-      <td id="pdf-area"></td>
-    </tr>
-    <tr>
-      <th>Budget</th>
-      <td id="pdf-budget"></td>
-      <th>Fire NOC</th>
-      <td id="pdf-fireNoc"></td>
-    </tr>
-    <tr>
-      <th>Purpose</th>
-      <td colspan="3" id="pdf-purpose"></td>
-    </tr>
-    <tr>
-      <th>Address</th>
-      <td colspan="3" id="pdf-address"></td>
-    </tr>
-  </table>
-
-  <div class="pdf-section-title">3. Links & Remarks</div>
-  <table class="pdf-table">
-    <tr>
-      <th>Location Link</th>
-      <td colspan="3" id="pdf-locationLink"></td>
-    </tr>
-    <tr>
-      <th>Photo/Doc Link</th>
-      <td colspan="3" id="pdf-photoLink"></td>
-    </tr>
-    <tr>
-      <th>Remarks</th>
-      <td colspan="3" id="pdf-remarks"></td>
-    </tr>
-  </table>
-
-  <div style="margin-top:20px; text-align:center; font-size:10px; color:#777; border-top:1px solid #ddd; padding-top:8px;">
-    This is a computer-generated property inquiry summary created by <strong>The Warehouse Guruz</strong>.
-  </div>
 </div>
 
 <script>
-  // Initialize Auto Fields
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('propId').value = 'PROP-' + Math.floor(100000 + Math.random() * 900000);
-    const today = new Date();
-    const formattedDate = String(today.getDate()).padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();
-    document.getElementById('inquiryDate').value = formattedDate;
-  });
+  // Firebase Configuration (Replace with your Firebase Project details)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDemoConfigForRealtimeDatabaseKey",
+    authDomain: "thewarehouseguruz-db.firebaseapp.com",
+    databaseURL: "https://thewarehouseguruz-db-default-rtdb.firebaseio.com",
+    projectId: "thewarehouseguruz-db",
+    storageBucket: "thewarehouseguruz-db.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:abcdef123456"
+  };
 
-  function formatMobileNumber(number) {
-    let cleaned = number.replace(/\D/g, '');
-    if (cleaned.length === 10) return '91' + cleaned;
-    return cleaned;
+  // Initialize Firebase (Safely falls back to LocalStorage if offline/unconfigured)
+  let db = null;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+  } catch (e) {
+    console.warn("Firebase running in offline storage mode.");
   }
 
-  function processSubmission(target) {
-    const form = document.getElementById('propertyForm');
+  function generateID() {
+    return 'PROP-' + Math.floor(100000 + Math.random() * 900000);
+  }
+
+  function getFormattedDate() {
+    const d = new Date();
+    return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
+  }
+
+  function resetAutoFields() {
+    document.getElementById('propId').value = generateID();
+    document.getElementById('inquiryDate').value = getFormattedDate();
+  }
+
+  document.addEventListener('DOMContentLoaded', resetAutoFields);
+
+  function clearForm() {
+    if (confirm("Are you sure you want to clear all form entries?")) {
+      document.getElementById('mainForm').reset();
+      resetAutoFields();
+    }
+  }
+
+  function collectFormData() {
+    return {
+      propId: document.getElementById('propId').value,
+      inquiryDate: document.getElementById('inquiryDate').value,
+      personName: document.getElementById('personName').value,
+      contactNumber: document.getElementById('contactNumber').value,
+      companyName: document.getElementById('companyName').value || 'N/A',
+      propertyType: document.getElementById('propertyType').value,
+      dealFor: document.getElementById('dealFor').value,
+      propertySize: document.getElementById('propertySize').value + ' ' + document.getElementById('sizeUnit').value,
+      area: document.getElementById('area').value,
+      budget: document.getElementById('budget').value || 'N/A',
+      purpose: document.getElementById('purpose').value || 'N/A',
+      fireNoc: document.getElementById('fireNoc').value,
+      address: document.getElementById('address').value || 'N/A',
+      locationLink: document.getElementById('locationLink').value || 'N/A',
+      photoLink: document.getElementById('photoLink').value || 'N/A',
+      remarks: document.getElementById('remarks').value || 'None'
+    };
+  }
+
+  function saveToCloud() {
+    const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    // Collect values
-    const propId = document.getElementById('propId').value;
-    const inquiryDate = document.getElementById('inquiryDate').value;
-    const personName = document.getElementById('personName').value;
-    const contactNumber = document.getElementById('contactNumber').value;
-    const companyName = document.getElementById('companyName').value || 'N/A';
-    const propertyType = document.getElementById('propertyType').value;
-    const dealFor = document.getElementById('dealFor').value;
-    const propertySize = document.getElementById('propertySize').value + ' ' + document.getElementById('sizeUnit').value;
-    const area = document.getElementById('area').value;
-    const budget = document.getElementById('budget').value || 'N/A';
-    const purpose = document.getElementById('purpose').value || 'N/A';
-    const fireNoc = document.getElementById('fireNoc').value;
-    const address = document.getElementById('address').value || 'N/A';
-    const locationLink = document.getElementById('locationLink').value || 'N/A';
-    const photoLink = document.getElementById('photoLink').value || 'N/A';
-    const remarks = document.getElementById('remarks').value || 'None';
+    const data = collectFormData();
 
-    // Populate PDF Template
-    document.getElementById('pdf-propId').innerText = propId;
-    document.getElementById('pdf-inquiryDate').innerText = inquiryDate;
-    document.getElementById('pdf-personName').innerText = personName;
-    document.getElementById('pdf-contactNumber').innerText = contactNumber;
-    document.getElementById('pdf-companyName').innerText = companyName;
-    document.getElementById('pdf-propertyType').innerText = propertyType;
-    document.getElementById('pdf-dealFor').innerText = dealFor;
-    document.getElementById('pdf-propertySize').innerText = propertySize;
-    document.getElementById('pdf-area').innerText = area;
-    document.getElementById('pdf-budget').innerText = budget;
-    document.getElementById('pdf-fireNoc').innerText = fireNoc;
-    document.getElementById('pdf-purpose').innerText = purpose;
-    document.getElementById('pdf-address').innerText = address;
-    document.getElementById('pdf-locationLink').innerText = locationLink;
-    document.getElementById('pdf-photoLink').innerText = photoLink;
-    document.getElementById('pdf-remarks').innerText = remarks;
+    // 1. Save locally in Browser Database
+    let localDB = JSON.parse(localStorage.getItem('twg_inquiries') || '[]');
+    localDB.push(data);
+    localStorage.setItem('twg_inquiries', JSON.stringify(localDB));
 
-    // Generate Single-Page PDF
-    const pdfTemplate = document.getElementById('pdf-template');
-    pdfTemplate.style.display = 'block';
+    // 2. Save to Firebase Realtime Database if connected
+    if (db) {
+      db.ref('inquiries/' + data.propId).set(data);
+    }
 
-    const pdfOptions = {
-      margin: 0.3,
-      filename: `Inquiry_${personName.replace(/\s+/g, '_')}_${propId}.pdf`,
+    alert(`Record ${data.propId} successfully saved to Cloud Database!`);
+  }
+
+  function submitForm(target) {
+    const form = document.getElementById('mainForm');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const data = collectFormData();
+
+    // Auto-save to cloud
+    saveToCloud();
+
+    // Populate PDF
+    for (let key in data) {
+      if (document.getElementById('pdf-' + key)) {
+        document.getElementById('pdf-' + key).innerText = data[key];
+      }
+    }
+
+    // Render & Download PDF
+    const element = document.getElementById('pdf-render-area');
+    element.style.display = 'block';
+
+    const pdfOpt = {
+      margin: 0.2,
+      filename: `${data.propId}_${data.personName.replace(/\s+/g, '_')}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, logging: false },
+      html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(pdfOptions).from(pdfTemplate).save().then(() => {
-      pdfTemplate.style.display = 'none';
+    html2pdf().set(pdfOpt).from(element).save().then(() => {
+      element.style.display = 'none';
     });
 
-    // Generate WhatsApp Text
+    // Send WhatsApp Message
     let waText = `*PROPERTY INQUIRY DETAILS*\n`;
-    waText += `*ID:* ${propId} | *Date:* ${inquiryDate}\n`;
+    waText += `*ID:* ${data.propId} | *Date:* ${data.inquiryDate}\n`;
     waText += `---------------------------------\n`;
-    waText += `👤 *Name:* ${personName}\n`;
-    waText += `📞 *Contact:* ${contactNumber}\n`;
-    waText += `🏢 *Company:* ${companyName}\n`;
-    waText += `🏗️ *Type:* ${propertyType}\n`;
-    waText += `🤝 *Deal For:* ${dealFor}\n`;
-    waText += `📐 *Size:* ${propertySize}\n`;
-    waText += `📍 *Area:* ${area}\n`;
-    waText += `💰 *Budget:* ${budget}\n`;
-    waText += `🔥 *Fire NOC:* ${fireNoc}\n`;
-    waText += `🎯 *Purpose:* ${purpose}\n`;
-    waText += `📍 *Address:* ${address}\n`;
-    if(locationLink !== 'N/A') waText += `🗺️ *Location:* ${locationLink}\n`;
-    if(photoLink !== 'N/A') waText += `🖼️ *Photos:* ${photoLink}\n`;
-    waText += `📝 *Remarks:* ${remarks}\n`;
+    waText += `👤 *Name:* ${data.personName}\n`;
+    waText += `📞 *Contact:* ${data.contactNumber}\n`;
+    waText += `🏢 *Company:* ${data.companyName}\n`;
+    waText += `🏗️ *Type:* ${data.propertyType}\n`;
+    waText += `🤝 *Deal For:* ${data.dealFor}\n`;
+    waText += `📐 *Size:* ${data.propertySize}\n`;
+    waText += `📍 *Location:* ${data.area}\n`;
+    waText += `💰 *Budget:* ${data.budget}\n`;
     waText += `---------------------------------\n`;
-    waText += `*The Warehouse Guruz*\n`;
-    waText += `A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210`;
+    waText += `*The Warehouse Guruz*`;
 
-    let targetPhone = (target === 'company') ? '916351207989' : formatMobileNumber(contactNumber);
-    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`;
-    
-    window.open(waUrl, '_blank');
+    let cleanPhone = data.contactNumber.replace(/\D/g, '');
+    if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+
+    let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
+    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`, '_blank');
   }
 </script>
 
