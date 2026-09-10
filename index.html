@@ -92,7 +92,7 @@
       gap: 6px;
     }
 
-    /* Target area for generating PDF cleanly */
+    /* Target printable area */
     #pdf-printable-container {
       position: absolute;
       left: -9999px;
@@ -233,10 +233,9 @@
       </div>
     </div>
 
-    <!-- 3. Location, Camera Photo & Remarks -->
-    <div class="section-title">3. GPS Location, Photos & Remarks</div>
+    <!-- 3. Location & Remarks -->
+    <div class="section-title">3. Location & Remarks</div>
     <div class="row g-2">
-      <!-- Location Link with Live GPS Fetch Button -->
       <div class="col-12">
         <label class="form-label">Google Maps Location Link</label>
         <div class="input-group mb-1">
@@ -244,17 +243,6 @@
           <button type="button" class="btn btn-outline-success btn-sm" onclick="getCurrentLocation()">📍 Get Current Location</button>
         </div>
       </div>
-
-      <!-- Camera Capture / Photo Upload -->
-      <div class="col-12">
-        <label class="form-label">Take Photo / Upload Image</label>
-        <input type="file" id="cameraUpload" class="form-control" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
-        <input type="hidden" id="photoLink">
-        <div id="imagePreviewContainer" class="mt-2 text-center" style="display:none;">
-          <img id="imagePreview" src="" alt="Photo Preview" style="max-height: 150px; border-radius: 8px; border: 1px solid #ccc;">
-        </div>
-      </div>
-
       <div class="col-12">
         <label class="form-label">Remarks</label>
         <textarea id="remarks" class="form-control" rows="2" placeholder="Specific Requirements"></textarea>
@@ -321,13 +309,8 @@
     <tr><th>Purpose</th><td colspan="3" id="pdf-purpose"></td></tr>
     <tr><th>Address</th><td colspan="3" id="pdf-address"></td></tr>
     <tr><th>Location Link</th><td colspan="3" id="pdf-locationLink"></td></tr>
-    <tr><th>Photo Attached</th><td colspan="3" id="pdf-photoStatus">No Image</td></tr>
     <tr><th>Remarks</th><td colspan="3" id="pdf-remarks"></td></tr>
   </table>
-  <div id="pdf-image-container" class="text-center mt-3" style="display:none;">
-    <p style="font-size:11px; font-weight:bold; margin-bottom:4px;">ATTACHED PROPERTY PHOTO:</p>
-    <img id="pdf-image" src="" style="max-height:220px; max-width:100%; border:1px solid #004d40; border-radius:4px;">
-  </div>
 </div>
 
 <script>
@@ -345,7 +328,7 @@
     console.warn("Firebase running in offline mode.");
   }
 
-  // Live Database listener to sync with desktop local Storage
+  // Sync entries automatically with LocalStorage for desktop view
   if (db) {
     db.ref('inquiries').on('value', (snapshot) => {
       const data = snapshot.val();
@@ -367,13 +350,10 @@
   function resetAutoFields() {
     document.getElementById('propId').value = generateID();
     document.getElementById('inquiryDate').value = getFormattedDate();
-    document.getElementById('photoLink').value = '';
-    document.getElementById('imagePreviewContainer').style.display = 'none';
   }
 
   document.addEventListener('DOMContentLoaded', resetAutoFields);
 
-  // Get Current GPS Location
   function getCurrentLocation() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -387,21 +367,6 @@
       });
     } else {
       alert("Geolocation is not supported by your browser.");
-    }
-  }
-
-  // Handle Photo / Camera capture
-  function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64Data = e.target.result;
-        document.getElementById('photoLink').value = base64Data;
-        document.getElementById('imagePreview').src = base64Data;
-        document.getElementById('imagePreviewContainer').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
     }
   }
 
@@ -428,7 +393,6 @@
       fireNoc: document.getElementById('fireNoc').value,
       address: document.getElementById('address').value || 'N/A',
       locationLink: document.getElementById('locationLink').value || 'N/A',
-      photoLink: document.getElementById('photoLink').value || '',
       remarks: document.getElementById('remarks').value || 'None'
     };
   }
@@ -450,7 +414,6 @@
     return true;
   }
 
-  // Prepare and Download Mobile-Compatible PDF
   function downloadPDF() {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
@@ -461,33 +424,19 @@
     saveToCloud();
     const data = collectFormData();
 
-    // Populate text fields for PDF
     for (let key in data) {
       if (document.getElementById('pdf-' + key)) {
         document.getElementById('pdf-' + key).innerText = data[key];
       }
     }
 
-    // Populate photo inside PDF if attached
-    const pdfImgContainer = document.getElementById('pdf-image-container');
-    const pdfImg = document.getElementById('pdf-image');
-    if (data.photoLink && data.photoLink !== '') {
-      pdfImg.src = data.photoLink;
-      pdfImgContainer.style.display = 'block';
-      document.getElementById('pdf-photoStatus').innerText = 'Attached Below';
-    } else {
-      pdfImgContainer.style.display = 'none';
-      document.getElementById('pdf-photoStatus').innerText = 'No Image';
-    }
-
     const element = document.getElementById('pdf-printable-container');
     
-    // Config tuned to force mobile download
     const pdfOpt = {
       margin: 0.2,
       filename: `${data.propId}_${data.personName.replace(/\s+/g, '_')}.pdf`,
-      image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
@@ -519,7 +468,6 @@
     waText += `🎯 *Purpose:* ${data.purpose}\n`;
     waText += `📍 *Address:* ${data.address}\n`;
     if(data.locationLink !== 'N/A') waText += `🗺️ *Location:* ${data.locationLink}\n`;
-    if(data.photoLink !== '') waText += `🖼️ *Photo:* [Image Attached in Record]\n`;
     waText += `📝 *Remarks:* ${data.remarks}\n`;
     waText += `---------------------------------\n`;
     waText += `*The Warehouse Guruz*`;
