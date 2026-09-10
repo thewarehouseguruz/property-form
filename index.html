@@ -92,36 +92,33 @@
       gap: 6px;
     }
 
-    #pdf-wrapper {
+    /* Target area for generating PDF cleanly */
+    #pdf-printable-container {
       position: absolute;
       left: -9999px;
       top: -9999px;
-    }
-
-    #pdf-render-area {
-      width: 680px;
-      padding: 20px;
+      width: 700px;
       background: #ffffff;
+      padding: 20px;
       font-family: Arial, sans-serif;
-      color: #111;
     }
 
     .pdf-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .pdf-table th, .pdf-table td {
       border: 1px solid #b2dfdb;
-      padding: 6px 10px;
-      font-size: 11px;
+      padding: 8px;
+      font-size: 12px;
     }
 
     .pdf-table th {
       background-color: #f0fdf4;
       color: var(--primary-color);
-      width: 32%;
+      width: 30%;
       text-align: left;
     }
   </style>
@@ -236,17 +233,28 @@
       </div>
     </div>
 
-    <!-- 3. Media & Links -->
-    <div class="section-title">3. Links & Remarks</div>
+    <!-- 3. Location, Camera Photo & Remarks -->
+    <div class="section-title">3. GPS Location, Photos & Remarks</div>
     <div class="row g-2">
+      <!-- Location Link with Live GPS Fetch Button -->
       <div class="col-12">
-        <label class="form-label">Location Link (Google Maps)</label>
-        <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
+        <label class="form-label">Google Maps Location Link</label>
+        <div class="input-group mb-1">
+          <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
+          <button type="button" class="btn btn-outline-success btn-sm" onclick="getCurrentLocation()">📍 Get Current Location</button>
+        </div>
       </div>
+
+      <!-- Camera Capture / Photo Upload -->
       <div class="col-12">
-        <label class="form-label">Photo / Document Link</label>
-        <input type="url" id="photoLink" class="form-control" placeholder="Cloud / Drive Link">
+        <label class="form-label">Take Photo / Upload Image</label>
+        <input type="file" id="cameraUpload" class="form-control" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
+        <input type="hidden" id="photoLink">
+        <div id="imagePreviewContainer" class="mt-2 text-center" style="display:none;">
+          <img id="imagePreview" src="" alt="Photo Preview" style="max-height: 150px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
       </div>
+
       <div class="col-12">
         <label class="form-label">Remarks</label>
         <textarea id="remarks" class="form-control" rows="2" placeholder="Specific Requirements"></textarea>
@@ -284,39 +292,41 @@
   </form>
 </div>
 
-<!-- Printable Area -->
-<div id="pdf-wrapper">
-  <div id="pdf-render-area">
-    <div style="border-bottom: 2px solid #004d40; padding-bottom:8px; margin-bottom:8px;">
-      <table style="width:100%;">
-        <tr>
-          <td style="width:50%;">
-            <img src="TWG LOGO PNG.png" style="max-height:55px;" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
-          </td>
-          <td style="width:50%; text-align:right; font-size:10px; color:#444;">
-            <strong style="color:#004d40; font-size:12px;">THE WAREHOUSE GURUZ</strong><br>
-            A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
-            SARKHEJ, AHMEDABAD-382210<br>
-            <strong>Mobile:</strong> +91 6351207989
-          </td>
-        </tr>
-      </table>
-      <h4 style="text-align:center; color:#004d40; margin-top:6px; margin-bottom:0; font-size:14px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
-    </div>
-
-    <table class="pdf-table">
-      <tr><th>Property ID</th><td id="pdf-propId"></td><th>Date</th><td id="pdf-inquiryDate"></td></tr>
-      <tr><th>Client Name</th><td id="pdf-personName"></td><th>Mobile</th><td id="pdf-contactNumber"></td></tr>
-      <tr><th>Company</th><td colspan="3" id="pdf-companyName"></td></tr>
-      <tr><th>Property Type</th><td id="pdf-propertyType"></td><th>Deal For</th><td id="pdf-dealFor"></td></tr>
-      <tr><th>Property Size</th><td id="pdf-propertySize"></td><th>Location</th><td id="pdf-area"></td></tr>
-      <tr><th>Budget</th><td id="pdf-budget"></td><th>Fire NOC</th><td id="pdf-fireNoc"></td></tr>
-      <tr><th>Purpose</th><td colspan="3" id="pdf-purpose"></td></tr>
-      <tr><th>Address</th><td colspan="3" id="pdf-address"></td></tr>
-      <tr><th>Location Link</th><td colspan="3" id="pdf-locationLink"></td></tr>
-      <tr><th>Photo Link</th><td colspan="3" id="pdf-photoLink"></td></tr>
-      <tr><th>Remarks</th><td colspan="3" id="pdf-remarks"></td></tr>
+<!-- Render Area for PDF Generation -->
+<div id="pdf-printable-container">
+  <div style="border-bottom: 2px solid #004d40; padding-bottom:8px; margin-bottom:8px;">
+    <table style="width:100%;">
+      <tr>
+        <td style="width:50%;">
+          <img src="TWG LOGO PNG.png" style="max-height:55px;" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
+        </td>
+        <td style="width:50%; text-align:right; font-size:10px; color:#444;">
+          <strong style="color:#004d40; font-size:12px;">THE WAREHOUSE GURUZ</strong><br>
+          A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
+          SARKHEJ, AHMEDABAD-382210<br>
+          <strong>Mobile:</strong> +91 6351207989
+        </td>
+      </tr>
     </table>
+    <h4 style="text-align:center; color:#004d40; margin-top:6px; margin-bottom:0; font-size:14px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
+  </div>
+
+  <table class="pdf-table">
+    <tr><th>Property ID</th><td id="pdf-propId"></td><th>Date</th><td id="pdf-inquiryDate"></td></tr>
+    <tr><th>Client Name</th><td id="pdf-personName"></td><th>Mobile</th><td id="pdf-contactNumber"></td></tr>
+    <tr><th>Company</th><td colspan="3" id="pdf-companyName"></td></tr>
+    <tr><th>Property Type</th><td id="pdf-propertyType"></td><th>Deal For</th><td id="pdf-dealFor"></td></tr>
+    <tr><th>Property Size</th><td id="pdf-propertySize"></td><th>Location</th><td id="pdf-area"></td></tr>
+    <tr><th>Budget</th><td id="pdf-budget"></td><th>Fire NOC</th><td id="pdf-fireNoc"></td></tr>
+    <tr><th>Purpose</th><td colspan="3" id="pdf-purpose"></td></tr>
+    <tr><th>Address</th><td colspan="3" id="pdf-address"></td></tr>
+    <tr><th>Location Link</th><td colspan="3" id="pdf-locationLink"></td></tr>
+    <tr><th>Photo Attached</th><td colspan="3" id="pdf-photoStatus">No Image</td></tr>
+    <tr><th>Remarks</th><td colspan="3" id="pdf-remarks"></td></tr>
+  </table>
+  <div id="pdf-image-container" class="text-center mt-3" style="display:none;">
+    <p style="font-size:11px; font-weight:bold; margin-bottom:4px;">ATTACHED PROPERTY PHOTO:</p>
+    <img id="pdf-image" src="" style="max-height:220px; max-width:100%; border:1px solid #004d40; border-radius:4px;">
   </div>
 </div>
 
@@ -332,16 +342,15 @@
     }
     db = firebase.database();
   } catch (e) {
-    console.warn("Firebase offline mode.");
+    console.warn("Firebase running in offline mode.");
   }
 
-  // Real-time Cloud-to-Desktop LocalStorage Sync
+  // Live Database listener to sync with desktop local Storage
   if (db) {
     db.ref('inquiries').on('value', (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const recordsList = Object.values(data);
-        localStorage.setItem('twg_inquiries', JSON.stringify(recordsList));
+        localStorage.setItem('twg_inquiries', JSON.stringify(Object.values(data)));
       }
     });
   }
@@ -358,9 +367,43 @@
   function resetAutoFields() {
     document.getElementById('propId').value = generateID();
     document.getElementById('inquiryDate').value = getFormattedDate();
+    document.getElementById('photoLink').value = '';
+    document.getElementById('imagePreviewContainer').style.display = 'none';
   }
 
   document.addEventListener('DOMContentLoaded', resetAutoFields);
+
+  // Get Current GPS Location
+  function getCurrentLocation() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
+        document.getElementById('locationLink').value = mapsUrl;
+        alert("📍 Location captured successfully!");
+      }, (error) => {
+        alert("Unable to fetch location. Please grant GPS permissions in your browser.");
+      });
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }
+
+  // Handle Photo / Camera capture
+  function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Data = e.target.result;
+        document.getElementById('photoLink').value = base64Data;
+        document.getElementById('imagePreview').src = base64Data;
+        document.getElementById('imagePreviewContainer').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
   function clearForm() {
     if (confirm("Are you sure you want to clear all form entries?")) {
@@ -385,7 +428,7 @@
       fireNoc: document.getElementById('fireNoc').value,
       address: document.getElementById('address').value || 'N/A',
       locationLink: document.getElementById('locationLink').value || 'N/A',
-      photoLink: document.getElementById('photoLink').value || 'N/A',
+      photoLink: document.getElementById('photoLink').value || '',
       remarks: document.getElementById('remarks').value || 'None'
     };
   }
@@ -407,14 +450,7 @@
     return true;
   }
 
-  function preparePDFData(data) {
-    for (let key in data) {
-      if (document.getElementById('pdf-' + key)) {
-        document.getElementById('pdf-' + key).innerText = data[key];
-      }
-    }
-  }
-
+  // Prepare and Download Mobile-Compatible PDF
   function downloadPDF() {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
@@ -424,14 +460,34 @@
 
     saveToCloud();
     const data = collectFormData();
-    preparePDFData(data);
 
-    const element = document.getElementById('pdf-render-area');
+    // Populate text fields for PDF
+    for (let key in data) {
+      if (document.getElementById('pdf-' + key)) {
+        document.getElementById('pdf-' + key).innerText = data[key];
+      }
+    }
+
+    // Populate photo inside PDF if attached
+    const pdfImgContainer = document.getElementById('pdf-image-container');
+    const pdfImg = document.getElementById('pdf-image');
+    if (data.photoLink && data.photoLink !== '') {
+      pdfImg.src = data.photoLink;
+      pdfImgContainer.style.display = 'block';
+      document.getElementById('pdf-photoStatus').innerText = 'Attached Below';
+    } else {
+      pdfImgContainer.style.display = 'none';
+      document.getElementById('pdf-photoStatus').innerText = 'No Image';
+    }
+
+    const element = document.getElementById('pdf-printable-container');
+    
+    // Config tuned to force mobile download
     const pdfOpt = {
       margin: 0.2,
       filename: `${data.propId}_${data.personName.replace(/\s+/g, '_')}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
@@ -463,7 +519,7 @@
     waText += `🎯 *Purpose:* ${data.purpose}\n`;
     waText += `📍 *Address:* ${data.address}\n`;
     if(data.locationLink !== 'N/A') waText += `🗺️ *Location:* ${data.locationLink}\n`;
-    if(data.photoLink !== 'N/A') waText += `🖼️ *Photos:* ${data.photoLink}\n`;
+    if(data.photoLink !== '') waText += `🖼️ *Photo:* [Image Attached in Record]\n`;
     waText += `📝 *Remarks:* ${data.remarks}\n`;
     waText += `---------------------------------\n`;
     waText += `*The Warehouse Guruz*`;
@@ -473,7 +529,6 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
     
-    // Smooth window opening prevents screen flicker
     window.open(`https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`, '_blank');
   }
 </script>
