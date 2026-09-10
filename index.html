@@ -92,9 +92,14 @@
       gap: 6px;
     }
 
-    /* Printable PDF Template (Hidden on mobile screen) */
+    /* Container to hide PDF render off-screen cleanly */
+    #pdf-wrapper {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+    }
+
     #pdf-render-area {
-      display: none;
       width: 680px;
       padding: 20px;
       background: #ffffff;
@@ -261,56 +266,63 @@
           ☁️ Save Record
         </button>
       </div>
-      <div class="col-12 col-md-6">
-        <button type="button" class="btn btn-success btn-action w-100" onclick="submitForm('company')">
-          📱 Send Company WhatsApp & PDF
+      <div class="col-12">
+        <button type="button" class="btn btn-dark btn-action w-100 fw-bold" onclick="downloadPDF()">
+          📄 Download PDF Record
         </button>
       </div>
       <div class="col-12 col-md-6">
-        <button type="button" class="btn btn-primary btn-action w-100" onclick="submitForm('customer')">
-          💬 Send Customer WhatsApp & PDF
+        <button type="button" class="btn btn-success btn-action w-100" onclick="sendWhatsApp('company')">
+          📱 Send Company WhatsApp
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-primary btn-action w-100" onclick="sendWhatsApp('customer')">
+          💬 Send Customer WhatsApp
         </button>
       </div>
     </div>
   </form>
 </div>
 
-<!-- Hidden PDF Output Template -->
-<div id="pdf-render-area">
-  <div style="border-bottom: 2px solid #004d40; padding-bottom:8px; margin-bottom:8px;">
-    <table style="width:100%;">
-      <tr>
-        <td style="width:50%;">
-          <img src="TWG LOGO PNG.png" style="max-height:55px;" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
-        </td>
-        <td style="width:50%; text-align:right; font-size:10px; color:#444;">
-          <strong style="color:#004d40; font-size:12px;">THE WAREHOUSE GURUZ</strong><br>
-          A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
-          SARKHEJ, AHMEDABAD-382210<br>
-          <strong>Mobile:</strong> +91 6351207989
-        </td>
-      </tr>
-    </table>
-    <h4 style="text-align:center; color:#004d40; margin-top:6px; margin-bottom:0; font-size:14px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
-  </div>
+<!-- Off-Screen Printable PDF Area -->
+<div id="pdf-wrapper">
+  <div id="pdf-render-area">
+    <div style="border-bottom: 2px solid #004d40; padding-bottom:8px; margin-bottom:8px;">
+      <table style="width:100%;">
+        <tr>
+          <td style="width:50%;">
+            <img src="TWG LOGO PNG.png" style="max-height:55px;" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
+          </td>
+          <td style="width:50%; text-align:right; font-size:10px; color:#444;">
+            <strong style="color:#004d40; font-size:12px;">THE WAREHOUSE GURUZ</strong><br>
+            A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
+            SARKHEJ, AHMEDABAD-382210<br>
+            <strong>Mobile:</strong> +91 6351207989
+          </td>
+        </tr>
+      </table>
+      <h4 style="text-align:center; color:#004d40; margin-top:6px; margin-bottom:0; font-size:14px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
+    </div>
 
-  <table class="pdf-table">
-    <tr><th>Property ID</th><td id="pdf-propId"></td><th>Date</th><td id="pdf-inquiryDate"></td></tr>
-    <tr><th>Client Name</th><td id="pdf-personName"></td><th>Mobile</th><td id="pdf-contactNumber"></td></tr>
-    <tr><th>Company</th><td colspan="3" id="pdf-companyName"></td></tr>
-    <tr><th>Property Type</th><td id="pdf-propertyType"></td><th>Deal For</th><td id="pdf-dealFor"></td></tr>
-    <tr><th>Property Size</th><td id="pdf-propertySize"></td><th>Location</th><td id="pdf-area"></td></tr>
-    <tr><th>Budget</th><td id="pdf-budget"></td><th>Fire NOC</th><td id="pdf-fireNoc"></td></tr>
-    <tr><th>Purpose</th><td colspan="3" id="pdf-purpose"></td></tr>
-    <tr><th>Address</th><td colspan="3" id="pdf-address"></td></tr>
-    <tr><th>Location Link</th><td colspan="3" id="pdf-locationLink"></td></tr>
-    <tr><th>Photo Link</th><td colspan="3" id="pdf-photoLink"></td></tr>
-    <tr><th>Remarks</th><td colspan="3" id="pdf-remarks"></td></tr>
-  </table>
+    <table class="pdf-table">
+      <tr><th>Property ID</th><td id="pdf-propId"></td><th>Date</th><td id="pdf-inquiryDate"></td></tr>
+      <tr><th>Client Name</th><td id="pdf-personName"></td><th>Mobile</th><td id="pdf-contactNumber"></td></tr>
+      <tr><th>Company</th><td colspan="3" id="pdf-companyName"></td></tr>
+      <tr><th>Property Type</th><td id="pdf-propertyType"></td><th>Deal For</th><td id="pdf-dealFor"></td></tr>
+      <tr><th>Property Size</th><td id="pdf-propertySize"></td><th>Location</th><td id="pdf-area"></td></tr>
+      <tr><th>Budget</th><td id="pdf-budget"></td><th>Fire NOC</th><td id="pdf-fireNoc"></td></tr>
+      <tr><th>Purpose</th><td colspan="3" id="pdf-purpose"></td></tr>
+      <tr><th>Address</th><td colspan="3" id="pdf-address"></td></tr>
+      <tr><th>Location Link</th><td colspan="3" id="pdf-locationLink"></td></tr>
+      <tr><th>Photo Link</th><td colspan="3" id="pdf-photoLink"></td></tr>
+      <tr><th>Remarks</th><td colspan="3" id="pdf-remarks"></td></tr>
+    </table>
+  </div>
 </div>
 
 <script>
-  // Firebase Database Configuration
+  // Firebase Configuration
   const firebaseConfig = {
     databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
   };
@@ -322,7 +334,7 @@
     }
     db = firebase.database();
   } catch (e) {
-    console.warn("Firebase running in local offline storage mode.");
+    console.warn("Firebase running in offline storage mode.");
   }
 
   function generateID() {
@@ -378,40 +390,40 @@
 
     const data = collectFormData();
 
-    // 1. Local Storage fallback
+    // Local Storage
     let localDB = JSON.parse(localStorage.getItem('twg_inquiries') || '[]');
     localDB.push(data);
     localStorage.setItem('twg_inquiries', JSON.stringify(localDB));
 
-    // 2. Firebase Database
+    // Firebase
     if (db) {
       db.ref('inquiries/' + data.propId).set(data);
     }
 
+    alert("Record Saved Successfully!");
     return true;
   }
 
-  function submitForm(target) {
+  function preparePDFData(data) {
+    for (let key in data) {
+      if (document.getElementById('pdf-' + key)) {
+        document.getElementById('pdf-' + key).innerText = data[key];
+      }
+    }
+  }
+
+  function downloadPDF() {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    const isSaved = saveToCloud();
+    saveToCloud();
     const data = collectFormData();
+    preparePDFData(data);
 
-    // Fill hidden PDF template
-    for (let key in data) {
-      if (document.getElementById('pdf-' + key)) {
-        document.getElementById('pdf-' + key).innerText = data[key];
-      }
-    }
-
-    // Generate PDF
     const element = document.getElementById('pdf-render-area');
-    element.style.display = 'block';
-
     const pdfOpt = {
       margin: 0.2,
       filename: `${data.propId}_${data.personName.replace(/\s+/g, '_')}.pdf`,
@@ -420,11 +432,19 @@
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(pdfOpt).from(element).save().then(() => {
-      element.style.display = 'none';
-    });
+    html2pdf().set(pdfOpt).from(element).save();
+  }
 
-    // WhatsApp Redirection
+  function sendWhatsApp(target) {
+    const form = document.getElementById('mainForm');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    saveToCloud();
+    const data = collectFormData();
+
     let waText = `*PROPERTY INQUIRY DETAILS*\n`;
     waText += `*ID:* ${data.propId} | *Date:* ${data.inquiryDate}\n`;
     waText += `---------------------------------\n`;
@@ -449,7 +469,7 @@
     if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
-    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`, '_blank');
+    window.location.href = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
   }
 </script>
 
