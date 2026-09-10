@@ -7,8 +7,6 @@
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- html2pdf.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -90,34 +88,6 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-    }
-
-    /* Target printable area */
-    #pdf-printable-container {
-      display: none;
-      width: 700px;
-      background: #ffffff;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-    }
-
-    .pdf-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    .pdf-table th, .pdf-table td {
-      border: 1px solid #b2dfdb;
-      padding: 8px;
-      font-size: 12px;
-    }
-
-    .pdf-table th {
-      background-color: #f0fdf4;
-      color: var(--primary-color);
-      width: 30%;
-      text-align: left;
     }
   </style>
 </head>
@@ -259,11 +229,6 @@
           ☁️ Save Record
         </button>
       </div>
-      <div class="col-12">
-        <button type="button" class="btn btn-dark btn-action w-100 fw-bold" onclick="downloadPDF()">
-          📄 Download PDF Record
-        </button>
-      </div>
       <div class="col-12 col-md-6">
         <button type="button" class="btn btn-success btn-action w-100" onclick="sendWhatsApp('company')">
           📱 Send Company WhatsApp
@@ -278,38 +243,6 @@
   </form>
 </div>
 
-<!-- Render Area for PDF Generation -->
-<div id="pdf-printable-container">
-  <div style="border-bottom: 2px solid #004d40; padding-bottom:8px; margin-bottom:8px;">
-    <table style="width:100%;">
-      <tr>
-        <td style="width:50%;">
-          <strong style="color:#004d40; font-size:16px;">THE WAREHOUSE GURUZ</strong>
-        </td>
-        <td style="width:50%; text-align:right; font-size:10px; color:#444;">
-          A 703, SIGNATURE-2, SANAND CROSS ROAD,<br>
-          SARKHEJ, AHMEDABAD-382210<br>
-          <strong>Mobile:</strong> +91 6351207989
-        </td>
-      </tr>
-    </table>
-    <h4 style="text-align:center; color:#004d40; margin-top:8px; margin-bottom:0; font-size:14px; font-weight:bold;">PROPERTY INQUIRY RECORD</h4>
-  </div>
-
-  <table class="pdf-table">
-    <tr><th>Property ID</th><td id="pdf-propId"></td><th>Date</th><td id="pdf-inquiryDate"></td></tr>
-    <tr><th>Client Name</th><td id="pdf-personName"></td><th>Mobile</th><td id="pdf-contactNumber"></td></tr>
-    <tr><th>Company</th><td colspan="3" id="pdf-companyName"></td></tr>
-    <tr><th>Property Type</th><td id="pdf-propertyType"></td><th>Deal For</th><td id="pdf-dealFor"></td></tr>
-    <tr><th>Property Size</th><td id="pdf-propertySize"></td><th>Location</th><td id="pdf-area"></td></tr>
-    <tr><th>Budget</th><td id="pdf-budget"></td><th>Fire NOC</th><td id="pdf-fireNoc"></td></tr>
-    <tr><th>Purpose</th><td colspan="3" id="pdf-purpose"></td></tr>
-    <tr><th>Address</th><td colspan="3" id="pdf-address"></td></tr>
-    <tr><th>Location Link</th><td colspan="3" id="pdf-locationLink"></td></tr>
-    <tr><th>Remarks</th><td colspan="3" id="pdf-remarks"></td></tr>
-  </table>
-</div>
-
 <script>
   const firebaseConfig = {
     databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
@@ -322,7 +255,7 @@
     }
     db = firebase.database();
   } catch (e) {
-    console.warn("Firebase running in offline mode.", e);
+    console.warn("Firebase initialized in offline mode.", e);
   }
 
   function generateID() {
@@ -383,7 +316,6 @@
     };
   }
 
-  // Promise-based save function for network sync on mobile
   function saveSilent() {
     const data = collectFormData();
     if (!data.personName || !data.contactNumber) {
@@ -393,7 +325,7 @@
     if (db) {
       return db.ref('inquiries/' + data.propId).set(data);
     } else {
-      return Promise.reject("Firebase database connection active.");
+      return Promise.reject("Firebase DB not initialized.");
     }
   }
 
@@ -411,45 +343,6 @@
       console.error("Save Error:", err);
       alert("❌ Save failed: " + (err.message || err));
     }
-  }
-
-  async function downloadPDF() {
-    const form = document.getElementById('mainForm');
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-
-    try {
-      await saveSilent();
-    } catch (err) {
-      console.warn("Database write warning before PDF generation:", err);
-    }
-
-    const data = collectFormData();
-
-    for (let key in data) {
-      if (document.getElementById('pdf-' + key)) {
-        document.getElementById('pdf-' + key).innerText = data[key];
-      }
-    }
-
-    const element = document.getElementById('pdf-printable-container');
-    element.style.display = 'block';
-
-    const pdfOpt = {
-      margin: 0.2,
-      filename: `${data.propId}_${data.personName.replace(/\s+/g, '_')}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-
-    html2pdf().set(pdfOpt).from(element).save().then(() => {
-      element.style.display = 'none';
-    }).catch(() => {
-      element.style.display = 'none';
-    });
   }
 
   async function sendWhatsApp(target) {
@@ -491,7 +384,6 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
     
-    // Using window.open allows background promises to settle on mobile OS browsers
     window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`, '_blank');
   }
 </script>
