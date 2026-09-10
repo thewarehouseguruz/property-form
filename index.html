@@ -272,17 +272,22 @@
           📱 Send Company WhatsApp & PDF
         </button>
       </div>
-      <div class="col-12 col-md-6">
-        <button type="button" class="btn btn-primary btn-action w-100" onclick="submitForm('customer')">
-          💬 Send Customer WhatsApp & PDF
-        </button>
-      </div>
-    </div>
-  </form>
-</div>
+    // Firebase Configuration linked to your database
+  const firebaseConfig = {
+    databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
+  };
 
-<!-- Printable PDF Layout -->
-<div id="pdf-render-area">
+  // Initialize Firebase Realtime Database
+  let db = null;
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    db = firebase.database();
+    console.log("Firebase Database Connected Successfully!");
+  } catch (e) {
+    console.error("Firebase connection error:", e);
+  }
   <div style="border-bottom: 2px solid #004d40; padding-bottom:10px; margin-bottom:10px;">
     <table style="width:100%;">
       <tr>
