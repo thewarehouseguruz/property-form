@@ -322,16 +322,7 @@
     }
     db = firebase.database();
   } catch (e) {
-    console.warn("Firebase running in offline mode.");
-  }
-
-  if (db) {
-    db.ref('inquiries').on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        localStorage.setItem('twg_inquiries', JSON.stringify(Object.values(data)));
-      }
-    });
+    console.warn("Firebase running in offline mode.", e);
   }
 
   function generateID() {
@@ -392,31 +383,49 @@
     };
   }
 
+  // Promise-based save function for network sync on mobile
   function saveSilent() {
     const data = collectFormData();
-    if (db && data.personName && data.contactNumber) {
-      db.ref('inquiries/' + data.propId).set(data);
+    if (!data.personName || !data.contactNumber) {
+      return Promise.reject("Required fields missing.");
+    }
+    
+    if (db) {
+      return db.ref('inquiries/' + data.propId).set(data);
+    } else {
+      return Promise.reject("Firebase database connection active.");
     }
   }
 
-  function manualSave() {
+  async function manualSave() {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-    saveSilent();
-    alert("Record Saved Successfully!");
+    
+    try {
+      await saveSilent();
+      alert("✅ Record Saved Successfully!");
+    } catch (err) {
+      console.error("Save Error:", err);
+      alert("❌ Save failed: " + (err.message || err));
+    }
   }
 
-  function downloadPDF() {
+  async function downloadPDF() {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    saveSilent();
+    try {
+      await saveSilent();
+    } catch (err) {
+      console.warn("Database write warning before PDF generation:", err);
+    }
+
     const data = collectFormData();
 
     for (let key in data) {
@@ -443,14 +452,19 @@
     });
   }
 
-  function sendWhatsApp(target) {
+  async function sendWhatsApp(target) {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    saveSilent();
+    try {
+      await saveSilent();
+    } catch (err) {
+      console.error("Firebase save before WhatsApp redirect failed:", err);
+    }
+
     const data = collectFormData();
 
     let waText = `*PROPERTY INQUIRY DETAILS*\n`;
@@ -477,7 +491,8 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
     
-    window.location.href = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`;
+    // Using window.open allows background promises to settle on mobile OS browsers
+    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`, '_blank');
   }
 </script>
 
