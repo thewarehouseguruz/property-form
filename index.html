@@ -16,7 +16,6 @@
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
   <link rel="icon" sizes="192x192" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
 
-    
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Firebase SDKs -->
@@ -328,6 +327,7 @@
     };
   }
 
+  // Saves using .push() so every entry generates a unique key and never overwrites previous entries
   function saveSilent() {
     const data = collectFormData();
     if (!data.personName || !data.contactNumber) {
@@ -335,7 +335,7 @@
     }
     
     if (db) {
-      return db.ref('inquiries/' + data.propId).set(data);
+      return db.ref('inquiries').push(data);
     } else {
       return Promise.reject("Firebase DB not initialized.");
     }
@@ -351,23 +351,19 @@
     try {
       await saveSilent();
       alert("✅ Record Saved Successfully!");
+      resetAutoFields();
     } catch (err) {
       console.error("Save Error:", err);
       alert("❌ Save failed: " + (err.message || err));
     }
   }
 
-  async function sendWhatsApp(target) {
+  // Direct window redirect fixes mobile pop-up blocking issues
+  function sendWhatsApp(target) {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
-    }
-
-    try {
-      await saveSilent();
-    } catch (err) {
-      console.error("Firebase save before WhatsApp redirect failed:", err);
     }
 
     const data = collectFormData();
@@ -396,7 +392,16 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
     
-    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`, '_blank');
+    // Background save to Firebase
+    saveSilent().then(() => {
+      resetAutoFields();
+    }).catch((err) => {
+      console.warn("Background save warning:", err);
+    });
+
+    // Immediate navigation to WhatsApp avoiding browser popup blocks
+    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
+    window.location.href = waUrl;
   }
 </script>
 
