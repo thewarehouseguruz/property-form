@@ -501,34 +501,71 @@
     window.location.href = waUrl;
   }
 
-  // --- GOOGLE SHEET DATABASE MULTI-SEARCH ENGINE ---
-  const sheetUri = "https://opensheet.elk.sh/1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA/Property Database";
+  // --- GOOGLE SHEET DATABASE MULTI-SEARCH ENGINE (FIXED) ---
+  const sheetId = "1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA";
+  const tabName = encodeURIComponent("Property Database"); // Encodes space as %20
+  const sheetUri = `https://opensheet.elk.sh/${sheetId}/${tabName}`;
+  
   let globalSheetData = [];
 
   function fetchSheetData() {
-    if (globalSheetData.length > 0) return; // Prevent re-fetching if already loaded
+    if (globalSheetData.length > 0) return; // Prevent extra requests if loaded
+
+    document.getElementById('searchStatus').innerText = "⏳ Loading data from Google Sheet...";
 
     fetch(sheetUri)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
       .then(data => {
+        if (!Array.isArray(data) || data.length === 0) {
+          document.getElementById('searchStatus').innerText = "⚠️ Sheet opened, but no rows were found.";
+          return;
+        }
         globalSheetData = data;
-        document.getElementById('searchStatus').innerText = `Loaded ${data.length} records.`;
+        document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} records successfully.`;
         renderSearchResults(data);
       })
       .catch(err => {
-        document.getElementById('searchStatus').innerText = "Failed to load Google Sheet data. Verify access permissions.";
+        console.error("Fetch Error:", err);
+        // Direct CSV Fallback endpoint if API is blocked
+        const fallbackUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+        
+        document.getElementById('searchStatus').innerText = "⚠️ Standard connection failed. Trying direct Google link...";
+        
+        fetch(fallbackUrl)
+          .then(r => r.text())
+          .then(txt => {
+            const json = JSON.parse(txt.substring(47, txt.length - 2));
+            const cols = json.table.cols.map(c => c.label);
+            const rows = json.table.rows.map(r => {
+              let obj = {};
+              r.c.forEach((cell, idx) => {
+                obj[cols[idx] || `Col_${idx}`] = cell ? cell.v : '';
+              });
+              return obj;
+            });
+            globalSheetData = rows;
+            document.getElementById('searchStatus').innerText = `✅ Loaded ${rows.length} records directly from Google!`;
+            renderSearchResults(rows);
+          })
+          .catch(fallbackErr => {
+            document.getElementById('searchStatus').innerText = "❌ Error loading sheet. Ensure Sheet link is set to 'Anyone with link can view'.";
+          });
       });
   }
 
   function applyFilters() {
-    const typeVal = document.getElementById('filterType').value.toLowerCase();
-    const dealVal = document.getElementById('filterDeal').value.toLowerCase();
-    const areaVal = document.getElementById('filterArea').value.toLowerCase();
-    const keywordVal = document.getElementById('filterKeyword').value.toLowerCase();
+    const typeVal = document.getElementById('filterType').value.toLowerCase().trim();
+    const dealVal = document.getElementById('filterDeal').value.toLowerCase().trim();
+    const areaVal = document.getElementById('filterArea').value.toLowerCase().trim();
+    const keywordVal = document.getElementById('filterKeyword').value.toLowerCase().trim();
 
     const filtered = globalSheetData.filter(row => {
-      const rowType = String(row['Type of Property'] || row['Property Type'] || '').toLowerCase();
-      const rowDeal = String(row['Deal For'] || row['Deal'] || '').toLowerCase();
+      // Flexibly check column header variations in your sheet
+      const rowType = String(row['Type of Property'] || row['Property Type'] || row['TYPE'] || '').toLowerCase();
+      const rowDeal = String(row['Deal For'] || row['DEAL FOR'] || row['Deal'] || '').toLowerCase();
       const rowArea = String(row['AREA'] || row['Location'] || row['Area'] || '').toLowerCase();
 
       const matchesType = !typeVal || rowType.includes(typeVal);
