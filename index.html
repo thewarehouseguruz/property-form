@@ -4,7 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>The Warehouse Guruz - Property Form</title>
-  
+
+  <!-- Mobile Web App & PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TWG Form">
+  <meta name="theme-color" content="#004d40">
+
+  <!-- App Icon for Home Screen -->
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
+  <link rel="icon" sizes="192x192" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
+
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Firebase SDKs -->
@@ -34,11 +45,13 @@
       padding: 20px;
       box-shadow: 0 4px 18px rgba(0,0,0,0.06);
       border-top: 5px solid var(--primary-color);
+      position: relative;
     }
 
     .brand-header {
       text-align: center;
       margin-bottom: 15px;
+      position: relative;
     }
 
     .brand-logo {
@@ -51,6 +64,16 @@
       font-size: 11px;
       color: #555;
       line-height: 1.3;
+    }
+
+    .search-btn-top {
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 12px;
+      padding: 5px 12px;
     }
 
     .section-title {
@@ -89,6 +112,24 @@
       justify-content: center;
       gap: 6px;
     }
+
+    /* Modal Table Styling */
+    .table-responsive {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background-color: var(--primary-color) !important;
+      color: white !important;
+      font-size: 12px;
+    }
+
+    td {
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
@@ -96,6 +137,9 @@
 <div class="app-card">
   <!-- Brand Header -->
   <div class="brand-header">
+    <button type="button" class="btn btn-outline-success search-btn-top" data-bs-toggle="modal" data-bs-target="#searchModal" onclick="fetchSheetData()">
+      🔍 Search Database
+    </button>
     <img src="TWG LOGO PNG.png" alt="THE WAREHOUSE GURUZ" class="brand-logo" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
     <div class="company-info">
       <strong>THE WAREHOUSE GURUZ</strong><br>
@@ -243,6 +287,65 @@
   </form>
 </div>
 
+<!-- MULTI-SEARCH MODAL -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold" id="searchModalLabel">🔍 Multi-Search Property Database</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Multiple Filter Controls -->
+        <div class="row g-2 mb-3 bg-light p-2 rounded">
+          <div class="col-12 col-md-3">
+            <label class="form-label">Property Type</label>
+            <select id="filterType" class="form-select" onchange="applyFilters()">
+              <option value="">All Types</option>
+              <option value="WAREHOUSE">WAREHOUSE</option>
+              <option value="LAND">LAND</option>
+              <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label">Deal For</label>
+            <select id="filterDeal" class="form-select" onchange="applyFilters()">
+              <option value="">All Deals</option>
+              <option value="BUYER">BUYER</option>
+              <option value="SELLER">SELLER</option>
+              <option value="TENANT">TENANT</option>
+              <option value="LANDLORD">LANDLORD</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label">Area / Location</label>
+            <input type="text" id="filterArea" class="form-control" placeholder="Search Location" onkeyup="applyFilters()">
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label">Keyword Search</label>
+            <input type="text" id="filterKeyword" class="form-control" placeholder="Name, Phone, ID..." onkeyup="applyFilters()">
+          </div>
+        </div>
+
+        <div id="searchStatus" class="text-muted fw-bold mb-2 small">Loading database from Google Sheets...</div>
+
+        <!-- Dynamic Results Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+              <tr id="modalTableHeader"></tr>
+            </thead>
+            <tbody id="modalTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
   const firebaseConfig = {
     databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
@@ -321,9 +424,8 @@
     if (!data.personName || !data.contactNumber) {
       return Promise.reject("Required fields missing.");
     }
-    
     if (db) {
-      return db.ref('inquiries/' + data.propId).set(data);
+      return db.ref('inquiries').push(data);
     } else {
       return Promise.reject("Firebase DB not initialized.");
     }
@@ -339,23 +441,18 @@
     try {
       await saveSilent();
       alert("✅ Record Saved Successfully!");
+      resetAutoFields();
     } catch (err) {
       console.error("Save Error:", err);
       alert("❌ Save failed: " + (err.message || err));
     }
   }
 
-  async function sendWhatsApp(target) {
+  function sendWhatsApp(target) {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
-    }
-
-    try {
-      await saveSilent();
-    } catch (err) {
-      console.error("Firebase save before WhatsApp redirect failed:", err);
     }
 
     const data = collectFormData();
@@ -384,7 +481,88 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
     
-    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`, '_blank');
+    saveSilent().then(() => {
+      resetAutoFields();
+    }).catch((err) => {
+      console.warn("Background save warning:", err);
+    });
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
+    window.location.href = waUrl;
+  }
+
+  // --- GOOGLE SHEET DATABASE MULTI-SEARCH ENGINE ---
+  const sheetUri = "https://opensheet.elk.sh/1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA/Property Database";
+  let globalSheetData = [];
+
+  function fetchSheetData() {
+    if (globalSheetData.length > 0) return; // Prevent re-fetching if already loaded
+
+    fetch(sheetUri)
+      .then(res => res.json())
+      .then(data => {
+        globalSheetData = data;
+        document.getElementById('searchStatus').innerText = `Loaded ${data.length} records.`;
+        renderSearchResults(data);
+      })
+      .catch(err => {
+        document.getElementById('searchStatus').innerText = "Failed to load Google Sheet data. Verify access permissions.";
+      });
+  }
+
+  function applyFilters() {
+    const typeVal = document.getElementById('filterType').value.toLowerCase();
+    const dealVal = document.getElementById('filterDeal').value.toLowerCase();
+    const areaVal = document.getElementById('filterArea').value.toLowerCase();
+    const keywordVal = document.getElementById('filterKeyword').value.toLowerCase();
+
+    const filtered = globalSheetData.filter(row => {
+      const rowType = String(row['Type of Property'] || row['Property Type'] || '').toLowerCase();
+      const rowDeal = String(row['Deal For'] || row['Deal'] || '').toLowerCase();
+      const rowArea = String(row['AREA'] || row['Location'] || row['Area'] || '').toLowerCase();
+
+      const matchesType = !typeVal || rowType.includes(typeVal);
+      const matchesDeal = !dealVal || rowDeal.includes(dealVal);
+      const matchesArea = !areaVal || rowArea.includes(areaVal);
+
+      const matchesKeyword = !keywordVal || Object.values(row).some(val =>
+        String(val).toLowerCase().includes(keywordVal)
+      );
+
+      return matchesType && matchesDeal && matchesArea && matchesKeyword;
+    });
+
+    renderSearchResults(filtered);
+    document.getElementById('searchStatus').innerText = `Showing ${filtered.length} matching records.`;
+  }
+
+  function renderSearchResults(data) {
+    const headerRow = document.getElementById('modalTableHeader');
+    const body = document.getElementById('modalTableBody');
+    headerRow.innerHTML = '';
+    body.innerHTML = '';
+
+    if (data.length === 0) {
+      body.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No matching records found.</td></tr>';
+      return;
+    }
+
+    const keys = Object.keys(data[0]);
+    keys.forEach(key => {
+      const th = document.createElement('th');
+      th.innerText = key;
+      headerRow.appendChild(th);
+    });
+
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      keys.forEach(key => {
+        const td = document.createElement('td');
+        td.innerText = row[key] || '-';
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
   }
 </script>
 
