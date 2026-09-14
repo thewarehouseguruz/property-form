@@ -419,6 +419,7 @@
     };
   }
 
+  // Saves using .push() so every entry generates a unique key and never overwrites previous entries
   function saveSilent() {
     const data = collectFormData();
     if (!data.personName || !data.contactNumber) {
@@ -448,6 +449,10 @@
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Direct window redirect fixes mobile pop-up blocking issues
+>>>>>>> 576ae6456b9b4b423f5773bfe31c64f756550b42
   function sendWhatsApp(target) {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
@@ -481,12 +486,17 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
     
+<<<<<<< HEAD
+=======
+    // Background save to Firebase
+>>>>>>> 576ae6456b9b4b423f5773bfe31c64f756550b42
     saveSilent().then(() => {
       resetAutoFields();
     }).catch((err) => {
       console.warn("Background save warning:", err);
     });
 
+<<<<<<< HEAD
     const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
     window.location.href = waUrl;
   }
@@ -563,6 +573,11 @@
       });
       body.appendChild(tr);
     });
+=======
+    // Immediate navigation to WhatsApp avoiding browser popup blocks
+    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
+    window.location.href = waUrl;
+>>>>>>> 576ae6456b9b4b423f5773bfe31c64f756550b42
   }
 </script>
 
