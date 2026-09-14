@@ -2,516 +2,231 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>The Warehouse Guruz - Property Form</title>
-
-  <!-- Mobile Web App & PWA Meta Tags -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="TWG Form">
-  <meta name="theme-color" content="#004d40">
-
-  <!-- App Icon for Home Screen -->
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
-  <link rel="icon" sizes="192x192" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Inquiry Form</title>
   <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/style.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
   <style>
-    :root {
-      --primary-color: #004d40;
-      --secondary-color: #00796b;
-      --accent-color: #e0f2f1;
-      --bg-color: #f4f6f8;
-    }
-
     body {
-      background-color: var(--bg-color);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      padding: 10px;
-      color: #333;
+      background-color: #f4f7f6;
+      font-family: Arial, sans-serif;
+      padding: 15px;
     }
-
     .app-card {
-      max-width: 700px;
-      margin: 0 auto;
+      max-width: 850px;
+      margin: auto;
       background: #ffffff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-      border-top: 5px solid var(--primary-color);
-      position: relative;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 25px;
+      border-top: 6px solid #198754;
     }
-
     .brand-header {
-      text-align: center;
-      margin-bottom: 15px;
-      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
     }
-
-    .brand-logo {
-      max-width: 220px;
-      height: auto;
-      margin-bottom: 8px;
-    }
-
     .company-info {
-      font-size: 11px;
-      color: #555;
-      line-height: 1.3;
+      text-align: center;
+      flex-grow: 1;
     }
-
     .search-btn-top {
-      position: absolute;
-      top: 0;
-      right: 0;
       border-radius: 20px;
       font-weight: bold;
-      font-size: 12px;
-      padding: 5px 12px;
     }
-
     .section-title {
-      background-color: var(--accent-color);
-      color: var(--primary-color);
-      padding: 8px 12px;
+      background-color: #e8f5e9;
+      color: #1b5e20;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 15px;
+    }
+    td, th {
       font-size: 13px;
-      font-weight: 700;
-      border-radius: 8px;
-      margin-top: 15px;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-
-    .form-label {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 3px;
-      color: #2c3e50;
-    }
-
-    .form-control, .form-select {
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 13px;
-      border: 1px solid #ced4da;
-    }
-
-    .btn-action {
-      padding: 12px;
-      font-weight: 600;
-      border-radius: 10px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    /* Modal Table Styling */
-    .table-responsive {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    th {
-      position: sticky;
-      top: 0;
-      background-color: var(--primary-color) !important;
-      color: white !important;
-      font-size: 12px;
-    }
-
-    td {
-      font-size: 12px;
+      vertical-align: middle;
     }
   </style>
 </head>
 <body>
 
 <div class="app-card">
+  
   <!-- Brand Header -->
   <div class="brand-header">
-    <button type="button" class="btn btn-outline-success search-btn-top" data-bs-toggle="modal" data-bs-target="#searchModal" onclick="fetchSheetData()">
-      🔍 Search Database
-    </button>
-    <img src="TWG LOGO PNG.png" alt="THE WAREHOUSE GURUZ" class="brand-logo" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
     <div class="company-info">
-      <strong>THE WAREHOUSE GURUZ</strong><br>
-      A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210<br>
-      <strong>Mobile:</strong> +91 6351207989
+      <h5 class="fw-bold mb-1">THE WAREHOUSE GURUZ</h5>
+      <p class="mb-0 text-muted small">A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210</p>
+      <p class="mb-0 text-muted small"><strong>Mobile:</strong> +91 6351207989</p>
+    </div>
+    <div>
+      <button type="button" class="btn btn-outline-success search-btn-top" data-bs-toggle="modal" data-bs-target="#searchModal">
+        🔍 Search Database
+      </button>
     </div>
   </div>
 
-  <h5 class="text-center fw-bold text-success mb-3">PROPERTY INQUIRY FORM</h5>
+  <h3 class="text-center text-success fw-bold mb-4">PROPERTY INQUIRY FORM</h3>
 
-  <form id="mainForm" onsubmit="event.preventDefault();">
-    <!-- Auto Fields -->
-    <div class="row g-2 mb-2">
-      <div class="col-6">
+  <form id="inquiryForm">
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
         <label class="form-label">Property ID</label>
-        <input type="text" id="propId" class="form-control bg-light" readonly>
+        <input type="text" class="form-control" id="propertyId">
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <label class="form-label">Inquiry Date</label>
-        <input type="text" id="inquiryDate" class="form-control bg-light" readonly>
+        <input type="date" class="form-control" id="inquiryDate">
       </div>
     </div>
 
-    <!-- 1. Client Details -->
-    <div class="section-title">1. Client Info</div>
-    <div class="row g-2">
-      <div class="col-12 col-md-6">
+    <div class="section-title">1. CLIENT INFO</div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
         <label class="form-label">Person Name *</label>
-        <input type="text" id="personName" class="form-control" placeholder="Full Name" required>
+        <input type="text" class="form-control" placeholder="Full Name" required>
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-md-6">
         <label class="form-label">Contact Mobile *</label>
-        <input type="tel" id="contactNumber" class="form-control" placeholder="9876543210" required>
+        <input type="tel" class="form-control" placeholder="9876543210" required>
       </div>
-      <div class="col-12">
+      <div class="col-md-12">
         <label class="form-label">Company Name</label>
-        <input type="text" id="companyName" class="form-control" placeholder="Company Name (Optional)">
+        <input type="text" class="form-control" placeholder="Company Name (Optional)">
       </div>
     </div>
 
-    <!-- 2. Property Details -->
-    <div class="section-title">2. Property Details</div>
-    <div class="row g-2">
-      <div class="col-6">
+    <div class="section-title">2. PROPERTY DETAILS</div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
         <label class="form-label">Property Type *</label>
-        <select id="propertyType" class="form-select" required>
+        <select class="form-select" required>
           <option value="">Select</option>
           <option value="WAREHOUSE">WAREHOUSE</option>
-          <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
-          <option value="NA LAND">NA LAND</option>
-          <option value="AGRICULTURE LAND">AGRICULTURE LAND</option>
+          <option value="INDUSTRIAL SHED">INDUSTRIAL SHED</option>
+          <option value="LAND / PLOT">LAND / PLOT</option>
+          <option value="COMMERCIAL">COMMERCIAL</option>
         </select>
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <label class="form-label">Deal For *</label>
-        <select id="dealFor" class="form-select" required>
+        <select class="form-select" required>
           <option value="">Select</option>
-          <option value="BUYER">BUYER</option>
-          <option value="SELLER">SELLER</option>
-          <option value="LANDLORD">LANDLORD</option>
-          <option value="TENANT">TENANT</option>
-          <option value="BTS">BTS</option>
-          <option value="PRE-LEASE">PRE-LEASE</option>
+          <option value="RENT">RENT</option>
+          <option value="SALE">SALE</option>
         </select>
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <label class="form-label">Size *</label>
-        <input type="text" id="propertySize" class="form-control" placeholder="Number" required>
+        <input type="number" class="form-control" placeholder="Number" required>
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <label class="form-label">Unit *</label>
-        <select id="sizeUnit" class="form-select" required>
+        <select class="form-select" required>
           <option value="SQ.FT.">SQ.FT.</option>
-          <option value="SQ.YARD">SQ.YARD</option>
-          <option value="SQ.VAR">SQ.VAR</option>
-          <option value="VIGHA">VIGHA</option>
+          <option value="SQ.YARDS">SQ.YARDS</option>
+          <option value="ACRE">ACRE</option>
         </select>
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <label class="form-label">Area / Location *</label>
-        <input type="text" id="area" class="form-control" placeholder="Location" required>
+        <input type="text" class="form-control" placeholder="e.g. Changodar" required>
       </div>
-      <div class="col-6">
+      <div class="col-md-6">
         <label class="form-label">Budget</label>
-        <input type="text" id="budget" class="form-control" placeholder="Budget Details">
-      </div>
-      <div class="col-6">
-        <label class="form-label">Purpose</label>
-        <input type="text" id="purpose" class="form-control" placeholder="e.g. Storage">
-      </div>
-      <div class="col-6">
-        <label class="form-label">Fire NOC</label>
-        <select id="fireNoc" class="form-select">
-          <option value="N/A">Select</option>
-          <option value="YES">YES</option>
-          <option value="NO">NO</option>
-          <option value="PENDING">PENDING</option>
-        </select>
-      </div>
-      <div class="col-12">
-        <label class="form-label">Detailed Address</label>
-        <textarea id="address" class="form-control" rows="2" placeholder="Full Address"></textarea>
+        <input type="text" class="form-control" placeholder="Expected Budget">
       </div>
     </div>
 
-    <!-- 3. Location & Remarks -->
-    <div class="section-title">3. Location & Remarks</div>
-    <div class="row g-2">
-      <div class="col-12">
-        <label class="form-label">Google Maps Location Link</label>
-        <div class="input-group mb-1">
-          <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
-          <button type="button" class="btn btn-outline-success btn-sm" onclick="getCurrentLocation()">📍 Get Current Location</button>
-        </div>
-      </div>
-      <div class="col-12">
-        <label class="form-label">Remarks</label>
-        <textarea id="remarks" class="form-control" rows="2" placeholder="Specific Requirements"></textarea>
-      </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="row g-2 mt-3">
-      <div class="col-6">
-        <button type="button" class="btn btn-outline-danger btn-action w-100" onclick="clearForm()">
-          🧹 Clear Form
-        </button>
-      </div>
-      <div class="col-6">
-        <button type="button" class="btn btn-warning btn-action w-100 fw-bold" onclick="manualSave()">
-          ☁️ Save Record
-        </button>
-      </div>
-      <div class="col-12 col-md-6">
-        <button type="button" class="btn btn-success btn-action w-100" onclick="sendWhatsApp('company')">
-          📱 Send Company WhatsApp
-        </button>
-      </div>
-      <div class="col-12 col-md-6">
-        <button type="button" class="btn btn-primary btn-action w-100" onclick="sendWhatsApp('customer')">
-          💬 Send Customer WhatsApp
-        </button>
-      </div>
-    </div>
+    <button type="submit" class="btn btn-success w-100 py-2 fw-bold mt-3">Submit Inquiry</button>
   </form>
 </div>
 
 <!-- MULTI-SEARCH MODAL -->
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-success text-white">
-        <h5 class="modal-title fw-bold" id="searchModalLabel">🔍 Multi-Search Property Database</h5>
+        <h5 class="modal-title">🔍 Multi-Search Property Database</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Multiple Filter Controls -->
-        <div class="row g-2 mb-3 bg-light p-2 rounded">
-          <div class="col-12 col-md-3">
-            <label class="form-label">Property Type</label>
+        
+        <!-- Search Filters Container -->
+        <div class="row g-2 mb-3">
+          <div class="col-md-3">
+            <label class="form-label fw-bold small">Property Type</label>
             <select id="filterType" class="form-select" onchange="applyFilters()">
               <option value="">All Types</option>
               <option value="WAREHOUSE">WAREHOUSE</option>
-              <option value="LAND">LAND</option>
-              <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
+              <option value="INDUSTRIAL SHED">INDUSTRIAL SHED</option>
+              <option value="LAND / PLOT">LAND / PLOT</option>
+              <option value="COMMERCIAL">COMMERCIAL</option>
             </select>
           </div>
-          <div class="col-12 col-md-3">
-            <label class="form-label">Deal For</label>
+          <div class="col-md-3">
+            <label class="form-label fw-bold small">Deal For</label>
             <select id="filterDeal" class="form-select" onchange="applyFilters()">
               <option value="">All Deals</option>
-              <option value="BUYER">BUYER</option>
-              <option value="SELLER">SELLER</option>
-              <option value="TENANT">TENANT</option>
-              <option value="LANDLORD">LANDLORD</option>
+              <option value="RENT">RENT</option>
+              <option value="SALE">SALE</option>
             </select>
           </div>
-          <div class="col-12 col-md-3">
-            <label class="form-label">Area / Location</label>
-            <input type="text" id="filterArea" class="form-control" placeholder="Search Location" onkeyup="applyFilters()">
+          <div class="col-md-3">
+            <label class="form-label fw-bold small">Area / Location</label>
+            <input type="text" id="filterArea" class="form-control" placeholder="Search Location" oninput="applyFilters()" onkeyup="if(event.key==='Enter') applyFilters()">
           </div>
-          <div class="col-12 col-md-3">
-            <label class="form-label">Keyword Search</label>
-            <input type="text" id="filterKeyword" class="form-control" placeholder="Name, Phone, ID..." onkeyup="applyFilters()">
+          <div class="col-md-3">
+            <label class="form-label fw-bold small">Keyword Search</label>
+            <input type="text" id="filterKeyword" class="form-control" placeholder="Name, Phone, ID..." oninput="applyFilters()" onkeyup="if(event.key==='Enter') applyFilters()">
           </div>
         </div>
 
-        <div id="searchStatus" class="text-muted fw-bold mb-2 small">Loading database from Google Sheets...</div>
-
-        <!-- Dynamic Results Table -->
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover align-middle">
-            <thead class="table-dark">
-              <tr id="modalTableHeader"></tr>
-            </thead>
-            <tbody id="modalTableBody"></tbody>
-          </table>
+        <!-- Confirm Search & Action Buttons -->
+        <div class="d-flex gap-2 mb-3">
+          <button type="button" class="btn btn-success fw-bold px-4" onclick="applyFilters()">🔍 Search Now</button>
+          <button type="button" class="btn btn-outline-secondary" onclick="resetFilters()">Reset Filters</button>
         </div>
+
+        <!-- Status Box & Table Results -->
+        <div id="searchStatus" class="alert alert-info py-2 small">Loading database from Google Sheets...</div>
+        <div id="searchResultsContainer" class="table-responsive" style="max-height: 420px; overflow-y: auto;"></div>
+
       </div>
     </div>
   </div>
 </div>
 
-<!-- Bootstrap 5 JS -->
+<!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  const firebaseConfig = {
-    databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
-  };
-
-  let db = null;
-  try {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    db = firebase.database();
-  } catch (e) {
-    console.warn("Firebase initialized in offline mode.", e);
-  }
-
-  function generateID() {
-    return 'PROP-' + Math.floor(100000 + Math.random() * 900000);
-  }
-
-  function getFormattedDate() {
-    const d = new Date();
-    return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
-  }
-
-  function resetAutoFields() {
-    document.getElementById('propId').value = generateID();
-    document.getElementById('inquiryDate').value = getFormattedDate();
-  }
-
-  document.addEventListener('DOMContentLoaded', resetAutoFields);
-
-  function getCurrentLocation() {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        document.getElementById('locationLink').value = `https://maps.google.com/?q=${lat},${lng}`;
-        alert("📍 Location captured successfully!");
-      }, (error) => {
-        alert("Unable to fetch location. Grant GPS permissions in browser.");
-      });
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  }
-
-  function clearForm() {
-    if (confirm("Are you sure you want to clear all form entries?")) {
-      document.getElementById('mainForm').reset();
-      resetAutoFields();
-    }
-  }
-
-  function collectFormData() {
-    return {
-      propId: document.getElementById('propId').value,
-      inquiryDate: document.getElementById('inquiryDate').value,
-      personName: document.getElementById('personName').value,
-      contactNumber: document.getElementById('contactNumber').value,
-      companyName: document.getElementById('companyName').value || 'N/A',
-      propertyType: document.getElementById('propertyType').value,
-      dealFor: document.getElementById('dealFor').value,
-      propertySize: document.getElementById('propertySize').value + ' ' + document.getElementById('sizeUnit').value,
-      area: document.getElementById('area').value,
-      budget: document.getElementById('budget').value || 'N/A',
-      purpose: document.getElementById('purpose').value || 'N/A',
-      fireNoc: document.getElementById('fireNoc').value,
-      address: document.getElementById('address').value || 'N/A',
-      locationLink: document.getElementById('locationLink').value || 'N/A',
-      remarks: document.getElementById('remarks').value || 'None'
-    };
-  }
-
-  // Saves using .push() so every entry generates a unique key and never overwrites previous entries
-  function saveSilent() {
-    const data = collectFormData();
-    if (!data.personName || !data.contactNumber) {
-      return Promise.reject("Required fields missing.");
-    }
-    if (db) {
-      return db.ref('inquiries').push(data);
-    } else {
-      return Promise.reject("Firebase DB not initialized.");
-    }
-  }
-
-  async function manualSave() {
-    const form = document.getElementById('mainForm');
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-    
-    try {
-      await saveSilent();
-      alert("✅ Record Saved Successfully!");
-      resetAutoFields();
-    } catch (err) {
-      console.error("Save Error:", err);
-      alert("❌ Save failed: " + (err.message || err));
-    }
-  }
-
-<<<<<<< HEAD
-=======
-  // Direct window redirect fixes mobile pop-up blocking issues
->>>>>>> 576ae6456b9b4b423f5773bfe31c64f756550b42
-  function sendWhatsApp(target) {
-    const form = document.getElementById('mainForm');
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-
-    const data = collectFormData();
-
-    let waText = `*PROPERTY INQUIRY DETAILS*\n`;
-    waText += `*ID:* ${data.propId} | *Date:* ${data.inquiryDate}\n`;
-    waText += `---------------------------------\n`;
-    waText += `👤 *Name:* ${data.personName}\n`;
-    waText += `📞 *Contact:* ${data.contactNumber}\n`;
-    waText += `🏢 *Company:* ${data.companyName}\n`;
-    waText += `🏗️ *Type:* ${data.propertyType}\n`;
-    waText += `🤝 *Deal For:* ${data.dealFor}\n`;
-    waText += `📐 *Size:* ${data.propertySize}\n`;
-    waText += `📍 *Location:* ${data.area}\n`;
-    waText += `💰 *Budget:* ${data.budget}\n`;
-    waText += `🔥 *Fire NOC:* ${data.fireNoc}\n`;
-    waText += `🎯 *Purpose:* ${data.purpose}\n`;
-    waText += `📍 *Address:* ${data.address}\n`;
-    if(data.locationLink !== 'N/A') waText += `🗺️ *Location:* ${data.locationLink}\n`;
-    waText += `📝 *Remarks:* ${data.remarks}\n`;
-    waText += `---------------------------------\n`;
-    waText += `*The Warehouse Guruz*`;
-
-    let cleanPhone = data.contactNumber.replace(/\D/g, '');
-    if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
-
-    let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
-    
-<<<<<<< HEAD
-=======
-    // Background save to Firebase
->>>>>>> 576ae6456b9b4b423f5773bfe31c64f756550b42
-    saveSilent().then(() => {
-      resetAutoFields();
-    }).catch((err) => {
-      console.warn("Background save warning:", err);
-    });
-
-<<<<<<< HEAD
-    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
-    window.location.href = waUrl;
-  }
-
-  // --- GOOGLE SHEET DATABASE MULTI-SEARCH ENGINE (FIXED) ---
   const sheetId = "1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA";
-  const tabName = encodeURIComponent("Property Database"); // Encodes space as %20
+  const tabName = encodeURIComponent("Property Database");
   const sheetUri = `https://opensheet.elk.sh/${sheetId}/${tabName}`;
   
   let globalSheetData = [];
 
-  function fetchSheetData() {
-    if (globalSheetData.length > 0) return; // Prevent extra requests if loaded
+  // Trigger auto-fetch as soon as search modal opens
+  document.addEventListener("DOMContentLoaded", function () {
+    const modalElem = document.getElementById('searchModal');
+    if (modalElem) {
+      modalElem.addEventListener('shown.bs.modal', function () {
+        fetchSheetData();
+      });
+    }
+  });
 
-    document.getElementById('searchStatus').innerText = "⏳ Loading data from Google Sheet...";
+  function fetchSheetData() {
+    if (globalSheetData.length > 0) return;
+
+    document.getElementById('searchStatus').innerText = "⏳ Loading database from Google Sheets...";
 
     fetch(sheetUri)
       .then(res => {
@@ -520,7 +235,7 @@
       })
       .then(data => {
         if (!Array.isArray(data) || data.length === 0) {
-          document.getElementById('searchStatus').innerText = "⚠️ Sheet opened, but no rows were found.";
+          fetchFallbackData();
           return;
         }
         globalSheetData = data;
@@ -528,31 +243,35 @@
         renderSearchResults(data);
       })
       .catch(err => {
-        console.error("Fetch Error:", err);
-        // Direct CSV Fallback endpoint if API is blocked
-        const fallbackUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-        
-        document.getElementById('searchStatus').innerText = "⚠️ Standard connection failed. Trying direct Google link...";
-        
-        fetch(fallbackUrl)
-          .then(r => r.text())
-          .then(txt => {
-            const json = JSON.parse(txt.substring(47, txt.length - 2));
-            const cols = json.table.cols.map(c => c.label);
-            const rows = json.table.rows.map(r => {
-              let obj = {};
-              r.c.forEach((cell, idx) => {
-                obj[cols[idx] || `Col_${idx}`] = cell ? cell.v : '';
-              });
-              return obj;
+        console.warn("Primary API failed, trying direct Google Sheet reader...", err);
+        fetchFallbackData();
+      });
+  }
+
+  function fetchFallbackData() {
+    const fallbackUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+    fetch(fallbackUrl)
+      .then(r => r.text())
+      .then(txt => {
+        const json = JSON.parse(txt.substring(47, txt.length - 2));
+        const cols = json.table.cols.map(c => (c && c.label) ? c.label : '');
+        const rows = json.table.rows.map(r => {
+          let obj = {};
+          if (r.c) {
+            r.c.forEach((cell, idx) => {
+              const colName = cols[idx] || `Col_${idx}`;
+              obj[colName] = cell ? (cell.v !== null ? cell.v : '') : '';
             });
-            globalSheetData = rows;
-            document.getElementById('searchStatus').innerText = `✅ Loaded ${rows.length} records directly from Google!`;
-            renderSearchResults(rows);
-          })
-          .catch(fallbackErr => {
-            document.getElementById('searchStatus').innerText = "❌ Error loading sheet. Ensure Sheet link is set to 'Anyone with link can view'.";
-          });
+          }
+          return obj;
+        });
+        globalSheetData = rows;
+        document.getElementById('searchStatus').innerText = `✅ Loaded ${rows.length} records directly.`;
+        renderSearchResults(rows);
+      })
+      .catch(fallbackErr => {
+        console.error("Fallback error:", fallbackErr);
+        document.getElementById('searchStatus').innerText = "❌ Unable to load sheet data. Please ensure Google Sheet access is set to 'Anyone with link can view'.";
       });
   }
 
@@ -563,7 +282,6 @@
     const keywordVal = document.getElementById('filterKeyword').value.toLowerCase().trim();
 
     const filtered = globalSheetData.filter(row => {
-      // Flexibly check column header variations in your sheet
       const rowType = String(row['Type of Property'] || row['Property Type'] || row['TYPE'] || '').toLowerCase();
       const rowDeal = String(row['Deal For'] || row['DEAL FOR'] || row['Deal'] || '').toLowerCase();
       const rowArea = String(row['AREA'] || row['Location'] || row['Area'] || '').toLowerCase();
@@ -583,38 +301,40 @@
     document.getElementById('searchStatus').innerText = `Showing ${filtered.length} matching records.`;
   }
 
-  function renderSearchResults(data) {
-    const headerRow = document.getElementById('modalTableHeader');
-    const body = document.getElementById('modalTableBody');
-    headerRow.innerHTML = '';
-    body.innerHTML = '';
+  function resetFilters() {
+    document.getElementById('filterType').value = "";
+    document.getElementById('filterDeal').value = "";
+    document.getElementById('filterArea').value = "";
+    document.getElementById('filterKeyword').value = "";
+    applyFilters();
+  }
 
-    if (data.length === 0) {
-      body.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No matching records found.</td></tr>';
+  function renderSearchResults(data) {
+    const container = document.getElementById('searchResultsContainer');
+    if (!data || data.length === 0) {
+      container.innerHTML = `<p class="text-center text-muted my-3">No matching properties found.</p>`;
       return;
     }
 
-    const keys = Object.keys(data[0]);
-    keys.forEach(key => {
-      const th = document.createElement('th');
-      th.innerText = key;
-      headerRow.appendChild(th);
+    const headers = Object.keys(data[0]);
+    let tableHtml = `<table class="table table-striped table-hover table-bordered border mb-0">
+      <thead class="table-dark"><tr>`;
+    
+    headers.forEach(h => {
+      tableHtml += `<th>${h}</th>`;
     });
+    tableHtml += `</tr></thead><tbody>`;
 
     data.forEach(row => {
-      const tr = document.createElement('tr');
-      keys.forEach(key => {
-        const td = document.createElement('td');
-        td.innerText = row[key] || '-';
-        tr.appendChild(td);
+      tableHtml += `<tr>`;
+      headers.forEach(h => {
+        tableHtml += `<td>${row[h] !== undefined ? row[h] : ''}</td>`;
       });
-      body.appendChild(tr);
+      tableHtml += `</tr>`;
     });
-=======
-    // Immediate navigation to WhatsApp avoiding browser popup blocks
-    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
-    window.location.href = waUrl;
->>>>>>> 576ae6456b9b4b423f5773bfe31c64f756550b42
+
+    tableHtml += `</tbody></table>`;
+    container.innerHTML = tableHtml;
   }
 </script>
 
