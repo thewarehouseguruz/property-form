@@ -2,51 +2,117 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Property Inquiry Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Warehouse Guruz - Property Form</title>
+
+  <!-- Mobile Web App & PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TWG Form">
+  <meta name="theme-color" content="#004d40">
+
+  <!-- App Icon for Home Screen -->
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
+  <link rel="icon" sizes="192x192" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
+
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
+    :root {
+      --primary-color: #004d40;
+      --secondary-color: #00796b;
+      --accent-color: #e0f2f1;
+      --bg-color: #f4f6f8;
+    }
+
     body {
-      background-color: #f4f7f6;
-      font-family: Arial, sans-serif;
-      padding: 15px;
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      padding: 10px;
+      color: #333;
     }
+
     .app-card {
-      max-width: 850px;
-      margin: auto;
+      max-width: 800px;
+      margin: 0 auto;
       background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      padding: 25px;
-      border-top: 6px solid #198754;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+      border-top: 5px solid var(--primary-color);
     }
+
     .brand-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       padding-bottom: 15px;
       border-bottom: 1px solid #e0e0e0;
     }
+
+    .brand-logo {
+      max-width: 200px;
+      height: auto;
+      margin-bottom: 8px;
+    }
+
     .company-info {
       text-align: center;
+      font-size: 11px;
+      color: #555;
+      line-height: 1.3;
       flex-grow: 1;
     }
+
+    .section-title {
+      background-color: var(--accent-color);
+      color: var(--primary-color);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 3px;
+      color: #2c3e50;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      border: 1px solid #ced4da;
+    }
+
+    .btn-action {
+      padding: 12px;
+      font-weight: 600;
+      border-radius: 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
     .search-btn-top {
       border-radius: 20px;
       font-weight: bold;
     }
-    .section-title {
-      background-color: #e8f5e9;
-      color: #1b5e20;
-      padding: 8px 15px;
-      border-radius: 6px;
-      font-weight: bold;
-      margin-top: 20px;
-      margin-bottom: 15px;
-    }
+
     /* Compact Table Styles */
     .table-custom th {
       background-color: #198754;
@@ -69,98 +135,162 @@
 <body>
 
 <div class="app-card">
-  
   <!-- Brand Header -->
   <div class="brand-header">
-    <div class="company-info">
-      <h5 class="fw-bold mb-1">THE WAREHOUSE GURUZ</h5>
-      <p class="mb-0 text-muted small">A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210</p>
-      <p class="mb-0 text-muted small"><strong>Mobile:</strong> +91 6351207989</p>
+    <div class="text-center">
+      <img src="TWG LOGO PNG.png" alt="THE WAREHOUSE GURUZ" class="brand-logo" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
     </div>
-    <div>
+    <div class="company-info">
+      <strong>THE WAREHOUSE GURUZ</strong><br>
+      A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210<br>
+      <strong>Mobile:</strong> +91 6351207989
+    </div>
+    <div class="mt-2 mt-md-0">
       <button type="button" class="btn btn-outline-success search-btn-top" data-bs-toggle="modal" data-bs-target="#searchModal">
         🔍 Search Database
       </button>
     </div>
   </div>
 
-  <h3 class="text-center text-success fw-bold mb-4">PROPERTY INQUIRY FORM</h3>
+  <h5 class="text-center fw-bold text-success mb-3">PROPERTY INQUIRY FORM</h5>
 
-  <form id="inquiryForm">
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
+  <form id="mainForm" onsubmit="event.preventDefault();">
+    <!-- Auto Fields -->
+    <div class="row g-2 mb-2">
+      <div class="col-6">
         <label class="form-label">Property ID</label>
-        <input type="text" class="form-control" id="propertyId">
+        <input type="text" id="propId" class="form-control bg-light" readonly>
       </div>
-      <div class="col-md-6">
+      <div class="col-6">
         <label class="form-label">Inquiry Date</label>
-        <input type="date" class="form-control" id="inquiryDate">
+        <input type="text" id="inquiryDate" class="form-control bg-light" readonly>
       </div>
     </div>
 
-    <div class="section-title">1. CLIENT INFO</div>
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
+    <!-- 1. Client Details -->
+    <div class="section-title">1. Client Info</div>
+    <div class="row g-2">
+      <div class="col-12 col-md-6">
         <label class="form-label">Person Name *</label>
-        <input type="text" class="form-control" placeholder="Full Name" required>
+        <input type="text" id="personName" class="form-control" placeholder="Full Name" required>
       </div>
-      <div class="col-md-6">
+      <div class="col-12 col-md-6">
         <label class="form-label">Contact Mobile *</label>
-        <input type="tel" class="form-control" placeholder="9876543210" required>
+        <input type="tel" id="contactNumber" class="form-control" placeholder="9876543210" required>
       </div>
-      <div class="col-md-12">
+      <div class="col-12">
         <label class="form-label">Company Name</label>
-        <input type="text" class="form-control" placeholder="Company Name (Optional)">
+        <input type="text" id="companyName" class="form-control" placeholder="Company Name (Optional)">
       </div>
     </div>
 
-    <div class="section-title">2. PROPERTY DETAILS</div>
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
+    <!-- 2. Property Details -->
+    <div class="section-title">2. Property Details</div>
+    <div class="row g-2">
+      <div class="col-6">
         <label class="form-label">Property Type *</label>
-        <select class="form-select" required>
+        <select id="propertyType" class="form-select" required>
           <option value="">Select</option>
           <option value="WAREHOUSE">WAREHOUSE</option>
           <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
           <option value="LAND">LAND</option>
+          <option value="NA LAND">NA LAND</option>
+          <option value="AGRICULTURE LAND">AGRICULTURE LAND</option>
           <option value="COMMERCIAL">COMMERCIAL</option>
         </select>
       </div>
-      <div class="col-md-6">
+      <div class="col-6">
         <label class="form-label">Deal For *</label>
-        <select class="form-select" required>
+        <select id="dealFor" class="form-select" required>
           <option value="">Select</option>
           <option value="SELLER">SELLER</option>
           <option value="BUYER">BUYER</option>
-          <option value="LANDLOARD">LANDLOARD</option>
+          <option value="LANDLORD">LANDLORD</option>
           <option value="TENANT">TENANT</option>
           <option value="BTS">BTS</option>
           <option value="PRE-LEASE">PRE-LEASE</option>
         </select>
       </div>
-      <div class="col-md-6">
+      <div class="col-6">
         <label class="form-label">Size *</label>
-        <input type="number" class="form-control" placeholder="Number" required>
+        <input type="text" id="propertySize" class="form-control" placeholder="Number" required>
       </div>
-      <div class="col-md-6">
+      <div class="col-6">
         <label class="form-label">Unit *</label>
-        <select class="form-select" required>
+        <select id="sizeUnit" class="form-select" required>
           <option value="SQ.FT.">SQ.FT.</option>
-          <option value="SQ.YARDS">SQ.YARDS</option>
+          <option value="SQ.YARD">SQ.YARD</option>
+          <option value="SQ.VAR">SQ.VAR</option>
+          <option value="VIGHA">VIGHA</option>
           <option value="ACRE">ACRE</option>
         </select>
       </div>
-      <div class="col-md-6">
+      <div class="col-6">
         <label class="form-label">Area / Location *</label>
-        <input type="text" class="form-control" placeholder="e.g. Changodar" required>
+        <input type="text" id="area" class="form-control" placeholder="Location" required>
       </div>
-      <div class="col-md-6">
+      <div class="col-6">
         <label class="form-label">Budget</label>
-        <input type="text" class="form-control" placeholder="Expected Budget">
+        <input type="text" id="budget" class="form-control" placeholder="Budget Details">
+      </div>
+      <div class="col-6">
+        <label class="form-label">Purpose</label>
+        <input type="text" id="purpose" class="form-control" placeholder="e.g. Storage">
+      </div>
+      <div class="col-6">
+        <label class="form-label">Fire NOC</label>
+        <select id="fireNoc" class="form-select">
+          <option value="N/A">Select</option>
+          <option value="YES">YES</option>
+          <option value="NO">NO</option>
+          <option value="PENDING">PENDING</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Detailed Address</label>
+        <textarea id="address" class="form-control" rows="2" placeholder="Full Address"></textarea>
       </div>
     </div>
 
-    <button type="submit" class="btn btn-success w-100 py-2 fw-bold mt-3">Submit Inquiry</button>
+    <!-- 3. Location & Remarks -->
+    <div class="section-title">3. Location & Remarks</div>
+    <div class="row g-2">
+      <div class="col-12">
+        <label class="form-label">Google Maps Location Link</label>
+        <div class="input-group mb-1">
+          <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
+          <button type="button" class="btn btn-outline-success btn-sm" onclick="getCurrentLocation()">📍 Get Current Location</button>
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Remarks</label>
+        <textarea id="remarks" class="form-control" rows="2" placeholder="Specific Requirements"></textarea>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row g-2 mt-3">
+      <div class="col-6">
+        <button type="button" class="btn btn-outline-danger btn-action w-100" onclick="clearForm()">
+          🧹 Clear Form
+        </button>
+      </div>
+      <div class="col-6">
+        <button type="button" class="btn btn-warning btn-action w-100 fw-bold" onclick="manualSave()">
+          ☁️ Save Record
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-success btn-action w-100" onclick="sendWhatsApp('company')">
+          📱 Send Company WhatsApp
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-primary btn-action w-100" onclick="sendWhatsApp('customer')">
+          💬 Send Customer WhatsApp
+        </button>
+      </div>
+    </div>
   </form>
 </div>
 
@@ -242,6 +372,153 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+  // Firebase Setup
+  const firebaseConfig = {
+    databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
+  };
+
+  let db = null;
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    db = firebase.database();
+  } catch (e) {
+    console.warn("Firebase initialized in offline mode.", e);
+  }
+
+  function generateID() {
+    return 'PROP-' + Math.floor(100000 + Math.random() * 900000);
+  }
+
+  function getFormattedDate() {
+    const d = new Date();
+    return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
+  }
+
+  function resetAutoFields() {
+    document.getElementById('propId').value = generateID();
+    document.getElementById('inquiryDate').value = getFormattedDate();
+  }
+
+  document.addEventListener('DOMContentLoaded', resetAutoFields);
+
+  function getCurrentLocation() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        document.getElementById('locationLink').value = `https://maps.google.com/?q=${lat},${lng}`;
+        alert("📍 Location captured successfully!");
+      }, (error) => {
+        alert("Unable to fetch location. Grant GPS permissions in browser.");
+      });
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }
+
+  function clearForm() {
+    if (confirm("Are you sure you want to clear all form entries?")) {
+      document.getElementById('mainForm').reset();
+      resetAutoFields();
+    }
+  }
+
+  function collectFormData() {
+    return {
+      propId: document.getElementById('propId').value,
+      inquiryDate: document.getElementById('inquiryDate').value,
+      personName: document.getElementById('personName').value,
+      contactNumber: document.getElementById('contactNumber').value,
+      companyName: document.getElementById('companyName').value || 'N/A',
+      propertyType: document.getElementById('propertyType').value,
+      dealFor: document.getElementById('dealFor').value,
+      propertySize: document.getElementById('propertySize').value + ' ' + document.getElementById('sizeUnit').value,
+      area: document.getElementById('area').value,
+      budget: document.getElementById('budget').value || 'N/A',
+      purpose: document.getElementById('purpose').value || 'N/A',
+      fireNoc: document.getElementById('fireNoc').value,
+      address: document.getElementById('address').value || 'N/A',
+      locationLink: document.getElementById('locationLink').value || 'N/A',
+      remarks: document.getElementById('remarks').value || 'None'
+    };
+  }
+
+  function saveSilent() {
+    const data = collectFormData();
+    if (!data.personName || !data.contactNumber) {
+      return Promise.reject("Required fields missing.");
+    }
+    
+    if (db) {
+      return db.ref('inquiries').push(data);
+    } else {
+      return Promise.reject("Firebase DB not initialized.");
+    }
+  }
+
+  async function manualSave() {
+    const form = document.getElementById('mainForm');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    
+    try {
+      await saveSilent();
+      alert("✅ Record Saved Successfully!");
+      resetAutoFields();
+    } catch (err) {
+      console.error("Save Error:", err);
+      alert("❌ Save failed: " + (err.message || err));
+    }
+  }
+
+  function sendWhatsApp(target) {
+    const form = document.getElementById('mainForm');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const data = collectFormData();
+
+    let waText = `*PROPERTY INQUIRY DETAILS*\n`;
+    waText += `*ID:* ${data.propId} | *Date:* ${data.inquiryDate}\n`;
+    waText += `---------------------------------\n`;
+    waText += `👤 *Name:* ${data.personName}\n`;
+    waText += `📞 *Contact:* ${data.contactNumber}\n`;
+    waText += `🏢 *Company:* ${data.companyName}\n`;
+    waText += `🏗️ *Type:* ${data.propertyType}\n`;
+    waText += `🤝 *Deal For:* ${data.dealFor}\n`;
+    waText += `📐 *Size:* ${data.propertySize}\n`;
+    waText += `📍 *Location:* ${data.area}\n`;
+    waText += `💰 *Budget:* ${data.budget}\n`;
+    waText += `🔥 *Fire NOC:* ${data.fireNoc}\n`;
+    waText += `🎯 *Purpose:* ${data.purpose}\n`;
+    waText += `📍 *Address:* ${data.address}\n`;
+    if(data.locationLink !== 'N/A') waText += `🗺️ *Location:* ${data.locationLink}\n`;
+    waText += `📝 *Remarks:* ${data.remarks}\n`;
+    waText += `---------------------------------\n`;
+    waText += `*The Warehouse Guruz*`;
+
+    let cleanPhone = data.contactNumber.replace(/\D/g, '');
+    if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+
+    let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
+    
+    saveSilent().then(() => {
+      resetAutoFields();
+    }).catch((err) => {
+      console.warn("Background save warning:", err);
+    });
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
+    window.location.href = waUrl;
+  }
+
+  // Google Sheets Multi-Search Logic
   const sheetId = "1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA";
   const tabName = encodeURIComponent("Property Database");
   const sheetUri = `https://opensheet.elk.sh/${sheetId}/${tabName}`;
@@ -256,6 +533,26 @@
       });
     }
   });
+
+  function getFieldValue(row, possibleKeys) {
+    for (let key of possibleKeys) {
+      if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
+        return String(row[key]).trim();
+      }
+    }
+    const keys = Object.keys(row);
+    for (let key of keys) {
+      const lowerKey = key.toLowerCase();
+      for (let pKey of possibleKeys) {
+        if (lowerKey.includes(pKey.toLowerCase())) {
+          if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
+            return String(row[key]).trim();
+          }
+        }
+      }
+    }
+    return '';
+  }
 
   function fetchSheetData() {
     if (globalSheetData.length > 0) return;
@@ -314,9 +611,9 @@
     const keywordVal = document.getElementById('filterKeyword').value.toLowerCase().trim();
 
     const filtered = globalSheetData.filter(row => {
-      const rowType = String(row['Type of Property'] || row['Property Type'] || row['TYPE'] || '').toLowerCase();
-      const rowDeal = String(row['Deal For'] || row['DEAL FOR'] || row['Deal'] || '').toLowerCase();
-      const rowArea = String(row['AREA'] || row['Location'] || row['Area'] || '').toLowerCase();
+      const rowType = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE']).toLowerCase();
+      const rowDeal = getFieldValue(row, ['Deal For', 'REQUIREMENT', 'Requirement', 'DEAL FOR', 'Deal']).toLowerCase();
+      const rowArea = getFieldValue(row, ['AREA', 'Location', 'Area']).toLowerCase();
 
       const matchesType = !typeVal || rowType.includes(typeVal);
       const matchesDeal = !dealVal || rowDeal.includes(dealVal);
@@ -359,11 +656,15 @@
       </tr></thead><tbody>`;
 
     data.forEach((row, index) => {
-      const id = row['SR NO'] || row['ID'] || row['Property ID'] || index + 1;
-      const type = row['Type of Property'] || row['Property Type'] || row['TYPE'] || '-';
-      const deal = row['Deal For'] || row['DEAL FOR'] || row['Deal'] || '-';
-      const area = row['AREA'] || row['Location'] || row['Area'] || '-';
-      const contact = row['PERSON NAME'] || row['Mobile'] || row['Name'] || row['Contact'] || '-';
+      const id = getFieldValue(row, ['SR NO', 'SR. NO', 'ID', 'Property ID']) || (index + 1);
+      const type = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE']) || '-';
+      const deal = getFieldValue(row, ['Deal For', 'REQUIREMENT', 'Requirement', 'DEAL FOR', 'Deal']);
+      const area = getFieldValue(row, ['AREA', 'Location', 'Area']) || '-';
+      const contact = getFieldValue(row, ['PERSON NAME', 'Owner Name', 'Mobile', 'Name', 'Contact']) || '-';
+
+      const dealBadgeHtml = deal 
+        ? `<span class="badge bg-success">${deal}</span>` 
+        : `<span class="text-muted">-</span>`;
 
       tableHtml += `<tr>
         <td class="text-center">
@@ -371,7 +672,7 @@
         </td>
         <td class="fw-bold">${id}</td>
         <td>${type}</td>
-        <td><span class="badge bg-secondary">${deal}</span></td>
+        <td>${dealBadgeHtml}</td>
         <td>${area}</td>
         <td>${contact}</td>
       </tr>`;
