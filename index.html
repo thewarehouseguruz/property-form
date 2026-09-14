@@ -372,14 +372,15 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  // Firebase Setup
+<script>
+  // Firebase Setup - Restored valid Realtime Database URL
   const firebaseConfig = {
-    databaseURL: "https://thewarehouseguruz-default-rtdb-export.json" // Updated with your active DB
+    databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
   };
 
   let db = null;
-  let isCurrentFormSaved = false; // Track if current record is already pushed
-  let isSavingInProgress = false; // Guard against double taps
+  let isCurrentFormSaved = false; // Prevents duplicate submissions
+  let isSavingInProgress = false; // Guard against rapid clicking
 
   try {
     if (!firebase.apps.length) {
@@ -402,7 +403,7 @@
   function resetAutoFields() {
     document.getElementById('propId').value = generateID();
     document.getElementById('inquiryDate').value = getFormattedDate();
-    isCurrentFormSaved = false; // Reset save tracker for new entry
+    isCurrentFormSaved = false; // Reset duplicate prevention tracker
   }
 
   document.addEventListener('DOMContentLoaded', resetAutoFields);
@@ -450,8 +451,9 @@
   }
 
   async function saveSilent() {
+    // If already saved or saving in progress, avoid duplicating
     if (isCurrentFormSaved || isSavingInProgress) {
-      return Promise.resolve(); // Prevent duplicate saves
+      return Promise.resolve();
     }
 
     const data = collectFormData();
@@ -459,15 +461,15 @@
       return Promise.reject("Required fields missing.");
     }
 
+    if (!db) {
+      return Promise.reject("Firebase DB instance is missing or blocked.");
+    }
+
     isSavingInProgress = true;
 
     try {
-      if (db) {
-        await db.ref('inquiries').push(data);
-        isCurrentFormSaved = true; // Flag as saved
-      } else {
-        throw new Error("Firebase DB not initialized.");
-      }
+      await db.ref('inquiries').push(data);
+      isCurrentFormSaved = true; // Mark saved to avoid double entries
     } finally {
       isSavingInProgress = false;
     }
@@ -505,12 +507,12 @@
 
     const data = collectFormData();
 
-    // Perform single background save if not already saved
+    // Auto-save only once if not already saved
     if (!isCurrentFormSaved && !isSavingInProgress) {
       try {
         await saveSilent();
       } catch (err) {
-        console.warn("Background save warning:", err);
+        console.warn("Background save notice:", err);
       }
     }
 
@@ -538,7 +540,6 @@
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
 
-    // Reset form after sending
     document.getElementById('mainForm').reset();
     resetAutoFields();
 
@@ -695,7 +696,6 @@
         ? `<span class="badge bg-success">${deal}</span>` 
         : `<span class="text-muted">-</span>`;
 
-      // Safe escape string for Property ID inside inline HTML button
       const safeId = String(id).replace(/'/g, "\\'");
 
       tableHtml += `<tr>
@@ -715,7 +715,6 @@
   }
 
   function showRecordDetails(propertyId) {
-    // Find the exact record matching the clicked property ID
     const record = globalSheetData.find(row => {
       const rowId = getFieldValue(row, ['Property ID', 'SR NO', 'SR. NO', 'ID']);
       return String(rowId).trim().toLowerCase() === String(propertyId).trim().toLowerCase();
