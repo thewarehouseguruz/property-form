@@ -374,10 +374,13 @@
 <script>
   // Firebase Setup
   const firebaseConfig = {
-    databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
+    databaseURL: "https://thewarehouseguruz-default-rtdb-export.json" // Updated with your active DB
   };
 
   let db = null;
+  let isCurrentFormSaved = false; // Track if current record is already pushed
+  let isSavingInProgress = false; // Guard against double taps
+
   try {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
@@ -399,6 +402,7 @@
   function resetAutoFields() {
     document.getElementById('propId').value = generateID();
     document.getElementById('inquiryDate').value = getFormattedDate();
+    isCurrentFormSaved = false; // Reset save tracker for new entry
   }
 
   document.addEventListener('DOMContentLoaded', resetAutoFields);
@@ -445,16 +449,27 @@
     };
   }
 
-  function saveSilent() {
+  async function saveSilent() {
+    if (isCurrentFormSaved || isSavingInProgress) {
+      return Promise.resolve(); // Prevent duplicate saves
+    }
+
     const data = collectFormData();
     if (!data.personName || !data.contactNumber) {
       return Promise.reject("Required fields missing.");
     }
-    
-    if (db) {
-      return db.ref('inquiries').push(data);
-    } else {
-      return Promise.reject("Firebase DB not initialized.");
+
+    isSavingInProgress = true;
+
+    try {
+      if (db) {
+        await db.ref('inquiries').push(data);
+        isCurrentFormSaved = true; // Flag as saved
+      } else {
+        throw new Error("Firebase DB not initialized.");
+      }
+    } finally {
+      isSavingInProgress = false;
     }
   }
 
@@ -464,10 +479,16 @@
       form.reportValidity();
       return;
     }
-    
+
+    if (isCurrentFormSaved) {
+      alert("⚠️ This entry has already been saved to Firebase!");
+      return;
+    }
+
     try {
       await saveSilent();
       alert("✅ Record Saved Successfully!");
+      document.getElementById('mainForm').reset();
       resetAutoFields();
     } catch (err) {
       console.error("Save Error:", err);
@@ -475,7 +496,7 @@
     }
   }
 
-  function sendWhatsApp(target) {
+  async function sendWhatsApp(target) {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
@@ -483,6 +504,15 @@
     }
 
     const data = collectFormData();
+
+    // Perform single background save if not already saved
+    if (!isCurrentFormSaved && !isSavingInProgress) {
+      try {
+        await saveSilent();
+      } catch (err) {
+        console.warn("Background save warning:", err);
+      }
+    }
 
     let waText = `*PROPERTY INQUIRY DETAILS*\n`;
     waText += `*ID:* ${data.propId} | *Date:* ${data.inquiryDate}\n`;
@@ -507,12 +537,10 @@
     if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
-    
-    saveSilent().then(() => {
-      resetAutoFields();
-    }).catch((err) => {
-      console.warn("Background save warning:", err);
-    });
+
+    // Reset form after sending
+    document.getElementById('mainForm').reset();
+    resetAutoFields();
 
     const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
     window.location.href = waUrl;
