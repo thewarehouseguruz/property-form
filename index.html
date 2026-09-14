@@ -524,6 +524,7 @@
   const sheetUri = `https://opensheet.elk.sh/${sheetId}/${tabName}`;
   
   let globalSheetData = [];
+  let filteredSheetData = [];
 
   document.addEventListener("DOMContentLoaded", function () {
     const modalElem = document.getElementById('searchModal');
@@ -535,6 +536,7 @@
   });
 
   function getFieldValue(row, possibleKeys) {
+    if (!row) return '';
     for (let key of possibleKeys) {
       if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
         return String(row[key]).trim();
@@ -542,9 +544,9 @@
     }
     const keys = Object.keys(row);
     for (let key of keys) {
-      const lowerKey = key.toLowerCase();
+      const lowerKey = key.trim().toLowerCase();
       for (let pKey of possibleKeys) {
-        if (lowerKey.includes(pKey.toLowerCase())) {
+        if (lowerKey === pKey.trim().toLowerCase() || lowerKey.includes(pKey.toLowerCase())) {
           if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
             return String(row[key]).trim();
           }
@@ -570,6 +572,7 @@
           return;
         }
         globalSheetData = data;
+        filteredSheetData = data;
         document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} records successfully.`;
         renderSearchResults(data);
       })
@@ -596,6 +599,7 @@
           return obj;
         });
         globalSheetData = rows;
+        filteredSheetData = rows;
         document.getElementById('searchStatus').innerText = `✅ Loaded ${rows.length} records directly.`;
         renderSearchResults(rows);
       })
@@ -605,18 +609,18 @@
   }
 
   function applyFilters() {
-    const typeVal = document.getElementById('filterType').value.toLowerCase().trim();
-    const dealVal = document.getElementById('filterDeal').value.toLowerCase().trim();
-    const areaVal = document.getElementById('filterArea').value.toLowerCase().trim();
-    const keywordVal = document.getElementById('filterKeyword').value.toLowerCase().trim();
+    const typeVal = document.getElementById('filterType').value.trim().toLowerCase();
+    const dealVal = document.getElementById('filterDeal').value.trim().toLowerCase();
+    const areaVal = document.getElementById('filterArea').value.trim().toLowerCase();
+    const keywordVal = document.getElementById('filterKeyword').value.trim().toLowerCase();
 
-    const filtered = globalSheetData.filter(row => {
-      const rowType = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE']).toLowerCase();
-      const rowDeal = getFieldValue(row, ['Deal For', 'REQUIREMENT', 'Requirement', 'DEAL FOR', 'Deal']).toLowerCase();
-      const rowArea = getFieldValue(row, ['AREA', 'Location', 'Area']).toLowerCase();
+    filteredSheetData = globalSheetData.filter(row => {
+      const rowType = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE', 'Type']).toLowerCase();
+      const rowDeal = getFieldValue(row, ['DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']).toLowerCase();
+      const rowArea = getFieldValue(row, ['AREA', 'Area', 'Location', 'AREA LIST']).toLowerCase();
 
-      const matchesType = !typeVal || rowType.includes(typeVal);
-      const matchesDeal = !dealVal || rowDeal.includes(dealVal);
+      const matchesType = !typeVal || rowType === typeVal || rowType.includes(typeVal);
+      const matchesDeal = !dealVal || rowDeal === dealVal || rowDeal.includes(dealVal);
       const matchesArea = !areaVal || rowArea.includes(areaVal);
 
       const matchesKeyword = !keywordVal || Object.values(row).some(val =>
@@ -626,8 +630,8 @@
       return matchesType && matchesDeal && matchesArea && matchesKeyword;
     });
 
-    renderSearchResults(filtered);
-    document.getElementById('searchStatus').innerText = `Showing ${filtered.length} matching records.`;
+    renderSearchResults(filteredSheetData);
+    document.getElementById('searchStatus').innerText = `Showing ${filteredSheetData.length} matching records.`;
   }
 
   function resetFilters() {
@@ -656,11 +660,11 @@
       </tr></thead><tbody>`;
 
     data.forEach((row, index) => {
-      const id = getFieldValue(row, ['SR NO', 'SR. NO', 'ID', 'Property ID']) || (index + 1);
-      const type = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE']) || '-';
-      const deal = getFieldValue(row, ['Deal For', 'REQUIREMENT', 'Requirement', 'DEAL FOR', 'Deal']);
-      const area = getFieldValue(row, ['AREA', 'Location', 'Area']) || '-';
-      const contact = getFieldValue(row, ['PERSON NAME', 'Owner Name', 'Mobile', 'Name', 'Contact']) || '-';
+      const id = getFieldValue(row, ['Property ID', 'SR NO', 'SR. NO', 'ID']) || (index + 1);
+      const type = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE', 'Type']) || '-';
+      const deal = getFieldValue(row, ['DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']);
+      const area = getFieldValue(row, ['AREA', 'Area', 'Location', 'AREA LIST']) || '-';
+      const contact = getFieldValue(row, ['Name', 'PERSON NAME', 'Owner Name', 'Mobile', 'Contact']) || '-';
 
       const dealBadgeHtml = deal 
         ? `<span class="badge bg-success">${deal}</span>` 
@@ -683,7 +687,7 @@
   }
 
   function showRecordDetails(index) {
-    const record = globalSheetData[index];
+    const record = filteredSheetData[index];
     if (!record) return;
 
     let detailHtml = `<table class="table table-striped table-sm border"><tbody>`;
