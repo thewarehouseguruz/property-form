@@ -2,375 +2,227 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>The Warehouse Guruz - Property Form</title>
-
-  <!-- Mobile Web App & PWA Meta Tags -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="TWG Form">
-  <meta name="theme-color" content="#004d40">
-
-  <!-- App Icon for Home Screen -->
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
-  <link rel="icon" sizes="192x192" href="https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png">
-
-  <!-- Bootstrap 5 CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Warehouse Guruz - Property Inquiry Form</title>
+  
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  
+  <!-- Firebase SDKs (Compat Version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    :root {
-      --primary-color: #004d40;
-      --secondary-color: #00796b;
-      --accent-color: #e0f2f1;
-      --bg-color: #f4f6f8;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      padding: 10px;
-      color: #333;
-    }
-
-    .app-card {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-      border-top: 5px solid var(--primary-color);
-    }
-
-    .brand-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .brand-logo {
-      max-width: 200px;
-      height: auto;
-      margin-bottom: 8px;
-    }
-
-    .company-info {
-      text-align: center;
-      font-size: 11px;
-      color: #555;
-      line-height: 1.3;
-      flex-grow: 1;
-    }
-
-    .section-title {
-      background-color: var(--accent-color);
-      color: var(--primary-color);
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: 700;
-      border-radius: 8px;
-      margin-top: 15px;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-
-    .form-label {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 3px;
-      color: #2c3e50;
-    }
-
-    .form-control, .form-select {
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 13px;
-      border: 1px solid #ced4da;
-    }
-
-    .btn-action {
-      padding: 12px;
-      font-weight: 600;
-      border-radius: 10px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .search-btn-top {
-      border-radius: 20px;
-      font-weight: bold;
-    }
-
-    /* Compact Table Styles */
-    .table-custom th {
-      background-color: #198754;
-      color: white;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    .table-custom td {
-      font-size: 12px;
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-    .detail-label {
-      font-weight: bold;
-      color: #198754;
-      width: 35%;
-    }
+    body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: none; }
+    .card-header { background-color: #1a252f; color: #fff; border-radius: 12px 12px 0 0 !important; font-weight: bold; }
+    .section-header { background-color: #2c3e50; color: #fff; padding: 8px 15px; border-radius: 6px; font-weight: 600; margin-bottom: 15px; }
+    .btn-custom-save { background-color: #b8860b; color: white; font-weight: 600; }
+    .btn-custom-save:hover { background-color: #966d07; color: white; }
+    .btn-custom-company { background-color: #1b4332; color: white; font-weight: 600; }
+    .btn-custom-company:hover { background-color: #143125; color: white; }
+    .btn-custom-customer { background-color: #0d47a1; color: white; font-weight: 600; }
+    .btn-custom-customer:hover { background-color: #0a3880; color: white; }
+    .table-custom th { background-color: #1a252f; color: white; }
+    .detail-label { font-weight: bold; width: 35%; background-color: #f1f3f5; }
   </style>
 </head>
-<body>
+<body class="py-4">
 
-<div class="app-card">
-  <!-- Brand Header -->
-  <div class="brand-header">
-    <div class="text-center">
-      <img src="TWG LOGO PNG.png" alt="THE WAREHOUSE GURUZ" class="brand-logo" onerror="this.src='https://raw.githubusercontent.com/thewarehouseguruz/property-form/main/TWG%20LOGO%20PNG.png'">
+<div class="container">
+  <div class="card mb-4">
+    <div class="card-header text-center py-3">
+      <h3 class="mb-0">THE WAREHOUSE GURUZ</h3>
+      <small>Property Inquiry & Database Management System</small>
     </div>
-    <div class="company-info">
-      <strong>THE WAREHOUSE GURUZ</strong><br>
-      A 703, SIGNATURE-2, SANAND CROSS ROAD, SARKHEJ, AHMEDABAD-382210<br>
-      <strong>Mobile:</strong> +91 6351207989
-    </div>
-    <div class="mt-2 mt-md-0">
-      <button type="button" class="btn btn-outline-success search-btn-top" data-bs-toggle="modal" data-bs-target="#searchModal">
-        🔍 Search Database
-      </button>
+    <div class="card-body p-4">
+
+      <!-- Action Row -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="text-secondary mb-0">Property Inquiry Form</h5>
+        <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#searchModal">
+          🔍 Search Property Database
+        </button>
+      </div>
+
+      <form id="mainForm" onsubmit="event.preventDefault();">
+        
+        <!-- Section 1 -->
+        <div class="section-header">1. BASIC DETAILS</div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Property ID</label>
+            <input type="text" id="propId" class="form-control" readonly>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Inquiry Date</label>
+            <input type="text" id="inquiryDate" class="form-control" readonly>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Person Name *</label>
+            <input type="text" id="personName" class="form-control" required placeholder="Enter Name">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Contact Number *</label>
+            <input type="tel" id="contactNumber" class="form-control" required placeholder="10-digit Mobile">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Company Name</label>
+            <input type="text" id="companyName" class="form-control" placeholder="Company Name">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Property Type</label>
+            <select id="propertyType" class="form-select">
+              <option value="WAREHOUSE">WAREHOUSE</option>
+              <option value="INDUSTRIAL SHED">INDUSTRIAL SHED</option>
+              <option value="LAND">LAND</option>
+              <option value="COMMERCIAL OFFICE">COMMERCIAL OFFICE</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Deal For</label>
+            <select id="dealFor" class="form-select">
+              <option value="LANDLORD">LANDLORD</option>
+              <option value="TENANT">TENANT</option>
+              <option value="SELLER">SELLER</option>
+              <option value="BUYER">BUYER</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section-header">2. PROPERTY SPECIFICATIONS</div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Property Size</label>
+            <div class="input-group">
+              <input type="text" id="propertySize" class="form-control" placeholder="Size (e.g. 5000)">
+              <select id="sizeUnit" class="form-select" style="max-width: 120px;">
+                <option value="SQ.FT.">SQ.FT.</option>
+                <option value="SQ.YARDS">SQ.YARDS</option>
+                <option value="ACRES">ACRES</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Area / Location *</label>
+            <input type="text" id="area" class="form-control" required placeholder="e.g. Aslali, Changodar">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Budget / Rate</label>
+            <input type="text" id="budget" class="form-control" placeholder="e.g. 15/- per sqft or 50 Lacs">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Purpose</label>
+            <input type="text" id="purpose" class="form-control" placeholder="e.g. Rent, Sell, Storage">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Fire NOC</label>
+            <select id="fireNoc" class="form-select">
+              <option value="NO">NO</option>
+              <option value="YES">YES</option>
+            </select>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label fw-bold">Detailed Address</label>
+            <textarea id="address" class="form-control" rows="2" placeholder="Full address details..."></textarea>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="section-header">3. LOCATION & REMARKS</div>
+        <div class="row g-3 mb-4">
+          <div class="col-md-12">
+            <label class="form-label fw-bold">Google Maps Location Link</label>
+            <div class="input-group">
+              <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
+              <button type="button" class="btn btn-outline-secondary" onclick="getCurrentLocation()">📍 Get Current Location</button>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label fw-bold">Remarks</label>
+            <textarea id="remarks" class="form-control" rows="3" placeholder="Additional details, height, shutters, availability..."></textarea>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="row g-2">
+          <div class="col-md-3">
+            <button type="button" class="btn btn-outline-danger w-100 py-2 fw-bold" onclick="clearForm()">🧹 Clear Form</button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-custom-save w-100 py-2 fw-bold" onclick="manualSave()">☁️ Save Record</button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-custom-company w-100 py-2 fw-bold" onclick="sendWhatsApp('company')">📲 Send Company WhatsApp</button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-custom-customer w-100 py-2 fw-bold" onclick="sendWhatsApp('customer')">💬 Send Customer WhatsApp</button>
+          </div>
+        </div>
+
+      </form>
     </div>
   </div>
-
-  <h5 class="text-center fw-bold text-success mb-3">PROPERTY INQUIRY FORM</h5>
-
-  <form id="mainForm" onsubmit="event.preventDefault();">
-    <!-- Auto Fields -->
-    <div class="row g-2 mb-2">
-      <div class="col-6">
-        <label class="form-label">Property ID</label>
-        <input type="text" id="propId" class="form-control bg-light" readonly>
-      </div>
-      <div class="col-6">
-        <label class="form-label">Inquiry Date</label>
-        <input type="text" id="inquiryDate" class="form-control bg-light" readonly>
-      </div>
-    </div>
-
-    <!-- 1. Client Details -->
-    <div class="section-title">1. Client Info</div>
-    <div class="row g-2">
-      <div class="col-12 col-md-6">
-        <label class="form-label">Person Name *</label>
-        <input type="text" id="personName" class="form-control" placeholder="Full Name" required>
-      </div>
-      <div class="col-12 col-md-6">
-        <label class="form-label">Contact Mobile *</label>
-        <input type="tel" id="contactNumber" class="form-control" placeholder="9876543210" required>
-      </div>
-      <div class="col-12">
-        <label class="form-label">Company Name</label>
-        <input type="text" id="companyName" class="form-control" placeholder="Company Name (Optional)">
-      </div>
-    </div>
-
-    <!-- 2. Property Details -->
-    <div class="section-title">2. Property Details</div>
-    <div class="row g-2">
-      <div class="col-6">
-        <label class="form-label">Property Type *</label>
-        <select id="propertyType" class="form-select" required>
-          <option value="">Select</option>
-          <option value="WAREHOUSE">WAREHOUSE</option>
-          <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
-          <option value="LAND">LAND</option>
-          <option value="NA LAND">NA LAND</option>
-          <option value="AGRICULTURE LAND">AGRICULTURE LAND</option>
-          <option value="COMMERCIAL">COMMERCIAL</option>
-        </select>
-      </div>
-      <div class="col-6">
-        <label class="form-label">Deal For *</label>
-        <select id="dealFor" class="form-select" required>
-          <option value="">Select</option>
-          <option value="SELLER">SELLER</option>
-          <option value="BUYER">BUYER</option>
-          <option value="LANDLORD">LANDLORD</option>
-          <option value="TENANT">TENANT</option>
-          <option value="BTS">BTS</option>
-          <option value="PRE-LEASE">PRE-LEASE</option>
-        </select>
-      </div>
-      <div class="col-6">
-        <label class="form-label">Size *</label>
-        <input type="text" id="propertySize" class="form-control" placeholder="Number" required>
-      </div>
-      <div class="col-6">
-        <label class="form-label">Unit *</label>
-        <select id="sizeUnit" class="form-select" required>
-          <option value="SQ.FT.">SQ.FT.</option>
-          <option value="SQ.YARD">SQ.YARD</option>
-          <option value="SQ.VAR">SQ.VAR</option>
-          <option value="VIGHA">VIGHA</option>
-          <option value="ACRE">ACRE</option>
-        </select>
-      </div>
-      <div class="col-6">
-        <label class="form-label">Area / Location *</label>
-        <input type="text" id="area" class="form-control" placeholder="Location" required>
-      </div>
-      <div class="col-6">
-        <label class="form-label">Budget</label>
-        <input type="text" id="budget" class="form-control" placeholder="Budget Details">
-      </div>
-      <div class="col-6">
-        <label class="form-label">Purpose</label>
-        <input type="text" id="purpose" class="form-control" placeholder="e.g. Storage">
-      </div>
-      <div class="col-6">
-        <label class="form-label">Fire NOC</label>
-        <select id="fireNoc" class="form-select">
-          <option value="N/A">Select</option>
-          <option value="YES">YES</option>
-          <option value="NO">NO</option>
-          <option value="PENDING">PENDING</option>
-        </select>
-      </div>
-      <div class="col-12">
-        <label class="form-label">Detailed Address</label>
-        <textarea id="address" class="form-control" rows="2" placeholder="Full Address"></textarea>
-      </div>
-    </div>
-
-    <!-- 3. Location & Remarks -->
-    <div class="section-title">3. Location & Remarks</div>
-    <div class="row g-2">
-      <div class="col-12">
-        <label class="form-label">Google Maps Location Link</label>
-        <div class="input-group mb-1">
-          <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
-          <button type="button" class="btn btn-outline-success btn-sm" onclick="getCurrentLocation()">📍 Get Current Location</button>
-        </div>
-      </div>
-      <div class="col-12">
-        <label class="form-label">Remarks</label>
-        <textarea id="remarks" class="form-control" rows="2" placeholder="Specific Requirements"></textarea>
-      </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="row g-2 mt-3">
-      <div class="col-6">
-        <button type="button" class="btn btn-outline-danger btn-action w-100" onclick="clearForm()">
-          🧹 Clear Form
-        </button>
-      </div>
-      <div class="col-6">
-        <button type="button" class="btn btn-warning btn-action w-100 fw-bold" onclick="manualSave()">
-          ☁️ Save Record
-        </button>
-      </div>
-      <div class="col-12 col-md-6">
-        <button type="button" class="btn btn-success btn-action w-100" onclick="sendWhatsApp('company')">
-          📱 Send Company WhatsApp
-        </button>
-      </div>
-      <div class="col-12 col-md-6">
-        <button type="button" class="btn btn-primary btn-action w-100" onclick="sendWhatsApp('customer')">
-          💬 Send Customer WhatsApp
-        </button>
-      </div>
-    </div>
-  </form>
 </div>
 
-<!-- MULTI-SEARCH MODAL -->
+<!-- Search Modal -->
 <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title">🔍 Multi-Search Property Database</h5>
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">🔍 Search Property Database</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         
-        <!-- Search Filters Container -->
+        <!-- Search Filters -->
         <div class="row g-2 mb-3">
           <div class="col-md-3">
-            <label class="form-label fw-bold small">Property Type</label>
-            <select id="filterType" class="form-select" onchange="applyFilters()">
-              <option value="">All Types</option>
-              <option value="WAREHOUSE">WAREHOUSE</option>
-              <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
-              <option value="LAND">LAND</option>
-              <option value="COMMERCIAL">COMMERCIAL</option>
-            </select>
+            <input type="text" id="filterType" class="form-control form-control-sm" placeholder="Property Type (e.g. Warehouse)" onkeyup="applyFilters()">
           </div>
           <div class="col-md-3">
-            <label class="form-label fw-bold small">Deal For</label>
-            <select id="filterDeal" class="form-select" onchange="applyFilters()">
-              <option value="">All Deals</option>
-              <option value="SELLER">SELLER</option>
-              <option value="BUYER">BUYER</option>
-              <option value="LANDLORD">LANDLORD</option>
-              <option value="TENANT">TENANT</option>
-              <option value="BTS">BTS</option>
-              <option value="PRE-LEASE">PRE-LEASE</option>
-            </select>
+            <input type="text" id="filterDeal" class="form-control form-control-sm" placeholder="Deal For (e.g. Landlord)" onkeyup="applyFilters()">
           </div>
           <div class="col-md-3">
-            <label class="form-label fw-bold small">Area / Location</label>
-            <input type="text" id="filterArea" class="form-control" placeholder="Search Location" oninput="applyFilters()" onkeyup="if(event.key==='Enter') applyFilters()">
+            <input type="text" id="filterArea" class="form-control form-control-sm" placeholder="Area / Location" onkeyup="applyFilters()">
           </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold small">Keyword Search</label>
-            <input type="text" id="filterKeyword" class="form-control" placeholder="Name, Phone, ID..." oninput="applyFilters()" onkeyup="if(event.key==='Enter') applyFilters()">
+          <div class="col-md-3 d-flex gap-1">
+            <input type="text" id="filterKeyword" class="form-control form-control-sm" placeholder="Keyword Search" onkeyup="applyFilters()">
+            <button class="btn btn-sm btn-secondary" onclick="resetFilters()">Reset</button>
           </div>
         </div>
 
-        <!-- Confirm Search & Action Buttons -->
-        <div class="d-flex gap-2 mb-3">
-          <button type="button" class="btn btn-success fw-bold px-4" onclick="applyFilters()">🔍 Search Now</button>
-          <button type="button" class="btn btn-outline-secondary" onclick="resetFilters()">Reset Filters</button>
-        </div>
+        <div id="searchStatus" class="small text-muted mb-2">⏳ Click search to load Google Sheets database...</div>
 
-        <!-- Status Box & Table Results -->
-        <div id="searchStatus" class="alert alert-info py-2 small">Loading database from Google Sheets...</div>
-        <div id="searchResultsContainer" class="table-responsive" style="max-height: 420px; overflow-y: auto;"></div>
+        <div class="table-responsive" id="searchResultsContainer">
+          <!-- Search results will load here -->
+        </div>
 
       </div>
     </div>
   </div>
 </div>
 
-<!-- SINGLE RECORD FULL DETAILS MODAL -->
+<!-- Detail Sub-Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header bg-dark text-white py-2">
-        <h5 class="modal-title fs-6 fw-bold">📋 Full Property Details</h5>
+      <div class="modal-header bg-secondary text-white">
+        <h5 class="modal-title">📄 Full Property Details</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body p-3">
-        <div id="fullDetailContent"></div>
+      <div class="modal-body" id="fullDetailContent">
+        <!-- Full record loaded here -->
       </div>
     </div>
   </div>
 </div>
 
-<!-- Bootstrap 5 JS Bundle -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Custom Application Script -->
 <script>
   // Firebase Setup
   const firebaseConfig = {
@@ -378,6 +230,9 @@
   };
 
   let db = null;
+  let isCurrentFormSaved = false;
+  let isSavingInProgress = false;
+
   try {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
@@ -399,6 +254,7 @@
   function resetAutoFields() {
     document.getElementById('propId').value = generateID();
     document.getElementById('inquiryDate').value = getFormattedDate();
+    isCurrentFormSaved = false;
   }
 
   document.addEventListener('DOMContentLoaded', resetAutoFields);
@@ -445,16 +301,27 @@
     };
   }
 
-  function saveSilent() {
+  async function saveSilent() {
+    if (isCurrentFormSaved || isSavingInProgress) {
+      return Promise.resolve();
+    }
+
     const data = collectFormData();
     if (!data.personName || !data.contactNumber) {
       return Promise.reject("Required fields missing.");
     }
-    
-    if (db) {
-      return db.ref('inquiries').push(data);
-    } else {
-      return Promise.reject("Firebase DB not initialized.");
+
+    if (!db) {
+      return Promise.reject("Firebase DB instance missing.");
+    }
+
+    isSavingInProgress = true;
+
+    try {
+      await db.ref('inquiries').push(data);
+      isCurrentFormSaved = true;
+    } finally {
+      isSavingInProgress = false;
     }
   }
 
@@ -464,10 +331,16 @@
       form.reportValidity();
       return;
     }
-    
+
+    if (isCurrentFormSaved) {
+      alert("⚠️ This entry has already been saved to Firebase!");
+      return;
+    }
+
     try {
       await saveSilent();
       alert("✅ Record Saved Successfully!");
+      document.getElementById('mainForm').reset();
       resetAutoFields();
     } catch (err) {
       console.error("Save Error:", err);
@@ -475,7 +348,7 @@
     }
   }
 
-  function sendWhatsApp(target) {
+  async function sendWhatsApp(target) {
     const form = document.getElementById('mainForm');
     if (!form.checkValidity()) {
       form.reportValidity();
@@ -483,6 +356,14 @@
     }
 
     const data = collectFormData();
+
+    if (!isCurrentFormSaved && !isSavingInProgress) {
+      try {
+        await saveSilent();
+      } catch (err) {
+        console.warn("Background save notice:", err);
+      }
+    }
 
     let waText = `*PROPERTY INQUIRY DETAILS*\n`;
     waText += `*ID:* ${data.propId} | *Date:* ${data.inquiryDate}\n`;
@@ -507,19 +388,16 @@
     if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
     let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
-    
-    saveSilent().then(() => {
-      resetAutoFields();
-    }).catch((err) => {
-      console.warn("Background save warning:", err);
-    });
+
+    document.getElementById('mainForm').reset();
+    resetAutoFields();
 
     const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
     window.location.href = waUrl;
   }
 
-  // Google Sheets Multi-Search Logic
-  const sheetId = "1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA";
+  // Google Sheets Multi-Search Logic (Updated Sheet ID)
+  const sheetId = "1dV8evDNt52N9sv8IhbbxJ2cLbL_6W0AreglNB81X5k0";
   const tabName = encodeURIComponent("Property Database");
   const sheetUri = `https://opensheet.elk.sh/${sheetId}/${tabName}`;
   
@@ -613,7 +491,7 @@
 
     const filtered = globalSheetData.filter(row => {
       const rowType = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE', 'Type']).toLowerCase();
-      const rowDeal = getFieldValue(row, ['DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']).toLowerCase();
+      const rowDeal = getFieldValue(row, ['BUYER/SELLER/LANDLORD/TENANT/BTS', 'DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']).toLowerCase();
       const rowArea = getFieldValue(row, ['AREA', 'Area', 'Location', 'AREA LIST']).toLowerCase();
 
       const matchesType = !typeVal || rowType === typeVal || rowType.includes(typeVal);
@@ -659,7 +537,7 @@
     data.forEach((row, index) => {
       const id = getFieldValue(row, ['Property ID', 'SR NO', 'SR. NO', 'ID']) || (index + 1);
       const type = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE', 'Type']) || '-';
-      const deal = getFieldValue(row, ['DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']);
+      const deal = getFieldValue(row, ['BUYER/SELLER/LANDLORD/TENANT/BTS', 'DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']);
       const area = getFieldValue(row, ['AREA', 'Area', 'Location', 'AREA LIST']) || '-';
       const contact = getFieldValue(row, ['Name', 'PERSON NAME', 'Owner Name', 'Mobile', 'Contact']) || '-';
 
@@ -667,7 +545,6 @@
         ? `<span class="badge bg-success">${deal}</span>` 
         : `<span class="text-muted">-</span>`;
 
-      // Safe escape string for Property ID inside inline HTML button
       const safeId = String(id).replace(/'/g, "\\'");
 
       tableHtml += `<tr>
@@ -687,7 +564,6 @@
   }
 
   function showRecordDetails(propertyId) {
-    // Find the exact record matching the clicked property ID
     const record = globalSheetData.find(row => {
       const rowId = getFieldValue(row, ['Property ID', 'SR NO', 'SR. NO', 'ID']);
       return String(rowId).trim().toLowerCase() === String(propertyId).trim().toLowerCase();
