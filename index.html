@@ -3,593 +3,420 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Warehouse Guruz - Property Inquiry Form</title>
+  <title>The Warehouse Guruz - CRM & Property Management</title>
   
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <!-- Firebase SDKs (Compat Version) -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: none; }
+    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .nav-pills .nav-link.active { background-color: #1a252f; color: white; font-weight: bold; }
+    .nav-pills .nav-link { color: #2c3e50; font-weight: 600; border: 1px solid #dee2e6; margin-right: 5px; }
+    .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: none; }
     .card-header { background-color: #1a252f; color: #fff; border-radius: 12px 12px 0 0 !important; font-weight: bold; }
     .section-header { background-color: #2c3e50; color: #fff; padding: 8px 15px; border-radius: 6px; font-weight: 600; margin-bottom: 15px; }
-    .btn-custom-save { background-color: #b8860b; color: white; font-weight: 600; }
-    .btn-custom-save:hover { background-color: #966d07; color: white; }
-    .btn-custom-company { background-color: #1b4332; color: white; font-weight: 600; }
-    .btn-custom-company:hover { background-color: #143125; color: white; }
-    .btn-custom-customer { background-color: #0d47a1; color: white; font-weight: 600; }
-    .btn-custom-customer:hover { background-color: #0a3880; color: white; }
-    .table-custom th { background-color: #1a252f; color: white; }
-    .detail-label { font-weight: bold; width: 35%; background-color: #f1f3f5; }
+    .stat-card { border-left: 4px solid #1a252f; border-radius: 8px; }
+    .stat-card-danger { border-left-color: #dc3545; }
+    .stat-card-warning { border-left-color: #ffc107; }
+    .stat-card-success { border-left-color: #198754; }
   </style>
 </head>
-<body class="py-4">
+<body class="py-3">
 
-<div class="container">
-  <div class="card mb-4">
-    <div class="card-header text-center py-3">
-      <h3 class="mb-0">THE WAREHOUSE GURUZ</h3>
-      <small>Property Inquiry & Database Management System</small>
-    </div>
-    <div class="card-body p-4">
-
-      <!-- Action Row -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="text-secondary mb-0">Property Inquiry Form</h5>
-        <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#searchModal">
-          🔍 Search Property Database
-        </button>
+<div class="container-fluid px-4">
+  
+  <!-- App Header & Navigation Bar -->
+  <div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center py-2">
+      <h4 class="mb-0">THE WAREHOUSE GURUZ</h4>
+      <div class="d-flex align-items-center gap-2">
+        <label class="text-white small fw-bold mb-0">Logged Executive:</label>
+        <select id="activeExecutiveSelect" class="form-select form-select-sm" style="width: 180px;" onchange="handleExecutiveChange()">
+          <option value="EXEC-1">Executive 1 (Rajesh)</option>
+          <option value="EXEC-2">Executive 2 (Amit)</option>
+          <option value="EXEC-3" selected>Executive 3 (Vikram)</option>
+        </select>
       </div>
-
-      <form id="mainForm" onsubmit="event.preventDefault();">
-        
-        <!-- Section 1 -->
-        <div class="section-header">1. BASIC DETAILS</div>
-        <div class="row g-3 mb-3">
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Property ID</label>
-            <input type="text" id="propId" class="form-control" readonly>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Inquiry Date</label>
-            <input type="text" id="inquiryDate" class="form-control" readonly>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Person Name *</label>
-            <input type="text" id="personName" class="form-control" required placeholder="Enter Name">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Contact Number *</label>
-            <input type="tel" id="contactNumber" class="form-control" required placeholder="10-digit Mobile">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Company Name</label>
-            <input type="text" id="companyName" class="form-control" placeholder="Company Name">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Property Type</label>
-            <select id="propertyType" class="form-select">
-              <option value="WAREHOUSE">WAREHOUSE</option>
-              <option value="INDUSTRIAL SHED">INDUSTRIAL SHED</option>
-              <option value="LAND">LAND</option>
-              <option value="COMMERCIAL OFFICE">COMMERCIAL OFFICE</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Deal For</label>
-            <select id="dealFor" class="form-select">
-              <option value="LANDLORD">LANDLORD</option>
-              <option value="TENANT">TENANT</option>
-              <option value="SELLER">SELLER</option>
-              <option value="BUYER">BUYER</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Section 2 -->
-        <div class="section-header">2. PROPERTY SPECIFICATIONS</div>
-        <div class="row g-3 mb-3">
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Property Size</label>
-            <div class="input-group">
-              <input type="text" id="propertySize" class="form-control" placeholder="Size (e.g. 5000)">
-              <select id="sizeUnit" class="form-select" style="max-width: 120px;">
-                <option value="SQ.FT.">SQ.FT.</option>
-                <option value="SQ.YARDS">SQ.YARDS</option>
-                <option value="ACRES">ACRES</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Area / Location *</label>
-            <input type="text" id="area" class="form-control" required placeholder="e.g. Aslali, Changodar">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Budget / Rate</label>
-            <input type="text" id="budget" class="form-control" placeholder="e.g. 15/- per sqft or 50 Lacs">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Purpose</label>
-            <input type="text" id="purpose" class="form-control" placeholder="e.g. Rent, Sell, Storage">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Fire NOC</label>
-            <select id="fireNoc" class="form-select">
-              <option value="NO">NO</option>
-              <option value="YES">YES</option>
-            </select>
-          </div>
-          <div class="col-md-12">
-            <label class="form-label fw-bold">Detailed Address</label>
-            <textarea id="address" class="form-control" rows="2" placeholder="Full address details..."></textarea>
-          </div>
-        </div>
-
-        <!-- Section 3 -->
-        <div class="section-header">3. LOCATION & REMARKS</div>
-        <div class="row g-3 mb-4">
-          <div class="col-md-12">
-            <label class="form-label fw-bold">Google Maps Location Link</label>
-            <div class="input-group">
-              <input type="url" id="locationLink" class="form-control" placeholder="https://maps.google.com/...">
-              <button type="button" class="btn btn-outline-secondary" onclick="getCurrentLocation()">📍 Get Current Location</button>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <label class="form-label fw-bold">Remarks</label>
-            <textarea id="remarks" class="form-control" rows="3" placeholder="Additional details, height, shutters, availability..."></textarea>
-          </div>
-        </div>
-
-        <!-- Form Buttons -->
-        <div class="row g-2">
-          <div class="col-md-3">
-            <button type="button" class="btn btn-outline-danger w-100 py-2 fw-bold" onclick="clearForm()">🧹 Clear Form</button>
-          </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-custom-save w-100 py-2 fw-bold" onclick="manualSave()">☁️ Save Record</button>
-          </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-custom-company w-100 py-2 fw-bold" onclick="sendWhatsApp('company')">📲 Send Company WhatsApp</button>
-          </div>
-          <div class="col-md-3">
-            <button type="button" class="btn btn-custom-customer w-100 py-2 fw-bold" onclick="sendWhatsApp('customer')">💬 Send Customer WhatsApp</button>
-          </div>
-        </div>
-
-      </form>
+    </div>
+    <div class="card-body py-2">
+      <ul class="nav nav-pills nav-fill" id="mainTabs" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active" id="tab-inquiry-tab" data-bs-toggle="pill" data-bs-target="#tab-inquiry" type="button">📝 1. Inquiry Form</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" id="tab-search-tab" data-bs-toggle="pill" data-bs-target="#tab-search" type="button" onclick="fetchSheetData()">🔍 2. Search Property</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" id="tab-reminders-tab" data-bs-toggle="pill" data-bs-target="#tab-reminders" type="button" onclick="loadRemindersDashboard()">⏰ 3. Reminders & Dashboard</button>
+        </li>
+      </ul>
     </div>
   </div>
-</div>
 
-<!-- Search Modal -->
-<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title">🔍 Search Property Database</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        
-        <!-- Search Filters -->
-        <div class="row g-2 mb-3">
-          <div class="col-md-3">
-            <input type="text" id="filterType" class="form-control form-control-sm" placeholder="Property Type (e.g. Warehouse)" onkeyup="applyFilters()">
-          </div>
-          <div class="col-md-3">
-            <input type="text" id="filterDeal" class="form-control form-control-sm" placeholder="Deal For (e.g. Landlord)" onkeyup="applyFilters()">
-          </div>
-          <div class="col-md-3">
-            <input type="text" id="filterArea" class="form-control form-control-sm" placeholder="Area / Location" onkeyup="applyFilters()">
-          </div>
-          <div class="col-md-3 d-flex gap-1">
-            <input type="text" id="filterKeyword" class="form-control form-control-sm" placeholder="Keyword Search" onkeyup="applyFilters()">
-            <button class="btn btn-sm btn-secondary" onclick="resetFilters()">Reset</button>
-          </div>
+  <div class="tab-content" id="mainTabsContent">
+
+    <!-- TAB 1: INQUIRY FORM -->
+    <div class="tab-pane fade show active" id="tab-inquiry" role="tabpanel">
+      <div class="card">
+        <div class="card-body p-4">
+          <form id="mainForm" onsubmit="event.preventDefault();">
+            <div class="section-header">1. BUYER & BASIC DETAILS</div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label fw-bold">Buyer ID</label>
+                <input type="text" id="buyerId" class="form-control" readonly>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-bold">Inquiry Date</label>
+                <input type="text" id="inquiryDate" class="form-control" readonly>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-bold">Person Name *</label>
+                <input type="text" id="personName" class="form-control" required placeholder="Buyer Name">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-bold">Contact Number *</label>
+                <input type="tel" id="contactNumber" class="form-control" required placeholder="10-digit Mobile">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Assigned Executive ID</label>
+                <select id="assignedExecId" class="form-select">
+                  <option value="EXEC-1">Executive 1 (Rajesh)</option>
+                  <option value="EXEC-2">Executive 2 (Amit)</option>
+                  <option value="EXEC-3" selected>Executive 3 (Vikram)</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Property Type</label>
+                <select id="propertyType" class="form-select">
+                  <option value="WAREHOUSE">WAREHOUSE</option>
+                  <option value="INDUSTRIAL SHED">INDUSTRIAL SHED</option>
+                  <option value="LAND">LAND</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Lead Status</label>
+                <select id="leadStatus" class="form-select">
+                  <option value="New Lead">New Lead</option>
+                  <option value="Hot Buyer">Hot Buyer</option>
+                  <option value="Follow-up Pending">Follow-up Pending</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-header">2. MATCHED PROPERTIES (Relational Link)</div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Select Matched Property IDs</label>
+                <input type="text" id="matchedPropIds" class="form-control" placeholder="e.g. 8, 15, 30">
+                <small class="text-muted">Link multiple Property IDs separated by commas.</small>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Budget & Location Preference</label>
+                <input type="text" id="budgetLoc" class="form-control" placeholder="e.g. 50 Lacs - Changodar/Aslali">
+              </div>
+            </div>
+
+            <div class="section-header">3. INITIAL FOLLOW-UP & REMINDER SCHEDULE</div>
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Next Follow-up Date & Time *</label>
+                <input type="datetime-local" id="nextFollowupTime" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Contact Method</label>
+                <select id="contactMethod" class="form-select">
+                  <option value="Call">Call</option>
+                  <option value="WhatsApp">WhatsApp</option>
+                  <option value="Site Visit">Site Visit</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Action Required</label>
+                <select id="actionRequired" class="form-select">
+                  <option value="Send Details">Send Details</option>
+                  <option value="Site Visit Suggested">Site Visit Suggested</option>
+                  <option value="Negotiation">Negotiation</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label fw-bold">Discussion Notes</label>
+                <textarea id="discussionNotes" class="form-control" rows="2" placeholder="Enter notes..."></textarea>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-outline-danger fw-bold" onclick="clearForm()">Clear Form</button>
+              <button type="button" class="btn btn-success fw-bold" onclick="saveNewInquiry()">💾 Save Inquiry & Set Reminder</button>
+            </div>
+          </form>
         </div>
-
-        <div id="searchStatus" class="small text-muted mb-2">⏳ Click search to load Google Sheets database...</div>
-
-        <div class="table-responsive" id="searchResultsContainer">
-          <!-- Search results will load here -->
-        </div>
-
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Detail Sub-Modal -->
-<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-secondary text-white">
-        <h5 class="modal-title">📄 Full Property Details</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="fullDetailContent">
-        <!-- Full record loaded here -->
+    <!-- TAB 2: SEARCH PROPERTY -->
+    <div class="tab-pane fade" id="tab-search" role="tabpanel">
+      <div class="card">
+        <div class="card-body p-4">
+          <div class="row g-2 mb-3">
+            <div class="col-md-3">
+              <input type="text" id="filterType" class="form-control" placeholder="Property Type" onkeyup="applyFilters()">
+            </div>
+            <div class="col-md-3">
+              <input type="text" id="filterDeal" class="form-control" placeholder="Deal For" onkeyup="applyFilters()">
+            </div>
+            <div class="col-md-3">
+              <input type="text" id="filterArea" class="form-control" placeholder="Area / Location" onkeyup="applyFilters()">
+            </div>
+            <div class="col-md-3 d-flex gap-1">
+              <input type="text" id="filterKeyword" class="form-control" placeholder="Keyword Search" onkeyup="applyFilters()">
+              <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+            </div>
+          </div>
+
+          <div id="searchStatus" class="small text-muted mb-2">⏳ Loading Google Sheets database...</div>
+          <div class="table-responsive" id="searchResultsContainer"></div>
+        </div>
       </div>
     </div>
+
+    <!-- TAB 3: REMINDERS & DAILY EXECUTIVE REPORT -->
+    <div class="tab-pane fade" id="tab-reminders" role="tabpanel">
+      
+      <!-- Executive Summary Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-2">
+          <div class="card p-3 stat-card stat-card-danger bg-white">
+            <small class="text-muted fw-bold">DUE TODAY / OVERDUE</small>
+            <h3 id="statDueToday" class="text-danger mb-0">0</h3>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card p-3 stat-card bg-white">
+            <small class="text-muted fw-bold">CALLS COMPLETED</small>
+            <h3 id="statCallsDone" class="text-dark mb-0">0</h3>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card p-3 stat-card stat-card-warning bg-white">
+            <small class="text-muted fw-bold">SITE VISITS</small>
+            <h3 id="statVisits" class="text-warning mb-0">0</h3>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card p-3 stat-card bg-white">
+            <small class="text-muted fw-bold">HOT BUYERS</small>
+            <h3 id="statHotBuyers" class="text-primary mb-0">0</h3>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card p-3 stat-card stat-card-danger bg-white">
+            <small class="text-muted fw-bold">OVERDUE FOLLOW-UPS</small>
+            <h3 id="statOverdue" class="text-danger mb-0">0</h3>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="card p-3 stat-card stat-card-success bg-white">
+            <small class="text-muted fw-bold">BOOKINGS</small>
+            <h3 id="statBookings" class="text-success mb-0">0</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Reminders Table -->
+      <div class="card">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <span id="reminderTableTitle">Daily Follow-up Reminders Due Today</span>
+          <button class="btn btn-sm btn-light fw-bold" onclick="loadRemindersDashboard()">🔄 Refresh Reminders</button>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Time / Status</th>
+                  <th>Buyer ID & Name</th>
+                  <th>Matched Properties</th>
+                  <th>Action Required</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="remindersTableBody">
+                <!-- Live reminder records will be generated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Custom Application Script -->
 <script>
-  // Firebase Setup
-  const firebaseConfig = {
-    databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com"
-  };
-
-  let db = null;
-  let isCurrentFormSaved = false;
-  let isSavingInProgress = false;
-
-  try {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    db = firebase.database();
-  } catch (e) {
-    console.warn("Firebase initialized in offline mode.", e);
-  }
-
-  function generateID() {
-    return 'PROP-' + Math.floor(100000 + Math.random() * 900000);
-  }
-
-  function getFormattedDate() {
-    const d = new Date();
-    return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
-  }
-
-  function resetAutoFields() {
-    document.getElementById('propId').value = generateID();
-    document.getElementById('inquiryDate').value = getFormattedDate();
-    isCurrentFormSaved = false;
-  }
-
-  document.addEventListener('DOMContentLoaded', resetAutoFields);
-
-  function getCurrentLocation() {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        document.getElementById('locationLink').value = `https://maps.google.com/?q=${lat},${lng}`;
-        alert("📍 Location captured successfully!");
-      }, (error) => {
-        alert("Unable to fetch location. Grant GPS permissions in browser.");
-      });
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  }
-
-  function clearForm() {
-    if (confirm("Are you sure you want to clear all form entries?")) {
-      document.getElementById('mainForm').reset();
-      resetAutoFields();
-    }
-  }
-
-  function collectFormData() {
-    return {
-      propId: document.getElementById('propId').value,
-      inquiryDate: document.getElementById('inquiryDate').value,
-      personName: document.getElementById('personName').value,
-      contactNumber: document.getElementById('contactNumber').value,
-      companyName: document.getElementById('companyName').value || 'N/A',
-      propertyType: document.getElementById('propertyType').value,
-      dealFor: document.getElementById('dealFor').value,
-      propertySize: document.getElementById('propertySize').value + ' ' + document.getElementById('sizeUnit').value,
-      area: document.getElementById('area').value,
-      budget: document.getElementById('budget').value || 'N/A',
-      purpose: document.getElementById('purpose').value || 'N/A',
-      fireNoc: document.getElementById('fireNoc').value,
-      address: document.getElementById('address').value || 'N/A',
-      locationLink: document.getElementById('locationLink').value || 'N/A',
-      remarks: document.getElementById('remarks').value || 'None'
-    };
-  }
-
-  async function saveSilent() {
-    if (isCurrentFormSaved || isSavingInProgress) {
-      return Promise.resolve();
-    }
-
-    const data = collectFormData();
-    if (!data.personName || !data.contactNumber) {
-      return Promise.reject("Required fields missing.");
-    }
-
-    if (!db) {
-      return Promise.reject("Firebase DB instance missing.");
-    }
-
-    isSavingInProgress = true;
-
-    try {
-      await db.ref('inquiries').push(data);
-      isCurrentFormSaved = true;
-    } finally {
-      isSavingInProgress = false;
-    }
-  }
-
-  async function manualSave() {
-    const form = document.getElementById('mainForm');
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-
-    if (isCurrentFormSaved) {
-      alert("⚠️ This entry has already been saved to Firebase!");
-      return;
-    }
-
-    try {
-      await saveSilent();
-      alert("✅ Record Saved Successfully!");
-      document.getElementById('mainForm').reset();
-      resetAutoFields();
-    } catch (err) {
-      console.error("Save Error:", err);
-      alert("❌ Save failed: " + (err.message || err));
-    }
-  }
-
-  async function sendWhatsApp(target) {
-    const form = document.getElementById('mainForm');
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-
-    const data = collectFormData();
-
-    if (!isCurrentFormSaved && !isSavingInProgress) {
-      try {
-        await saveSilent();
-      } catch (err) {
-        console.warn("Background save notice:", err);
-      }
-    }
-
-    let waText = `*PROPERTY INQUIRY DETAILS*\n`;
-    waText += `*ID:* ${data.propId} | *Date:* ${data.inquiryDate}\n`;
-    waText += `---------------------------------\n`;
-    waText += `👤 *Name:* ${data.personName}\n`;
-    waText += `📞 *Contact:* ${data.contactNumber}\n`;
-    waText += `🏢 *Company:* ${data.companyName}\n`;
-    waText += `🏗️ *Type:* ${data.propertyType}\n`;
-    waText += `🤝 *Deal For:* ${data.dealFor}\n`;
-    waText += `📐 *Size:* ${data.propertySize}\n`;
-    waText += `📍 *Location:* ${data.area}\n`;
-    waText += `💰 *Budget:* ${data.budget}\n`;
-    waText += `🔥 *Fire NOC:* ${data.fireNoc}\n`;
-    waText += `🎯 *Purpose:* ${data.purpose}\n`;
-    waText += `📍 *Address:* ${data.address}\n`;
-    if(data.locationLink !== 'N/A') waText += `🗺️ *Location:* ${data.locationLink}\n`;
-    waText += `📝 *Remarks:* ${data.remarks}\n`;
-    waText += `---------------------------------\n`;
-    waText += `*The Warehouse Guruz*`;
-
-    let cleanPhone = data.contactNumber.replace(/\D/g, '');
-    if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
-
-    let targetPhone = (target === 'company') ? '916351207989' : cleanPhone;
-
-    document.getElementById('mainForm').reset();
-    resetAutoFields();
-
-    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(waText)}`;
-    window.location.href = waUrl;
-  }
-
-  // Google Sheets Multi-Search Logic (Updated Sheet ID)
+  // Active Google Sheet configuration
   const sheetId = "1dV8evDNt52N9sv8IhbbxJ2cLbL_6W0AreglNB81X5k0";
-  const tabName = encodeURIComponent("Property Database");
-  const sheetUri = `https://opensheet.elk.sh/${sheetId}/${tabName}`;
-  
+  const sheetUri = `https://opensheet.elk.sh/${sheetId}/Property Database`;
   let globalSheetData = [];
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const modalElem = document.getElementById('searchModal');
-    if (modalElem) {
-      modalElem.addEventListener('shown.bs.modal', function () {
-        fetchSheetData();
-      });
-    }
+  // Firebase Realtime DB setup
+  const firebaseConfig = { databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com" };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    resetAutoFields();
+    // Auto-open reminders tab if requested or set initial state
+    loadRemindersDashboard();
   });
 
-  function getFieldValue(row, possibleKeys) {
-    if (!row) return '';
-    for (let key of possibleKeys) {
-      if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
-        return String(row[key]).trim();
-      }
-    }
-    const keys = Object.keys(row);
-    for (let key of keys) {
-      const lowerKey = key.trim().toLowerCase();
-      for (let pKey of possibleKeys) {
-        if (lowerKey === pKey.trim().toLowerCase() || lowerKey.includes(pKey.toLowerCase())) {
-          if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
-            return String(row[key]).trim();
-          }
-        }
-      }
-    }
-    return '';
+  function resetAutoFields() {
+    document.getElementById('buyerId').value = 'BUYER-' + Math.floor(1000 + Math.random() * 9000);
+    const d = new Date();
+    document.getElementById('inquiryDate').value = String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
   }
 
+  function handleExecutiveChange() {
+    const execVal = document.getElementById('activeExecutiveSelect').value;
+    document.getElementById('assignedExecId').value = execVal;
+    loadRemindersDashboard();
+  }
+
+  async function saveNewInquiry() {
+    const buyerId = document.getElementById('buyerId').value;
+    const personName = document.getElementById('personName').value;
+    const contactNumber = document.getElementById('contactNumber').value;
+    const nextFollowupTime = document.getElementById('nextFollowupTime').value;
+
+    if (!personName || !contactNumber || !nextFollowupTime) {
+      alert("Please complete required fields: Name, Phone, and Next Follow-up Date/Time.");
+      return;
+    }
+
+    const payload = {
+      buyerId: buyerId,
+      inquiryDate: document.getElementById('inquiryDate').value,
+      personName: personName,
+      contactNumber: contactNumber,
+      assignedExecId: document.getElementById('assignedExecId').value,
+      propertyType: document.getElementById('propertyType').value,
+      leadStatus: document.getElementById('leadStatus').value,
+      matchedPropIds: document.getElementById('matchedPropIds').value,
+      budgetLoc: document.getElementById('budgetLoc').value,
+      nextFollowupTime: nextFollowupTime,
+      contactMethod: document.getElementById('contactMethod').value,
+      actionRequired: document.getElementById('actionRequired').value,
+      discussionNotes: document.getElementById('discussionNotes').value,
+      completed: false
+    };
+
+    await db.ref('reminders/' + buyerId).set(payload);
+    alert("✅ Buyer Inquiry and Daily Follow-up Reminder Saved!");
+    document.getElementById('mainForm').reset();
+    resetAutoFields();
+  }
+
+  function loadRemindersDashboard() {
+    const activeExec = document.getElementById('activeExecutiveSelect').value;
+    document.getElementById('reminderTableTitle').innerText = `Daily Follow-up Reminders Due Today for ${activeExec}`;
+
+    db.ref('reminders').once('value', (snapshot) => {
+      const data = snapshot.val() || {};
+      const tbody = document.getElementById('remindersTableBody');
+      tbody.innerHTML = '';
+
+      let dueTodayCount = 0, completedCount = 0, visitsCount = 0, hotBuyersCount = 0, overdueCount = 0, bookingsCount = 0;
+      const now = new Date();
+
+      Object.values(data).forEach((item) => {
+        if (item.assignedExecId !== activeExec) return;
+
+        const followupDate = new Date(item.nextFollowupTime);
+        const isOverdue = followupDate < now && !item.completed;
+        const isToday = followupDate.toDateString() === now.toDateString();
+
+        if (isToday || isOverdue) dueTodayCount++;
+        if (isOverdue) overdueCount++;
+        if (item.completed) completedCount++;
+        if (item.contactMethod === 'Site Visit') visitsCount++;
+        if (item.leadStatus === 'Hot Buyer') hotBuyersCount++;
+        if (item.leadStatus === 'Booked') bookingsCount++;
+
+        let badgeClass = isOverdue ? 'bg-danger' : (item.completed ? 'bg-success' : 'bg-warning text-dark');
+        let statusText = isOverdue ? 'OVERDUE' : (item.completed ? 'Completed' : 'Pending');
+
+        tbody.innerHTML += `
+          <tr>
+            <td>
+              <span class="badge ${badgeClass}">${statusText}</span><br>
+              <small class="fw-bold">${item.nextFollowupTime.replace('T', ' ')}</small>
+            </td>
+            <td>
+              <strong>${item.personName}</strong> (${item.buyerId})<br>
+              <small class="text-muted">📞 ${item.contactNumber}</small>
+            </td>
+            <td><span class="badge bg-secondary">Props: ${item.matchedPropIds || 'None'}</span></td>
+            <td><strong>${item.actionRequired}</strong><br><small class="text-muted">via ${item.contactMethod}</small></td>
+            <td><small>${item.discussionNotes || 'No notes'}</small></td>
+            <td>
+              <button class="btn btn-sm btn-outline-success" onclick="markComplete('${item.buyerId}')">✓ Complete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('statDueToday').innerText = dueTodayCount;
+      document.getElementById('statCallsDone').innerText = completedCount;
+      document.getElementById('statVisits').innerText = visitsCount;
+      document.getElementById('statHotBuyers').innerText = hotBuyersCount;
+      document.getElementById('statOverdue').innerText = overdueCount;
+      document.getElementById('statBookings').innerText = bookingsCount;
+    });
+  }
+
+  async function markComplete(buyerId) {
+    await db.ref('reminders/' + buyerId).update({ completed: true });
+    loadRemindersDashboard();
+  }
+
+  // Google Sheet Fetch & Filter Logic
   function fetchSheetData() {
     if (globalSheetData.length > 0) return;
-
-    document.getElementById('searchStatus').innerText = "⏳ Loading database from Google Sheets...";
-
     fetch(sheetUri)
-      .then(res => {
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        if (!Array.isArray(data) || data.length === 0) {
-          fetchFallbackData();
-          return;
-        }
         globalSheetData = data;
-        document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} records successfully.`;
+        document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} properties from Google Sheets.`;
         renderSearchResults(data);
       })
       .catch(err => {
-        fetchFallbackData();
+        document.getElementById('searchStatus').innerText = "❌ Error loading Google Sheet data.";
       });
-  }
-
-  function fetchFallbackData() {
-    const fallbackUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-    fetch(fallbackUrl)
-      .then(r => r.text())
-      .then(txt => {
-        const json = JSON.parse(txt.substring(47, txt.length - 2));
-        const cols = json.table.cols.map(c => (c && c.label) ? c.label : '');
-        const rows = json.table.rows.map(r => {
-          let obj = {};
-          if (r.c) {
-            r.c.forEach((cell, idx) => {
-              const colName = cols[idx] || `Col_${idx}`;
-              obj[colName] = cell ? (cell.v !== null ? cell.v : '') : '';
-            });
-          }
-          return obj;
-        });
-        globalSheetData = rows;
-        document.getElementById('searchStatus').innerText = `✅ Loaded ${rows.length} records directly.`;
-        renderSearchResults(rows);
-      })
-      .catch(fallbackErr => {
-        document.getElementById('searchStatus').innerText = "❌ Unable to load sheet data. Check Google Sheet sharing permissions.";
-      });
-  }
-
-  function applyFilters() {
-    const typeVal = document.getElementById('filterType').value.trim().toLowerCase();
-    const dealVal = document.getElementById('filterDeal').value.trim().toLowerCase();
-    const areaVal = document.getElementById('filterArea').value.trim().toLowerCase();
-    const keywordVal = document.getElementById('filterKeyword').value.trim().toLowerCase();
-
-    const filtered = globalSheetData.filter(row => {
-      const rowType = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE', 'Type']).toLowerCase();
-      const rowDeal = getFieldValue(row, ['BUYER/SELLER/LANDLORD/TENANT/BTS', 'DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']).toLowerCase();
-      const rowArea = getFieldValue(row, ['AREA', 'Area', 'Location', 'AREA LIST']).toLowerCase();
-
-      const matchesType = !typeVal || rowType === typeVal || rowType.includes(typeVal);
-      const matchesDeal = !dealVal || rowDeal === dealVal || rowDeal.includes(dealVal);
-      const matchesArea = !areaVal || rowArea.includes(areaVal);
-
-      const matchesKeyword = !keywordVal || Object.values(row).some(val =>
-        String(val).toLowerCase().includes(keywordVal)
-      );
-
-      return matchesType && matchesDeal && matchesArea && matchesKeyword;
-    });
-
-    renderSearchResults(filtered);
-    document.getElementById('searchStatus').innerText = `Showing ${filtered.length} matching records.`;
-  }
-
-  function resetFilters() {
-    document.getElementById('filterType').value = "";
-    document.getElementById('filterDeal').value = "";
-    document.getElementById('filterArea').value = "";
-    document.getElementById('filterKeyword').value = "";
-    applyFilters();
   }
 
   function renderSearchResults(data) {
     const container = document.getElementById('searchResultsContainer');
-    if (!data || data.length === 0) {
-      container.innerHTML = `<p class="text-center text-muted my-3">No matching properties found.</p>`;
-      return;
-    }
-
-    let tableHtml = `<table class="table table-hover table-bordered table-custom mb-0">
-      <thead><tr>
-        <th>Action</th>
-        <th>ID</th>
-        <th>Type</th>
-        <th>Deal For</th>
-        <th>Area / Location</th>
-        <th>Contact / Owner</th>
-      </tr></thead><tbody>`;
-
-    data.forEach((row, index) => {
-      const id = getFieldValue(row, ['Property ID', 'SR NO', 'SR. NO', 'ID']) || (index + 1);
-      const type = getFieldValue(row, ['Type of Property', 'Property Type', 'TYPE', 'Type']) || '-';
-      const deal = getFieldValue(row, ['BUYER/SELLER/LANDLORD/TENANT/BTS', 'DEAL FOR', 'Deal For', 'REQUIREMENT', 'Requirement', 'Deal']);
-      const area = getFieldValue(row, ['AREA', 'Area', 'Location', 'AREA LIST']) || '-';
-      const contact = getFieldValue(row, ['Name', 'PERSON NAME', 'Owner Name', 'Mobile', 'Contact']) || '-';
-
-      const dealBadgeHtml = deal 
-        ? `<span class="badge bg-success">${deal}</span>` 
-        : `<span class="text-muted">-</span>`;
-
-      const safeId = String(id).replace(/'/g, "\\'");
-
-      tableHtml += `<tr>
-        <td class="text-center">
-          <button class="btn btn-sm btn-outline-success py-0 px-2 fw-bold" onclick="showRecordDetails('${safeId}')">👁️ View</button>
-        </td>
-        <td class="fw-bold">${id}</td>
-        <td>${type}</td>
-        <td>${dealBadgeHtml}</td>
-        <td>${area}</td>
-        <td>${contact}</td>
+    let html = `<table class="table table-hover border"><thead><tr><th>ID</th><th>Type</th><th>Deal For</th><th>Area</th><th>Contact</th></tr></thead><tbody>`;
+    data.forEach(row => {
+      html += `<tr>
+        <td>${row['Property ID'] || '-'}</td>
+        <td>${row['Type of Property'] || '-'}</td>
+        <td>${row['BUYER/SELLER/LANDLORD/TENANT/BTS'] || '-'}</td>
+        <td>${row['AREA'] || '-'}</td>
+        <td>${row['Name'] || '-'} (${row['Contact Number'] || '-'})</td>
       </tr>`;
     });
-
-    tableHtml += `</tbody></table>`;
-    container.innerHTML = tableHtml;
-  }
-
-  function showRecordDetails(propertyId) {
-    const record = globalSheetData.find(row => {
-      const rowId = getFieldValue(row, ['Property ID', 'SR NO', 'SR. NO', 'ID']);
-      return String(rowId).trim().toLowerCase() === String(propertyId).trim().toLowerCase();
-    });
-
-    if (!record) {
-      alert("Could not load details for ID: " + propertyId);
-      return;
-    }
-
-    let detailHtml = `<table class="table table-striped table-sm border"><tbody>`;
-    for (let key in record) {
-      if (record[key] !== undefined && record[key] !== null && String(record[key]).trim() !== '') {
-        detailHtml += `<tr>
-          <td class="detail-label">${key}</td>
-          <td>${record[key]}</td>
-        </tr>`;
-      }
-    }
-    detailHtml += `</tbody></table>`;
-
-    document.getElementById('fullDetailContent').innerHTML = detailHtml;
-    const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
-    detailModal.show();
+    html += `</tbody></table>`;
+    container.innerHTML = html;
   }
 </script>
-
 </body>
 </html>
