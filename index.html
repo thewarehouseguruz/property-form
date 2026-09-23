@@ -10,47 +10,47 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   
   <style>
-    body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; }
-    .header-card { background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%); color: #fff; border-radius: 12px; padding: 12px 15px; }
-    .card { border-radius: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; }
+    .header-card { background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%); color: #fff; border-radius: 10px; padding: 10px 12px; }
+    .card { border-radius: 10px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     
-    /* Mobile-Optimized Nav Pills */
-    .nav-pills { gap: 4px; display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 5px; }
-    .nav-pills .nav-link { white-space: nowrap; font-size: 0.85rem; padding: 8px 12px; border-radius: 20px; font-weight: 600; background-color: #e9ecef; color: #495057; }
+    /* Responsive Navigation Pills */
+    .nav-pills { gap: 4px; display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+    .nav-pills .nav-link { white-space: nowrap; font-size: 0.82rem; padding: 6px 12px; border-radius: 20px; font-weight: 600; background-color: #e9ecef; color: #495057; }
     .nav-pills .nav-link.active { background-color: #0d6efd; color: #fff; }
     
-    .section-header { background-color: #2c3e50; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; }
-    .btn-whatsapp-save { background-color: #25d366; color: white; font-weight: 700; font-size: 1rem; width: 100%; border-radius: 8px; padding: 12px; border: none; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+    .section-header { background-color: #2c3e50; color: #fff; padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; margin-bottom: 10px; }
+    .btn-whatsapp-save { background-color: #25d366; color: white; font-weight: 700; font-size: 0.95rem; width: 100%; border-radius: 8px; padding: 10px; border: none; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
     .btn-whatsapp-save:active { background-color: #1ebc57; transform: scale(0.98); }
     
-    /* Responsive Table Styles */
+    /* Responsive Mobile Cards Table */
     .table-mobile-card { width: 100%; }
     @media (max-width: 768px) {
-      .form-label { font-size: 0.8rem; margin-bottom: 2px; }
-      .form-control, .form-select { font-size: 0.85rem; padding: 6px 10px; }
+      .form-label { font-size: 0.78rem; margin-bottom: 2px; }
+      .form-control, .form-select { font-size: 0.82rem; padding: 5px 8px; }
       .table-mobile-card thead { display: none; }
-      .table-mobile-card tr { display: block; margin-bottom: 10px; border: 1px solid #dee2e6; border-radius: 8px; padding: 8px; background: #fff; }
-      .table-mobile-card td { display: flex; justify-content: space-between; border: none !important; padding: 4px 0 !important; font-size: 0.85rem; }
+      .table-mobile-card tr { display: block; margin-bottom: 8px; border: 1px solid #dee2e6; border-radius: 8px; padding: 8px; background: #fff; }
+      .table-mobile-card td { display: flex; justify-content: space-between; border: none !important; padding: 3px 0 !important; font-size: 0.82rem; }
       .table-mobile-card td::before { content: attr(data-label); font-weight: bold; color: #6c757d; }
     }
     
-    .timeline-step { border-left: 3px solid #0d6efd; padding-left: 12px; position: relative; margin-bottom: 15px; }
+    .timeline-step { border-left: 3px solid #0d6efd; padding-left: 10px; position: relative; margin-bottom: 12px; }
     .timeline-step::before { content: ''; width: 10px; height: 10px; background: #0d6efd; border-radius: 50%; position: absolute; left: -6.5px; top: 4px; }
   </style>
 </head>
 <body class="py-2">
 
-<div class="container-fluid px-2 px-md-3">
+<div class="container-fluid px-2">
 
-  <!-- Mobile Friendly Header -->
+  <!-- Mobile Header -->
   <div class="header-card mb-2">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h5 class="mb-0 fw-bold text-warning" style="font-size: 1.1rem;">THE WAREHOUSE GURUZ</h5>
-        <small class="text-light" style="font-size: 0.75rem;">Property & Reminders CRM</small>
+        <h6 class="mb-0 fw-bold text-warning" style="font-size: 1rem;">THE WAREHOUSE GURUZ</h6>
+        <small class="text-light" style="font-size: 0.7rem;">Property & Reminders CRM</small>
       </div>
       <div>
-        <select id="loggedExecutive" class="form-select form-select-sm fw-bold border-warning text-dark style="width: auto;">
+        <select id="loggedExecutive" class="form-select form-select-sm fw-bold text-dark style="width: auto;">
           <option value="Dipak Sir">Dipak Sir</option>
           <option value="Girish">Girish</option>
           <option value="Bhavik">Bhavik</option>
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <!-- Horizontal Scrollable Nav Tabs -->
+  <!-- Horizontal Scrollable Tabs -->
   <ul class="nav nav-pills mb-2" id="crmTabs" role="tablist">
     <li class="nav-item">
       <button class="nav-link active" id="inquiry-tab" data-bs-toggle="tab" data-bs-target="#inquiryView"><i class="bi bi-pencil-square"></i> 1. Inquiry</button>
@@ -68,7 +68,7 @@
       <button class="nav-link" id="search-tab" data-bs-toggle="tab" data-bs-target="#searchView" onclick="fetchSheetData()"><i class="bi bi-search"></i> 2. Search DB</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" id="flow-tab" data-bs-toggle="tab" data-bs-target="#flowView"><i class="bi bi-diagram-3"></i> 3. Reminders Flow</button>
+      <button class="nav-link" id="flow-tab" data-bs-toggle="tab" data-bs-target="#flowView" onclick="fetchSheetData()"><i class="bi bi-diagram-3"></i> 3. Reminders Flow</button>
     </li>
   </ul>
 
@@ -124,13 +124,13 @@
             </div>
           </div>
 
-          <div class="section-header"><i class="bi bi-geo-alt"></i> SPECIFICATIONS & AREA</div>
+          <div class="section-header"><i class="bi bi-geo-alt"></i> SPECIFICATIONS & LOCATION</div>
           <div class="row g-2 mb-2">
             <div class="col-12 col-md-4">
               <label class="form-label fw-bold">Property Size</label>
               <div class="input-group">
                 <input type="text" id="propertySize" class="form-control" placeholder="Size">
-                <select id="sizeUnit" class="form-select" style="max-width: 110px;">
+                <select id="sizeUnit" class="form-select" style="max-width: 100px;">
                   <option value="SQ.FT.">SQ.FT.</option>
                   <option value="SQ.YARDS">SQ.YARDS</option>
                   <option value="ACRES">ACRES</option>
@@ -143,18 +143,17 @@
             </div>
             <div class="col-12 col-md-4">
               <label class="form-label fw-bold">Budget / Rate</label>
-              <input type="text" id="budget" class="form-control" placeholder="e.g. 15 Per Sqft or 3.5 Cr">
+              <input type="text" id="budget" class="form-control" placeholder="e.g. 15 Per Sqft">
             </div>
             <div class="col-12">
-              <label class="form-label fw-bold">Remarks / Requirements</label>
-              <textarea id="remarks" class="form-control" rows="2" placeholder="Requirement details..."></textarea>
+              <label class="form-label fw-bold">Remarks</label>
+              <textarea id="remarks" class="form-control" rows="2" placeholder="Property requirements..."></textarea>
             </div>
           </div>
 
-          <!-- 1-CLICK SAVE & WHATSAPP BUTTON -->
-          <div class="mt-3">
+          <div class="mt-2">
             <button type="submit" class="btn btn-whatsapp-save">
-              <i class="bi bi-whatsapp"></i> SAVE DATA & SEND WHATSAPP
+              <i class="bi bi-whatsapp"></i> SAVE DATA & SEND WHATSAPP IN 1-CLICK
             </button>
           </div>
 
@@ -166,7 +165,6 @@
     <div class="tab-pane fade" id="searchView">
       <div class="card p-3">
         
-        <!-- Search Filters matching Excel -->
         <div class="row g-2 mb-2">
           <div class="col-6 col-md-3">
             <select id="filterType" class="form-select form-select-sm" onchange="applyFilters()">
@@ -190,7 +188,7 @@
             </select>
           </div>
           <div class="col-8 col-md-4">
-            <input type="text" id="filterKeyword" class="form-control form-control-sm" placeholder="Search ID, Name, Area..." onkeyup="applyFilters()">
+            <input type="text" id="filterKeyword" class="form-control form-control-sm" placeholder="Search Name, Phone, Area..." onkeyup="applyFilters()">
           </div>
           <div class="col-4 col-md-2">
             <button class="btn btn-sm btn-secondary w-100" onclick="resetFilters()">Reset</button>
@@ -202,12 +200,11 @@
       </div>
     </div>
 
-    <!-- TAB 3: FOLLOW-UP FLOWCHART & REMINDERS -->
+    <!-- TAB 3: REMINDERS FLOWCHART -->
     <div class="tab-pane fade" id="flowView">
       <div class="card p-3">
-        <div class="section-header"><i class="bi bi-diagram-3-fill"></i> EXECUTIVE FOLLOW-UP FLOWCHART</div>
+        <div class="section-header"><i class="bi bi-diagram-3-fill"></i> APPLICATION EXECUTIVE FOLLOW-UP FLOWCHART</div>
         
-        <!-- Reminder Entry Form -->
         <div class="bg-light p-2 rounded border mb-3">
           <div class="row g-2">
             <div class="col-6 col-md-3">
@@ -218,19 +215,32 @@
                 <option value="Bhavik">Bhavik</option>
               </select>
             </div>
-            <div class="col-6 col-md-3">
-              <label class="form-label fw-bold">Buyer/Tenant ID *</label>
-              <input type="text" id="flowBuyerId" class="form-control form-control-sm" placeholder="e.g. ID 7" required>
+            
+            <!-- SELECT BUYER / TENANT FROM DATABASE -->
+            <div class="col-12 col-md-5">
+              <label class="form-label fw-bold">Select Buyer / Tenant Client *</label>
+              <select id="flowBuyerSelect" class="form-select form-select-sm" required>
+                <option value="">⏳ Loading Buyer/Tenant List from Sheet...</option>
+              </select>
             </div>
-            <div class="col-12 col-md-3">
-              <label class="form-label fw-bold">Matched Property IDs *</label>
-              <input type="text" id="flowPropIds" class="form-control form-control-sm" placeholder="e.g. 8, 25, 35, 205" required>
+
+            <!-- MATCHED MULTIPLE PROPERTY IDS (MAX 5) -->
+            <div class="col-12">
+              <label class="form-label fw-bold">Matched Property IDs (Select Max 5 Properties) *</label>
+              <div class="row g-1">
+                <div class="col-4 col-md-2"><select id="matchProp1" class="form-select form-select-sm match-prop-dd"><option value="">ID 1</option></select></div>
+                <div class="col-4 col-md-2"><select id="matchProp2" class="form-select form-select-sm match-prop-dd"><option value="">ID 2</option></select></div>
+                <div class="col-4 col-md-2"><select id="matchProp3" class="form-select form-select-sm match-prop-dd"><option value="">ID 3</option></select></div>
+                <div class="col-6 col-md-3"><select id="matchProp4" class="form-select form-select-sm match-prop-dd"><option value="">ID 4</option></select></div>
+                <div class="col-6 col-md-3"><select id="matchProp5" class="form-select form-select-sm match-prop-dd"><option value="">ID 5</option></select></div>
+              </div>
             </div>
+
             <div class="col-6 col-md-3">
               <label class="form-label fw-bold">Visit Date</label>
               <input type="date" id="flowVisitDate" class="form-control form-control-sm">
             </div>
-            <div class="col-6 col-md-4">
+            <div class="col-6 col-md-3">
               <label class="form-label fw-bold">Status</label>
               <select id="flowStatus" class="form-select form-select-sm">
                 <option value="Shown">Shown</option>
@@ -239,11 +249,11 @@
                 <option value="Finalized">Finalized</option>
               </select>
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
               <label class="form-label fw-bold">Customer Response</label>
               <input type="text" id="flowResponse" class="form-control form-control-sm" placeholder="e.g. Will inform on 10/10/2026">
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
               <label class="form-label fw-bold">Next Follow-up Date *</label>
               <input type="date" id="flowNextDate" class="form-control form-control-sm" required>
             </div>
@@ -265,10 +275,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  // Sheet Configurations with Fallbacks
+  // Sheet URI Configuration
   const sheetId = "1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA";
   const sheetUriPrimary = `https://opensheet.elk.sh/${sheetId}/Property%20Database`;
-  const sheetUriFallback = `https://opensheet.elk.sh/${sheetId}/Sheet1`;
+  const sheetUriFallback = `https://opensheet.elk.sh/${sheetId}/1`;
 
   let globalSheetData = [];
   let followUpNodes = JSON.parse(localStorage.getItem('twg_reminders') || '[]');
@@ -287,9 +297,10 @@
     document.getElementById('inquiryDate').value = getFormattedDate();
     document.getElementById('flowVisitDate').valueAsDate = new Date();
     renderTimeline();
+    fetchSheetData();
   });
 
-  // 1-CLICK SAVE & DIRECT WHATSAPP SENDER
+  // SAVE & WHATSAPP SENDER
   function handleSaveAndWhatsApp() {
     const execName = document.getElementById('loggedExecutive').value;
     const propId = document.getElementById('propId').value;
@@ -304,7 +315,6 @@
     const budget = document.getElementById('budget').value || 'N/A';
     const remarks = document.getElementById('remarks').value || 'None';
 
-    // Local Record Sync
     const newRecord = {
       'Property ID': propId,
       'INQUIRY DATE': date,
@@ -321,7 +331,6 @@
     };
     globalSheetData.unshift(newRecord);
 
-    // Formatted WhatsApp Message
     let waText = `*THE WAREHOUSE GURUZ*\n`;
     waText += `*Inquiry ID:* ${propId} | *Date:* ${date}\n`;
     waText += `---------------------------------\n`;
@@ -339,20 +348,18 @@
     let cleanPhone = phone.replace(/\D/g, '');
     if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
-    // Reset Form for next entry
     document.getElementById('mainForm').reset();
     document.getElementById('propId').value = generateID();
     document.getElementById('inquiryDate').value = getFormattedDate();
 
-    // Trigger Direct WhatsApp Navigation
     const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(waText)}`;
     window.location.href = waUrl;
   }
 
-  // Fetch Google Sheet Data
+  // FETCH GOOGLE SHEET DATA
   function fetchSheetData() {
     if (globalSheetData.length > 1) return;
-    document.getElementById('searchStatus').innerText = "⏳ Reading Google Sheets Database...";
+    document.getElementById('searchStatus').innerText = "⏳ Loading database from Google Sheets...";
 
     fetch(sheetUriPrimary)
       .then(res => res.json())
@@ -362,8 +369,7 @@
           .then(res => res.json())
           .then(data => handleDataLoad(data))
           .catch(e => {
-            document.getElementById('searchStatus').innerText = "⚠️ Showing current session records.";
-            renderSearchResults(globalSheetData);
+            document.getElementById('searchStatus').innerText = "⚠️ Offline mode active.";
           });
       });
   }
@@ -371,11 +377,47 @@
   function handleDataLoad(data) {
     if(Array.isArray(data) && data.length > 0) {
       globalSheetData = data;
-      document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} records from Google Sheet.`;
+      document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} records.`;
       renderSearchResults(data);
+      populateBuyerDropdowns(data);
+      populatePropertyDropdowns(data);
     }
   }
 
+  // POPULATE BUYERS/TENANTS DROPDOWN
+  function populateBuyerDropdowns(data) {
+    const buyerSelect = document.getElementById('flowBuyerSelect');
+    buyerSelect.innerHTML = `<option value="">-- Select Buyer/Tenant Client --</option>`;
+
+    data.forEach(r => {
+      const deal = String(r['BUYER/SELLER/LANDLORD/TENANT/BTS'] || r['DEAL FOR'] || '').toUpperCase();
+      if(deal.includes('BUYER') || deal.includes('TENANT')) {
+        const id = r['Property ID'] || r['SR NO'] || 'N/A';
+        const name = r['Name'] || r['PERSON NAME'] || 'Unknown';
+        const company = r['Company Name'] || '';
+        const label = `ID: ${id} | ${name} ${company ? '(' + company + ')' : ''} [${deal}]`;
+        buyerSelect.innerHTML += `<option value="${id}">${label}</option>`;
+      }
+    });
+  }
+
+  // POPULATE MATCHING PROPERTY DROPDOWNS (MAX 5)
+  function populatePropertyDropdowns(data) {
+    const propertyDropdowns = document.querySelectorAll('.match-prop-dd');
+    
+    propertyDropdowns.forEach(dd => {
+      dd.innerHTML = `<option value="">None</option>`;
+      data.forEach(r => {
+        const id = r['Property ID'] || r['SR NO'] || 'N/A';
+        const type = r['Type of Property'] || r['TYPE'] || '';
+        const area = r['Area'] || r['AREA'] || '';
+        const label = `ID ${id} - ${type} (${area})`;
+        dd.innerHTML += `<option value="${id}">${label}</option>`;
+      });
+    });
+  }
+
+  // SEARCH FILTER LOGIC
   function renderSearchResults(data) {
     const container = document.getElementById('searchResultsContainer');
     if (!data || data.length === 0) {
@@ -385,7 +427,7 @@
 
     let html = `<table class="table table-sm table-hover table-mobile-card mb-0">
       <thead class="table-dark"><tr>
-        <th>ID</th><th>Type</th><th>Deal For</th><th>Area</th><th>Client</th><th>Contact</th><th>Action</th>
+        <th>ID</th><th>Type</th><th>Deal For</th><th>Area</th><th>Client</th><th>Contact</th>
       </tr></thead><tbody>`;
 
     data.forEach(row => {
@@ -403,9 +445,6 @@
         <td data-label="Area">${pArea}</td>
         <td data-label="Client">${pName}</td>
         <td data-label="Contact">${pPhone}</td>
-        <td data-label="Action">
-          <button class="btn btn-sm btn-outline-primary py-0" onclick="useInReminder('${pId}')">➕ Reminder</button>
-        </td>
       </tr>`;
     });
 
@@ -413,25 +452,21 @@
     container.innerHTML = html;
   }
 
-  function useInReminder(propId) {
-    document.getElementById('flowPropIds').value = propId;
-    const triggerTab = new bootstrap.Tab(document.getElementById('flow-tab'));
-    triggerTab.show();
-  }
-
   function applyFilters() {
-    const typeVal = document.getElementById('filterType').value.toLowerCase();
-    const dealVal = document.getElementById('filterDeal').value.toLowerCase();
-    const keyVal = document.getElementById('filterKeyword').value.toLowerCase();
+    const typeVal = document.getElementById('filterType').value.trim().toLowerCase();
+    const dealVal = document.getElementById('filterDeal').value.trim().toLowerCase();
+    const keyVal = document.getElementById('filterKeyword').value.trim().toLowerCase();
 
     const filtered = globalSheetData.filter(r => {
       const type = String(r['Type of Property'] || r['TYPE'] || '').toLowerCase();
       const deal = String(r['BUYER/SELLER/LANDLORD/TENANT/BTS'] || r['DEAL FOR'] || '').toLowerCase();
       const all = Object.values(r).join(' ').toLowerCase();
 
-      return (!typeVal || type === typeVal) &&
-             (!dealVal || deal === dealVal) &&
-             (!keyVal || all.includes(keyVal));
+      const matchType = !typeVal || type.includes(typeVal);
+      const matchDeal = !dealVal || deal.includes(dealVal);
+      const matchKey = !keyVal || all.includes(keyVal);
+
+      return matchType && matchDeal && matchKey;
     });
 
     renderSearchResults(filtered);
@@ -447,24 +482,32 @@
   // REMINDERS FLOWCHART LOGIC
   function addFollowupEntry() {
     const exec = document.getElementById('flowExec').value;
-    const buyerId = document.getElementById('flowBuyerId').value;
-    const propIds = document.getElementById('flowPropIds').value;
+    const buyerId = document.getElementById('flowBuyerSelect').value;
+    
+    // Collect non-empty matched property IDs (Max 5)
+    let selectedProps = [];
+    for(let i=1; i<=5; i++) {
+      const val = document.getElementById(`matchProp${i}`).value;
+      if(val) selectedProps.push(val);
+    }
+
+    const propIdsStr = selectedProps.join(', ');
     const visitDate = document.getElementById('flowVisitDate').value;
     const status = document.getElementById('flowStatus').value;
     const response = document.getElementById('flowResponse').value;
     const nextDate = document.getElementById('flowNextDate').value;
 
-    if (!buyerId || !propIds || !nextDate) {
-      alert("Please enter Buyer ID, Property ID, and Next Follow-up Date.");
+    if (!buyerId || selectedProps.length === 0 || !nextDate) {
+      alert("Please select Buyer Client, at least 1 Matched Property ID, and Next Date.");
       return;
     }
 
-    const node = { exec, buyerId, propIds, visitDate, status, response, nextDate, created: new Date().toLocaleDateString() };
+    const node = { exec, buyerId, propIds: propIdsStr, visitDate, status, response, nextDate, created: new Date().toLocaleDateString() };
     followUpNodes.unshift(node);
     localStorage.setItem('twg_reminders', JSON.stringify(followUpNodes));
 
     renderTimeline();
-    alert("✅ Added to Follow-up Flowchart!");
+    alert("✅ Follow-up flowchart node added!");
   }
 
   function renderTimeline() {
@@ -483,7 +526,7 @@
           <small class="text-muted">${node.created}</small>
         </div>
         <div class="fw-bold mt-1">START: Buyer/Tenant ID: ${node.buyerId}</div>
-        <div class="text-success fw-semibold">MATCHED: Property IDs: ${node.propIds}</div>
+        <div class="text-success fw-semibold">MATCH LIST SELECTED: Property IDs: ${node.propIds}</div>
         <div class="mt-1">
           📅 <strong>Visit (${node.visitDate}):</strong> Status: <span class="badge bg-info text-dark">${node.status}</span>
         </div>
@@ -491,7 +534,7 @@
           💬 <strong>Response:</strong> "${node.response || 'Pending'}"
         </div>
         <div class="mt-1 bg-warning bg-opacity-25 p-2 rounded border border-warning">
-          🔔 <strong>REMINDER:</strong> <u>${node.nextDate}</u> | Call Buyer ID ${node.buyerId}
+          🔔 <strong>FOLLOW-UP REMINDER SET:</strong> <u>${node.nextDate}</u> | Call Buyer ID ${node.buyerId}
         </div>
       </div>`;
     });
