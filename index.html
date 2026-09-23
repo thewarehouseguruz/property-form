@@ -3,420 +3,873 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Warehouse Guruz - CRM & Property Management</title>
-  
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
+  <title>THE WAREHOUSE GURUZ - Property Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .nav-pills .nav-link.active { background-color: #1a252f; color: white; font-weight: bold; }
-    .nav-pills .nav-link { color: #2c3e50; font-weight: 600; border: 1px solid #dee2e6; margin-right: 5px; }
-    .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: none; }
-    .card-header { background-color: #1a252f; color: #fff; border-radius: 12px 12px 0 0 !important; font-weight: bold; }
-    .section-header { background-color: #2c3e50; color: #fff; padding: 8px 15px; border-radius: 6px; font-weight: 600; margin-bottom: 15px; }
-    .stat-card { border-left: 4px solid #1a252f; border-radius: 8px; }
-    .stat-card-danger { border-left-color: #dc3545; }
-    .stat-card-warning { border-left-color: #ffc107; }
-    .stat-card-success { border-left-color: #198754; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+    }
+    .custom-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
   </style>
 </head>
-<body class="py-3">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
-<div class="container-fluid px-4">
-  
-  <!-- App Header & Navigation Bar -->
-  <div class="card mb-3">
-    <div class="card-header d-flex justify-content-between align-items-center py-2">
-      <h4 class="mb-0">THE WAREHOUSE GURUZ</h4>
-      <div class="d-flex align-items-center gap-2">
-        <label class="text-white small fw-bold mb-0">Logged Executive:</label>
-        <select id="activeExecutiveSelect" class="form-select form-select-sm" style="width: 180px;" onchange="handleExecutiveChange()">
-          <option value="EXEC-1">Executive 1 (Rajesh)</option>
-          <option value="EXEC-2">Executive 2 (Amit)</option>
-          <option value="EXEC-3" selected>Executive 3 (Vikram)</option>
+  <div class="max-w-4xl mx-auto w-full px-3 py-4 sm:px-6 sm:py-6 flex-grow">
+
+    <!-- TOP BRAND HEADER -->
+    <header class="bg-slate-900 text-white rounded-t-xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-md">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-black tracking-wider text-amber-400 uppercase leading-none">THE WAREHOUSE GURUZ</h1>
+        <p class="text-xs text-slate-400 mt-1">Property Management & Leads Dashboard</p>
+      </div>
+
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+        <div class="text-right text-xs">
+          <span class="text-slate-400 block sm:inline">Logged Executive:</span>
+        </div>
+        <select id="loggedExecutiveSelect" class="bg-slate-800 border border-slate-700 text-white text-xs sm:text-sm rounded-lg p-2 focus:ring-2 focus:ring-amber-400 outline-none">
+          <option value="Executive 1 (Rahul)">Executive 1 (Rahul)</option>
+          <option value="Executive 2 (Neha)">Executive 2 (Neha)</option>
+          <option value="Executive 3 (Vikram)" selected>Executive 3 (Vikram)</option>
+          <option value="Executive 4 (Amit)">Executive 4 (Amit)</option>
         </select>
+        <button onclick="toggleSettingsModal()" title="Google Sheets API Settings" class="bg-slate-800 hover:bg-slate-700 text-amber-400 p-2 rounded-lg border border-slate-700 transition">
+          <i class="fas fa-cog"></i>
+        </button>
       </div>
-    </div>
-    <div class="card-body py-2">
-      <ul class="nav nav-pills nav-fill" id="mainTabs" role="tablist">
-        <li class="nav-item">
-          <button class="nav-link active" id="tab-inquiry-tab" data-bs-toggle="pill" data-bs-target="#tab-inquiry" type="button">📝 1. Inquiry Form</button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link" id="tab-search-tab" data-bs-toggle="pill" data-bs-target="#tab-search" type="button" onclick="fetchSheetData()">🔍 2. Search Property</button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link" id="tab-reminders-tab" data-bs-toggle="pill" data-bs-target="#tab-reminders" type="button" onclick="loadRemindersDashboard()">⏰ 3. Reminders & Dashboard</button>
-        </li>
-      </ul>
-    </div>
-  </div>
+    </header>
 
-  <div class="tab-content" id="mainTabsContent">
+    <!-- MAIN NAVIGATION ACTION BUTTONS -->
+    <nav class="bg-white p-2 border-x border-b border-slate-200 rounded-b-xl mb-5 shadow-sm grid grid-cols-3 gap-2">
+      <button id="navBtn-1" onclick="switchTab('inquiry')" class="nav-tab text-xs sm:text-sm font-semibold py-3 px-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition flex items-center justify-center gap-1.5 text-slate-700">
+        <span class="text-base">📝</span> <span>1. Inquiry Form</span>
+      </button>
+      <button id="navBtn-2" onclick="switchTab('search')" class="nav-tab text-xs sm:text-sm font-semibold py-3 px-2 rounded-lg border border-slate-900 bg-slate-900 text-white transition flex items-center justify-center gap-1.5 shadow">
+        <span class="text-base">🔍</span> <span>2. Search Property</span>
+      </button>
+      <button id="navBtn-3" onclick="switchTab('reminders')" class="nav-tab text-xs sm:text-sm font-semibold py-3 px-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition flex items-center justify-center gap-1.5 text-slate-700">
+        <span class="text-base">⏰</span> <span>3. Reminders & Dashboard</span>
+      </button>
+    </nav>
 
-    <!-- TAB 1: INQUIRY FORM -->
-    <div class="tab-pane fade show active" id="tab-inquiry" role="tabpanel">
-      <div class="card">
-        <div class="card-body p-4">
-          <form id="mainForm" onsubmit="event.preventDefault();">
-            <div class="section-header">1. BUYER & BASIC DETAILS</div>
-            <div class="row g-3 mb-3">
-              <div class="col-md-3">
-                <label class="form-label fw-bold">Buyer ID</label>
-                <input type="text" id="buyerId" class="form-control" readonly>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label fw-bold">Inquiry Date</label>
-                <input type="text" id="inquiryDate" class="form-control" readonly>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label fw-bold">Person Name *</label>
-                <input type="text" id="personName" class="form-control" required placeholder="Buyer Name">
-              </div>
-              <div class="col-md-3">
-                <label class="form-label fw-bold">Contact Number *</label>
-                <input type="tel" id="contactNumber" class="form-control" required placeholder="10-digit Mobile">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Assigned Executive ID</label>
-                <select id="assignedExecId" class="form-select">
-                  <option value="EXEC-1">Executive 1 (Rajesh)</option>
-                  <option value="EXEC-2">Executive 2 (Amit)</option>
-                  <option value="EXEC-3" selected>Executive 3 (Vikram)</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Property Type</label>
-                <select id="propertyType" class="form-select">
-                  <option value="WAREHOUSE">WAREHOUSE</option>
-                  <option value="INDUSTRIAL SHED">INDUSTRIAL SHED</option>
-                  <option value="LAND">LAND</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Lead Status</label>
-                <select id="leadStatus" class="form-select">
-                  <option value="New Lead">New Lead</option>
-                  <option value="Hot Buyer">Hot Buyer</option>
-                  <option value="Follow-up Pending">Follow-up Pending</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="section-header">2. MATCHED PROPERTIES (Relational Link)</div>
-            <div class="row g-3 mb-3">
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Select Matched Property IDs</label>
-                <input type="text" id="matchedPropIds" class="form-control" placeholder="e.g. 8, 15, 30">
-                <small class="text-muted">Link multiple Property IDs separated by commas.</small>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Budget & Location Preference</label>
-                <input type="text" id="budgetLoc" class="form-control" placeholder="e.g. 50 Lacs - Changodar/Aslali">
-              </div>
-            </div>
-
-            <div class="section-header">3. INITIAL FOLLOW-UP & REMINDER SCHEDULE</div>
-            <div class="row g-3 mb-4">
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Next Follow-up Date & Time *</label>
-                <input type="datetime-local" id="nextFollowupTime" class="form-control" required>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Contact Method</label>
-                <select id="contactMethod" class="form-select">
-                  <option value="Call">Call</option>
-                  <option value="WhatsApp">WhatsApp</option>
-                  <option value="Site Visit">Site Visit</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Action Required</label>
-                <select id="actionRequired" class="form-select">
-                  <option value="Send Details">Send Details</option>
-                  <option value="Site Visit Suggested">Site Visit Suggested</option>
-                  <option value="Negotiation">Negotiation</option>
-                </select>
-              </div>
-              <div class="col-md-12">
-                <label class="form-label fw-bold">Discussion Notes</label>
-                <textarea id="discussionNotes" class="form-control" rows="2" placeholder="Enter notes..."></textarea>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-outline-danger fw-bold" onclick="clearForm()">Clear Form</button>
-              <button type="button" class="btn btn-success fw-bold" onclick="saveNewInquiry()">💾 Save Inquiry & Set Reminder</button>
-            </div>
-          </form>
-        </div>
-      </div>
+    <!-- STATUS NOTIFICATION BAR -->
+    <div id="syncStatusBanner" class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-2 rounded-lg mb-4 text-xs sm:text-sm flex justify-between items-center">
+      <span id="syncStatusText"><i class="fas fa-database text-blue-500 mr-1.5"></i> Working on Local Database (Connect Google Sheets in Settings <i class="fas fa-cog"></i>)</span>
+      <span id="syncBadge" class="bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded font-mono">LOCAL STATE</span>
     </div>
 
-    <!-- TAB 2: SEARCH PROPERTY -->
-    <div class="tab-pane fade" id="tab-search" role="tabpanel">
-      <div class="card">
-        <div class="card-body p-4">
-          <div class="row g-2 mb-3">
-            <div class="col-md-3">
-              <input type="text" id="filterType" class="form-control" placeholder="Property Type" onkeyup="applyFilters()">
-            </div>
-            <div class="col-md-3">
-              <input type="text" id="filterDeal" class="form-control" placeholder="Deal For" onkeyup="applyFilters()">
-            </div>
-            <div class="col-md-3">
-              <input type="text" id="filterArea" class="form-control" placeholder="Area / Location" onkeyup="applyFilters()">
-            </div>
-            <div class="col-md-3 d-flex gap-1">
-              <input type="text" id="filterKeyword" class="form-control" placeholder="Keyword Search" onkeyup="applyFilters()">
-              <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
-            </div>
-          </div>
-
-          <div id="searchStatus" class="small text-muted mb-2">⏳ Loading Google Sheets database...</div>
-          <div class="table-responsive" id="searchResultsContainer"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: REMINDERS & DAILY EXECUTIVE REPORT -->
-    <div class="tab-pane fade" id="tab-reminders" role="tabpanel">
+    <!-- ================= SECTION 1: INQUIRY FORM ================= -->
+    <section id="section-inquiry" class="tab-content hidden bg-white rounded-xl p-5 sm:p-6 border border-slate-200 custom-shadow mb-6">
+      <h2 class="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+        <i class="fas fa-file-signature text-amber-500"></i> New Property / Lead Inquiry Form
+      </h2>
       
-      <!-- Executive Summary Cards -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-2">
-          <div class="card p-3 stat-card stat-card-danger bg-white">
-            <small class="text-muted fw-bold">DUE TODAY / OVERDUE</small>
-            <h3 id="statDueToday" class="text-danger mb-0">0</h3>
+      <form id="inquiryForm" onsubmit="handleInquirySubmit(event)" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Client Name *</label>
+            <input type="text" id="inqClientName" required placeholder="e.g. Rajesh Kumar" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Client Phone / Contact *</label>
+            <input type="tel" id="inqClientPhone" required placeholder="e.g. +91 9876543210" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
           </div>
         </div>
-        <div class="col-md-2">
-          <div class="card p-3 stat-card bg-white">
-            <small class="text-muted fw-bold">CALLS COMPLETED</small>
-            <h3 id="statCallsDone" class="text-dark mb-0">0</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Property Type *</label>
+            <select id="inqPropertyType" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+              <option value="WAREHOUSE">Warehouse</option>
+              <option value="LAND">Land</option>
+              <option value="INDUSTRIAL">Industrial</option>
+              <option value="COMMERCIAL">Commercial</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Deal For *</label>
+            <select id="inqDealFor" required class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+              <option value="TENANT">Tenant</option>
+              <option value="BUYER">Buyer</option>
+              <option value="SELLER">Seller</option>
+              <option value="LEASE">Lease</option>
+            </select>
           </div>
         </div>
-        <div class="col-md-2">
-          <div class="card p-3 stat-card stat-card-warning bg-white">
-            <small class="text-muted fw-bold">SITE VISITS</small>
-            <h3 id="statVisits" class="text-warning mb-0">0</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Area / Location *</label>
+            <input type="text" id="inqLocation" required placeholder="e.g. Changodar, Ahmedabad" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Budget / Price Range</label>
+            <input type="text" id="inqBudget" placeholder="e.g. ₹ 2.5 Lakhs/month or ₹ 1.5 Cr" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
           </div>
         </div>
-        <div class="col-md-2">
-          <div class="card p-3 stat-card bg-white">
-            <small class="text-muted fw-bold">HOT BUYERS</small>
-            <h3 id="statHotBuyers" class="text-primary mb-0">0</h3>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Requirements / Specific Notes</label>
+          <textarea id="inqNotes" rows="3" placeholder="e.g. Requires 20,000 sq ft RCC shed with 30ft height..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="document.getElementById('inquiryForm').reset()" class="px-4 py-2 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-600 font-semibold hover:bg-slate-100 transition">Reset</button>
+          <button type="submit" class="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-xs sm:text-sm shadow transition">Save Inquiry Entry</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= SECTION 2: SEARCH PROPERTY ================= -->
+    <section id="section-search" class="tab-content bg-white rounded-xl p-5 sm:p-6 border border-slate-200 custom-shadow mb-6">
+      
+      <!-- SEARCH FILTER PANEL -->
+      <div class="space-y-3 mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- PROPERTY TYPE DROPDOWN -->
+          <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">Property Type</label>
+            <select id="searchTypeSelect" onchange="applyFilters()" class="w-full p-2.5 text-sm border border-blue-200 focus:border-blue-500 rounded-lg bg-blue-50/30 text-slate-800 outline-none transition">
+              <option value="">All Property Types</option>
+              <option value="WAREHOUSE">Warehouse</option>
+              <option value="LAND">Land</option>
+              <option value="INDUSTRIAL">Industrial</option>
+              <option value="COMMERCIAL">Commercial</option>
+            </select>
+          </div>
+
+          <!-- DEAL FOR DROPDOWN -->
+          <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">Deal For</label>
+            <select id="searchDealSelect" onchange="applyFilters()" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg bg-slate-50 text-slate-800 outline-none focus:ring-2 focus:ring-slate-300">
+              <option value="">All Deals</option>
+              <option value="TENANT">Tenant</option>
+              <option value="BUYER">Buyer</option>
+              <option value="SELLER">Seller</option>
+              <option value="LEASE">Lease</option>
+            </select>
+          </div>
+
+          <!-- AREA/LOCATION FIELD -->
+          <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">Area / Location</label>
+            <input type="text" id="searchLocationInput" oninput="applyFilters()" placeholder="Filter Location..." class="w-full p-2.5 text-sm border border-slate-200 rounded-lg bg-slate-50 text-slate-800 outline-none focus:ring-2 focus:ring-slate-300">
           </div>
         </div>
-        <div class="col-md-2">
-          <div class="card p-3 stat-card stat-card-danger bg-white">
-            <small class="text-muted fw-bold">OVERDUE FOLLOW-UPS</small>
-            <h3 id="statOverdue" class="text-danger mb-0">0</h3>
+
+        <!-- KEYWORD & RESET ROW -->
+        <div class="flex gap-2">
+          <div class="relative flex-grow">
+            <input type="text" id="searchKeywordInput" oninput="applyFilters()" placeholder="Keyword Search (ID, Client, Notes)..." class="w-full p-2.5 pl-9 text-sm border border-slate-200 rounded-lg bg-white outline-none focus:ring-2 focus:ring-amber-400">
+            <i class="fas fa-search absolute left-3 top-3.5 text-slate-400 text-xs"></i>
           </div>
-        </div>
-        <div class="col-md-2">
-          <div class="card p-3 stat-card stat-card-success bg-white">
-            <small class="text-muted fw-bold">BOOKINGS</small>
-            <h3 id="statBookings" class="text-success mb-0">0</h3>
-          </div>
+          <button onclick="resetFilters()" class="bg-slate-600 hover:bg-slate-700 text-white font-semibold px-4 py-2.5 rounded-lg text-sm transition flex items-center gap-1.5 shadow-sm">
+            <i class="fas fa-undo text-xs"></i> Reset
+          </button>
         </div>
       </div>
 
-      <!-- Action Reminders Table -->
-      <div class="card">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-          <span id="reminderTableTitle">Daily Follow-up Reminders Due Today</span>
-          <button class="btn btn-sm btn-light fw-bold" onclick="loadRemindersDashboard()">🔄 Refresh Reminders</button>
+      <!-- PROPERTY COUNT STATUS -->
+      <div id="propertyCountBadge" class="mb-4 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg flex items-center gap-2">
+        <i class="fas fa-check-circle text-emerald-600"></i> <span id="propertyCountText">Loaded properties from database.</span>
+      </div>
+
+      <!-- RESULTS TABLE -->
+      <div class="overflow-x-auto rounded-lg border border-slate-200">
+        <table class="w-full text-left text-xs sm:text-sm border-collapse">
+          <thead class="bg-slate-900 text-slate-200 font-semibold uppercase tracking-wider text-[11px]">
+            <tr>
+              <th class="p-3 border-b">ID</th>
+              <th class="p-3 border-b">Type</th>
+              <th class="p-3 border-b">Deal For</th>
+              <th class="p-3 border-b">Area / Location</th>
+              <th class="p-3 border-b">Client / Executive</th>
+              <th class="p-3 border-b text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="propertyTableBody" class="divide-y divide-slate-200 bg-white">
+            <!-- Dynamic Rows rendered via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 3: REMINDERS & DASHBOARD ================= -->
+    <section id="section-reminders" class="tab-content hidden bg-white rounded-xl p-5 sm:p-6 border border-slate-200 custom-shadow mb-6">
+      
+      <!-- DASHBOARD SUMMARY METRICS -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div class="bg-slate-900 text-white p-3.5 rounded-lg">
+          <div class="text-xs text-slate-400 uppercase font-bold">Total Properties</div>
+          <div id="statTotalProps" class="text-2xl font-black text-amber-400 mt-1">0</div>
         </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Time / Status</th>
-                  <th>Buyer ID & Name</th>
-                  <th>Matched Properties</th>
-                  <th>Action Required</th>
-                  <th>Notes</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="remindersTableBody">
-                <!-- Live reminder records will be generated here -->
-              </tbody>
-            </table>
-          </div>
+        <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-lg">
+          <div class="text-xs text-amber-700 uppercase font-bold">Active Reminders</div>
+          <div id="statActiveReminders" class="text-2xl font-black text-amber-900 mt-1">0</div>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-lg">
+          <div class="text-xs text-emerald-700 uppercase font-bold">Completed Tasks</div>
+          <div id="statCompletedReminders" class="text-2xl font-black text-emerald-800 mt-1">0</div>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-lg">
+          <div class="text-xs text-indigo-700 uppercase font-bold">Total Inquiries</div>
+          <div id="statTotalInquiries" class="text-2xl font-black text-indigo-900 mt-1">0</div>
         </div>
       </div>
 
-    </div>
+      <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fas fa-bell text-amber-500"></i> Follow-up Reminders List
+        </h2>
+        <button onclick="openNewReminderModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5">
+          <i class="fas fa-plus text-amber-400"></i> Add Reminder
+        </button>
+      </div>
+
+      <!-- REMINDERS TABLE -->
+      <div class="overflow-x-auto rounded-lg border border-slate-200">
+        <table class="w-full text-left text-xs sm:text-sm border-collapse">
+          <thead class="bg-slate-100 text-slate-700 font-semibold uppercase text-[11px]">
+            <tr>
+              <th class="p-3 border-b">Status</th>
+              <th class="p-3 border-b">Task / Reminder</th>
+              <th class="p-3 border-b">Assigned Executive</th>
+              <th class="p-3 border-b">Due Date</th>
+              <th class="p-3 border-b text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reminderTableBody" class="divide-y divide-slate-200 bg-white">
+            <!-- Dynamic Reminders rendered via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
 
   </div>
-</div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- FOOTER -->
+  <footer class="text-center text-xs text-slate-500 py-4 border-t border-slate-200 bg-white">
+    THE WAREHOUSE GURUZ © 2026 | Property Management System
+  </footer>
 
-<script>
-  // Active Google Sheet configuration
-  const sheetId = "1dV8evDNt52N9sv8IhbbxJ2cLbL_6W0AreglNB81X5k0";
-  const sheetUri = `https://opensheet.elk.sh/${sheetId}/Property Database`;
-  let globalSheetData = [];
+  <!-- ================= MODALS & DRAWERS ================= -->
 
-  // Firebase Realtime DB setup
-  const firebaseConfig = { databaseURL: "https://thewarehouseguruz-default-rtdb.firebaseio.com" };
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  <!-- EDIT PROPERTY MODAL -->
+  <div id="editPropertyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">Edit Property Details (ID: <span id="modalPropId"></span>)</h3>
+        <button onclick="closeModal('editPropertyModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <form id="editPropertyForm" onsubmit="savePropertyEdit(event)" class="space-y-3 mt-4">
+        <input type="hidden" id="editPropIndex">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Property Type</label>
+          <select id="editPropType" class="w-full p-2 text-sm border rounded-lg bg-white">
+            <option value="WAREHOUSE">Warehouse</option>
+            <option value="LAND">Land</option>
+            <option value="INDUSTRIAL">Industrial</option>
+            <option value="COMMERCIAL">Commercial</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Deal For</label>
+          <select id="editPropDeal" class="w-full p-2 text-sm border rounded-lg bg-white">
+            <option value="TENANT">Tenant</option>
+            <option value="BUYER">Buyer</option>
+            <option value="SELLER">Seller</option>
+            <option value="LEASE">Lease</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Area / Location</label>
+          <input type="text" id="editPropLocation" required class="w-full p-2 text-sm border rounded-lg">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Budget / Price</label>
+          <input type="text" id="editPropBudget" class="w-full p-2 text-sm border rounded-lg">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Client Name / Contact</label>
+          <input type="text" id="editPropClient" required class="w-full p-2 text-sm border rounded-lg">
+        </div>
 
-  document.addEventListener("DOMContentLoaded", () => {
-    resetAutoFields();
-    // Auto-open reminders tab if requested or set initial state
-    loadRemindersDashboard();
-  });
+        <div class="flex justify-end gap-2 pt-3">
+          <button type="button" onclick="closeModal('editPropertyModal')" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-xs">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  function resetAutoFields() {
-    document.getElementById('buyerId').value = 'BUYER-' + Math.floor(1000 + Math.random() * 9000);
-    const d = new Date();
-    document.getElementById('inquiryDate').value = String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
-  }
+  <!-- EDIT / ADD REMINDER MODAL -->
+  <div id="editReminderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+        <h3 id="reminderModalTitle" class="text-base font-bold text-slate-900">Edit Reminder / Follow-up</h3>
+        <button onclick="closeModal('editReminderModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+      </div>
 
-  function handleExecutiveChange() {
-    const execVal = document.getElementById('activeExecutiveSelect').value;
-    document.getElementById('assignedExecId').value = execVal;
-    loadRemindersDashboard();
-  }
+      <form id="reminderForm" onsubmit="saveReminderSubmit(event)" class="space-y-3 mt-4">
+        <input type="hidden" id="editReminderId">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Task / Description *</label>
+          <textarea id="remText" required rows="3" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-amber-400 outline-none"></textarea>
+        </div>
 
-  async function saveNewInquiry() {
-    const buyerId = document.getElementById('buyerId').value;
-    const personName = document.getElementById('personName').value;
-    const contactNumber = document.getElementById('contactNumber').value;
-    const nextFollowupTime = document.getElementById('nextFollowupTime').value;
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned Executive *</label>
+          <select id="remExec" class="w-full p-2 text-sm border rounded-lg bg-white">
+            <option value="Executive 1 (Rahul)">Executive 1 (Rahul)</option>
+            <option value="Executive 2 (Neha)">Executive 2 (Neha)</option>
+            <option value="Executive 3 (Vikram)">Executive 3 (Vikram)</option>
+            <option value="Executive 4 (Amit)">Executive 4 (Amit)</option>
+          </select>
+        </div>
 
-    if (!personName || !contactNumber || !nextFollowupTime) {
-      alert("Please complete required fields: Name, Phone, and Next Follow-up Date/Time.");
-      return;
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Due Date *</label>
+            <input type="date" id="remDate" required class="w-full p-2 text-sm border rounded-lg">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Status *</label>
+            <select id="remStatus" class="w-full p-2 text-sm border rounded-lg bg-white">
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+              <option value="Deferred">Deferred</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3">
+          <button type="button" onclick="closeModal('editReminderModal')" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg text-xs">Save Reminder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- GOOGLE SHEETS / DRIVE CONFIGURATION MODAL -->
+  <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fab fa-google-drive text-emerald-600"></i> Google Drive / Sheets Backend Setup
+        </h3>
+        <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Google Apps Script Web App URL</label>
+          <input type="url" id="googleScriptUrlInput" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+          <p class="text-[11px] text-slate-500 mt-1">Paste your deployed Google Apps Script URL here to enable saving data directly into Google Drive Sheets.</p>
+        </div>
+
+        <div class="flex gap-2">
+          <button onclick="saveGoogleScriptUrl()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition">Save Endpoint URL</button>
+          <button onclick="syncDataFromBackend()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg transition"><i class="fas fa-sync mr-1"></i> Sync Now</button>
+        </div>
+
+        <hr class="my-4 border-slate-200">
+
+        <!-- GOOGLE APPS SCRIPT CODE GENERATOR SECTION -->
+        <div class="bg-slate-900 text-slate-200 rounded-lg p-4 text-xs">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold text-amber-400 flex items-center gap-1.5"><i class="fas fa-code"></i> Copy Google Apps Script Code:</span>
+            <button onclick="copyAppsScriptCode()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 px-3 py-1 rounded text-[11px] font-semibold border border-slate-700">
+              <i class="fas fa-copy mr-1"></i> Copy Code
+            </button>
+          </div>
+          <p class="text-slate-400 mb-2">Instructions: Open your Google Sheet -> Extensions -> Apps Script -> Paste code below -> Deploy as Web App (Execute as: Me, Access: Anyone).</p>
+          
+          <textarea id="appsScriptCodeText" readonly rows="8" class="w-full bg-slate-950 text-emerald-400 p-2.5 rounded border border-slate-800 font-mono text-[11px] leading-relaxed outline-none"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // INITIAL SAMPLE DATA
+    const initialProperties = [
+      { id: 1, type: 'WAREHOUSE', dealFor: 'TENANT', location: 'Changodar, Ahmedabad', budget: '₹ 2.2 L / month', client: 'Shree Logistics (Rajesh)', executive: 'Executive 3 (Vikram)' },
+      { id: 2, type: 'LAND', dealFor: 'BUYER', location: 'Sanand GIDC, Ahmedabad', budget: '₹ 3.5 Cr', client: 'Apex Infra (Sanjay)', executive: 'Executive 1 (Rahul)' },
+      { id: 3, type: 'INDUSTRIAL', dealFor: 'LEASE', location: 'Bavla Highway', budget: '₹ 1.8 L / month', client: 'Rohan Polymers', executive: 'Executive 2 (Neha)' },
+      { id: 4, type: 'COMMERCIAL', dealFor: 'SELLER', location: 'S.G. Highway', budget: '₹ 1.2 Cr', client: 'Vikram Desai', executive: 'Executive 3 (Vikram)' },
+      { id: 5, type: 'WAREHOUSE', dealFor: 'TENANT', location: 'Aslali Bypass', budget: '₹ 1.5 L / month', client: 'Green Express', executive: 'Executive 4 (Amit)' }
+    ];
+
+    const initialReminders = [
+      { id: 101, text: 'Follow up with Shree Logistics regarding Changodar agreement copy', exec: 'Executive 3 (Vikram)', date: '2026-09-25', status: 'Pending' },
+      { id: 102, text: 'Arrange site visit at Sanand Land plot with Apex Infra team', exec: 'Executive 1 (Rahul)', date: '2026-09-24', status: 'Pending' },
+      { id: 103, text: 'Confirm token payment for Aslali Warehouse lease', exec: 'Executive 4 (Amit)', date: '2026-09-20', status: 'Completed' }
+    ];
+
+    // STATE VARIABLES
+    let propertiesData = [];
+    let remindersData = [];
+    let googleScriptUrl = localStorage.getItem('warehouse_script_url') || '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load saved state or default sample data
+      const savedProps = localStorage.getItem('warehouse_props');
+      const savedRems = localStorage.getItem('warehouse_rems');
+
+      propertiesData = savedProps ? JSON.parse(savedProps) : initialProperties;
+      remindersData = savedRems ? JSON.parse(savedRems) : initialReminders;
+
+      if (googleScriptUrl) {
+        document.getElementById('googleScriptUrlInput').value = googleScriptUrl;
+        updateSyncBanner(true, 'Connected to Google Sheets Web App');
+      }
+
+      setupAppsScriptCode();
+      applyFilters();
+      renderReminders();
+      updateDashboardStats();
+    });
+
+    // NAVIGATION SYSTEM
+    function switchTab(tabKey) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`section-${tabKey}`).classList.remove('hidden');
+
+      // Update button styling
+      const tabs = ['inquiry', 'search', 'reminders'];
+      tabs.forEach((key, idx) => {
+        const btn = document.getElementById(`navBtn-${idx + 1}`);
+        if (key === tabKey) {
+          btn.className = 'nav-tab text-xs sm:text-sm font-semibold py-3 px-2 rounded-lg border border-slate-900 bg-slate-900 text-white transition flex items-center justify-center gap-1.5 shadow';
+        } else {
+          btn.className = 'nav-tab text-xs sm:text-sm font-semibold py-3 px-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition flex items-center justify-center gap-1.5 text-slate-700';
+        }
+      });
     }
 
-    const payload = {
-      buyerId: buyerId,
-      inquiryDate: document.getElementById('inquiryDate').value,
-      personName: personName,
-      contactNumber: contactNumber,
-      assignedExecId: document.getElementById('assignedExecId').value,
-      propertyType: document.getElementById('propertyType').value,
-      leadStatus: document.getElementById('leadStatus').value,
-      matchedPropIds: document.getElementById('matchedPropIds').value,
-      budgetLoc: document.getElementById('budgetLoc').value,
-      nextFollowupTime: nextFollowupTime,
-      contactMethod: document.getElementById('contactMethod').value,
-      actionRequired: document.getElementById('actionRequired').value,
-      discussionNotes: document.getElementById('discussionNotes').value,
-      completed: false
-    };
+    // SEARCH & FILTERING ENGINE
+    function applyFilters() {
+      const typeVal = document.getElementById('searchTypeSelect').value.toUpperCase();
+      const dealVal = document.getElementById('searchDealSelect').value.toUpperCase();
+      const locVal = document.getElementById('searchLocationInput').value.toLowerCase().trim();
+      const kwVal = document.getElementById('searchKeywordInput').value.toLowerCase().trim();
 
-    await db.ref('reminders/' + buyerId).set(payload);
-    alert("✅ Buyer Inquiry and Daily Follow-up Reminder Saved!");
-    document.getElementById('mainForm').reset();
-    resetAutoFields();
-  }
+      const filtered = propertiesData.filter(item => {
+        const matchType = !typeVal || item.type.toUpperCase() === typeVal;
+        const matchDeal = !dealVal || item.dealFor.toUpperCase() === dealVal;
+        const matchLoc = !locVal || item.location.toLowerCase().includes(locVal);
+        
+        const fullString = `${item.id} ${item.type} ${item.dealFor} ${item.location} ${item.client} ${item.executive}`.toLowerCase();
+        const matchKw = !kwVal || fullString.includes(kwVal);
 
-  function loadRemindersDashboard() {
-    const activeExec = document.getElementById('activeExecutiveSelect').value;
-    document.getElementById('reminderTableTitle').innerText = `Daily Follow-up Reminders Due Today for ${activeExec}`;
+        return matchType && matchDeal && matchLoc && matchKw;
+      });
 
-    db.ref('reminders').once('value', (snapshot) => {
-      const data = snapshot.val() || {};
-      const tbody = document.getElementById('remindersTableBody');
-      tbody.innerHTML = '';
+      renderPropertyTable(filtered);
+    }
 
-      let dueTodayCount = 0, completedCount = 0, visitsCount = 0, hotBuyersCount = 0, overdueCount = 0, bookingsCount = 0;
-      const now = new Date();
+    function resetFilters() {
+      document.getElementById('searchTypeSelect').value = '';
+      document.getElementById('searchDealSelect').value = '';
+      document.getElementById('searchLocationInput').value = '';
+      document.getElementById('searchKeywordInput').value = '';
+      applyFilters();
+    }
 
-      Object.values(data).forEach((item) => {
-        if (item.assignedExecId !== activeExec) return;
+    function renderPropertyTable(dataList) {
+      const tbody = document.getElementById('propertyTableBody');
+      const badgeText = document.getElementById('propertyCountText');
 
-        const followupDate = new Date(item.nextFollowupTime);
-        const isOverdue = followupDate < now && !item.completed;
-        const isToday = followupDate.toDateString() === now.toDateString();
+      badgeText.innerText = `Loaded ${dataList.length} properties from ${googleScriptUrl ? 'Google Sheets' : 'Local Database'}.`;
 
-        if (isToday || isOverdue) dueTodayCount++;
-        if (isOverdue) overdueCount++;
-        if (item.completed) completedCount++;
-        if (item.contactMethod === 'Site Visit') visitsCount++;
-        if (item.leadStatus === 'Hot Buyer') hotBuyersCount++;
-        if (item.leadStatus === 'Booked') bookingsCount++;
+      if (dataList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">No matching properties found. Try resetting filters.</td></tr>`;
+        return;
+      }
 
-        let badgeClass = isOverdue ? 'bg-danger' : (item.completed ? 'bg-success' : 'bg-warning text-dark');
-        let statusText = isOverdue ? 'OVERDUE' : (item.completed ? 'Completed' : 'Pending');
-
-        tbody.innerHTML += `
-          <tr>
-            <td>
-              <span class="badge ${badgeClass}">${statusText}</span><br>
-              <small class="fw-bold">${item.nextFollowupTime.replace('T', ' ')}</small>
+      tbody.innerHTML = dataList.map((item) => {
+        const indexInMaster = propertiesData.findIndex(p => p.id === item.id);
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-3 font-mono font-bold text-slate-700">#${item.id}</td>
+            <td class="p-3">
+              <span class="px-2 py-0.5 text-[11px] font-bold rounded ${getTypeBadge(item.type)}">${item.type}</span>
             </td>
-            <td>
-              <strong>${item.personName}</strong> (${item.buyerId})<br>
-              <small class="text-muted">📞 ${item.contactNumber}</small>
+            <td class="p-3">
+              <span class="px-2 py-0.5 text-[11px] font-semibold rounded bg-slate-100 text-slate-800">${item.dealFor}</span>
             </td>
-            <td><span class="badge bg-secondary">Props: ${item.matchedPropIds || 'None'}</span></td>
-            <td><strong>${item.actionRequired}</strong><br><small class="text-muted">via ${item.contactMethod}</small></td>
-            <td><small>${item.discussionNotes || 'No notes'}</small></td>
-            <td>
-              <button class="btn btn-sm btn-outline-success" onclick="markComplete('${item.buyerId}')">✓ Complete</button>
+            <td class="p-3 font-medium text-slate-800">
+              ${item.location}
+              <div class="text-[11px] text-slate-400">${item.budget || 'N/A'}</div>
+            </td>
+            <td class="p-3 text-xs">
+              <div class="font-semibold text-slate-800">${item.client}</div>
+              <div class="text-slate-400">${item.executive || 'Unassigned'}</div>
+            </td>
+            <td class="p-3 text-center">
+              <button onclick="openEditPropertyModal(${indexInMaster})" class="text-slate-700 hover:text-amber-600 bg-slate-100 hover:bg-amber-50 p-1.5 rounded transition mr-1" title="Edit Property">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="quickAddReminder('${item.client}', '${item.location}')" class="text-slate-700 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 p-1.5 rounded transition" title="Add Follow-up Reminder">
+                <i class="fas fa-bell"></i>
+              </button>
             </td>
           </tr>
         `;
-      });
+      }).join('');
+    }
 
-      document.getElementById('statDueToday').innerText = dueTodayCount;
-      document.getElementById('statCallsDone').innerText = completedCount;
-      document.getElementById('statVisits').innerText = visitsCount;
-      document.getElementById('statHotBuyers').innerText = hotBuyersCount;
-      document.getElementById('statOverdue').innerText = overdueCount;
-      document.getElementById('statBookings').innerText = bookingsCount;
-    });
-  }
+    function getTypeBadge(type) {
+      switch (type) {
+        case 'WAREHOUSE': return 'bg-amber-100 text-amber-900 border border-amber-300';
+        case 'LAND': return 'bg-emerald-100 text-emerald-900 border border-emerald-300';
+        case 'INDUSTRIAL': return 'bg-indigo-100 text-indigo-900 border border-indigo-300';
+        default: return 'bg-purple-100 text-purple-900 border border-purple-300';
+      }
+    }
 
-  async function markComplete(buyerId) {
-    await db.ref('reminders/' + buyerId).update({ completed: true });
-    loadRemindersDashboard();
-  }
+    // INQUIRY FORM SUBMISSION
+    function handleInquirySubmit(e) {
+      e.preventDefault();
+      const currentExec = document.getElementById('loggedExecutiveSelect').value;
 
-  // Google Sheet Fetch & Filter Logic
-  function fetchSheetData() {
-    if (globalSheetData.length > 0) return;
-    fetch(sheetUri)
-      .then(res => res.json())
-      .then(data => {
-        globalSheetData = data;
-        document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} properties from Google Sheets.`;
-        renderSearchResults(data);
-      })
-      .catch(err => {
-        document.getElementById('searchStatus').innerText = "❌ Error loading Google Sheet data.";
-      });
-  }
+      const newProp = {
+        id: propertiesData.length > 0 ? Math.max(...propertiesData.map(p => p.id)) + 1 : 1,
+        type: document.getElementById('inqPropertyType').value,
+        dealFor: document.getElementById('inqDealFor').value,
+        location: document.getElementById('inqLocation').value,
+        budget: document.getElementById('inqBudget').value,
+        client: `${document.getElementById('inqClientName').value} (${document.getElementById('inqClientPhone').value})`,
+        executive: currentExec
+      };
 
-  function renderSearchResults(data) {
-    const container = document.getElementById('searchResultsContainer');
-    let html = `<table class="table table-hover border"><thead><tr><th>ID</th><th>Type</th><th>Deal For</th><th>Area</th><th>Contact</th></tr></thead><tbody>`;
-    data.forEach(row => {
-      html += `<tr>
-        <td>${row['Property ID'] || '-'}</td>
-        <td>${row['Type of Property'] || '-'}</td>
-        <td>${row['BUYER/SELLER/LANDLORD/TENANT/BTS'] || '-'}</td>
-        <td>${row['AREA'] || '-'}</td>
-        <td>${row['Name'] || '-'} (${row['Contact Number'] || '-'})</td>
-      </tr>`;
-    });
-    html += `</tbody></table>`;
-    container.innerHTML = html;
+      propertiesData.unshift(newProp);
+      saveStateLocally();
+      syncWithBackend('ADD_PROPERTY', newProp);
+
+      document.getElementById('inquiryForm').reset();
+      alert('New Inquiry saved successfully!');
+      switchTab('search');
+      applyFilters();
+      updateDashboardStats();
+    }
+
+    // PROPERTY EDIT MODAL LOGIC
+    function openEditPropertyModal(index) {
+      const item = propertiesData[index];
+      document.getElementById('editPropIndex').value = index;
+      document.getElementById('modalPropId').innerText = item.id;
+      document.getElementById('editPropType').value = item.type;
+      document.getElementById('editPropDeal').value = item.dealFor;
+      document.getElementById('editPropLocation').value = item.location;
+      document.getElementById('editPropBudget').value = item.budget || '';
+      document.getElementById('editPropClient').value = item.client;
+
+      document.getElementById('editPropertyModal').classList.remove('hidden');
+    }
+
+    function savePropertyEdit(e) {
+      e.preventDefault();
+      const index = document.getElementById('editPropIndex').value;
+      
+      propertiesData[index].type = document.getElementById('editPropType').value;
+      propertiesData[index].dealFor = document.getElementById('editPropDeal').value;
+      propertiesData[index].location = document.getElementById('editPropLocation').value;
+      propertiesData[index].budget = document.getElementById('editPropBudget').value;
+      propertiesData[index].client = document.getElementById('editPropClient').value;
+
+      saveStateLocally();
+      syncWithBackend('UPDATE_PROPERTY', propertiesData[index]);
+      closeModal('editPropertyModal');
+      applyFilters();
+    }
+
+    // REMINDERS & DASHBOARD LOGIC
+    function renderReminders() {
+      const tbody = document.getElementById('reminderTableBody');
+      if (remindersData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 font-medium">No reminders active.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = remindersData.map((item) => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3">
+            <span class="px-2 py-0.5 text-[11px] font-bold rounded ${getStatusBadge(item.status)}">${item.status}</span>
+          </td>
+          <td class="p-3 font-medium text-slate-800">
+            ${item.text}
+          </td>
+          <td class="p-3 text-xs text-slate-600">
+            ${item.exec}
+          </td>
+          <td class="p-3 text-xs font-mono text-slate-700">
+            ${item.date}
+          </td>
+          <td class="p-3 text-center">
+            <button onclick="openEditReminderModal(${item.id})" class="text-slate-700 hover:text-amber-600 bg-slate-100 hover:bg-amber-50 p-1.5 rounded transition mr-1" title="Edit Reminder">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="toggleReminderStatus(${item.id})" class="text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 p-1.5 rounded transition" title="Toggle Done/Pending">
+              <i class="fas fa-check"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function getStatusBadge(status) {
+      switch (status) {
+        case 'Completed': return 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+        case 'Deferred': return 'bg-slate-100 text-slate-700 border border-slate-300';
+        default: return 'bg-amber-100 text-amber-900 border border-amber-300';
+      }
+    }
+
+    function openNewReminderModal() {
+      document.getElementById('reminderModalTitle').innerText = 'Add New Reminder';
+      document.getElementById('editReminderId').value = '';
+      document.getElementById('remText').value = '';
+      document.getElementById('remExec').value = document.getElementById('loggedExecutiveSelect').value;
+      document.getElementById('remDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('remStatus').value = 'Pending';
+
+      document.getElementById('editReminderModal').classList.remove('hidden');
+    }
+
+    function openEditReminderModal(id) {
+      const item = remindersData.find(r => r.id === id);
+      if (!item) return;
+
+      document.getElementById('reminderModalTitle').innerText = 'Edit Reminder / Follow-up';
+      document.getElementById('editReminderId').value = item.id;
+      document.getElementById('remText').value = item.text;
+      document.getElementById('remExec').value = item.exec;
+      document.getElementById('remDate').value = item.date;
+      document.getElementById('remStatus').value = item.status;
+
+      document.getElementById('editReminderModal').classList.remove('hidden');
+    }
+
+    function quickAddReminder(clientName, location) {
+      switchTab('reminders');
+      openNewReminderModal();
+      document.getElementById('remText').value = `Follow-up with ${clientName} for property at ${location}`;
+    }
+
+    function saveReminderSubmit(e) {
+      e.preventDefault();
+      const remId = document.getElementById('editReminderId').value;
+      const text = document.getElementById('remText').value;
+      const exec = document.getElementById('remExec').value;
+      const date = document.getElementById('remDate').value;
+      const status = document.getElementById('remStatus').value;
+
+      if (remId) {
+        // EDIT EXISTING
+        const item = remindersData.find(r => r.id === parseInt(remId));
+        if (item) {
+          item.text = text;
+          item.exec = exec;
+          item.date = date;
+          item.status = status;
+          syncWithBackend('UPDATE_REMINDER', item);
+        }
+      } else {
+        // ADD NEW
+        const newRem = {
+          id: remindersData.length > 0 ? Math.max(...remindersData.map(r => r.id)) + 1 : 101,
+          text, exec, date, status
+        };
+        remindersData.unshift(newRem);
+        syncWithBackend('ADD_REMINDER', newRem);
+      }
+
+      saveStateLocally();
+      closeModal('editReminderModal');
+      renderReminders();
+      updateDashboardStats();
+    }
+
+    function toggleReminderStatus(id) {
+      const item = remindersData.find(r => r.id === id);
+      if (item) {
+        item.status = item.status === 'Completed' ? 'Pending' : 'Completed';
+        saveStateLocally();
+        syncWithBackend('UPDATE_REMINDER', item);
+        renderReminders();
+        updateDashboardStats();
+      }
+    }
+
+    function updateDashboardStats() {
+      document.getElementById('statTotalProps').innerText = propertiesData.length;
+      document.getElementById('statActiveReminders').innerText = remindersData.filter(r => r.status === 'Pending').length;
+      document.getElementById('statCompletedReminders').innerText = remindersData.filter(r => r.status === 'Completed').length;
+      document.getElementById('statTotalInquiries').innerText = propertiesData.length;
+    }
+
+    // STATE STORAGE & GOOGLE APPS SCRIPT SYNC
+    function saveStateLocally() {
+      localStorage.setItem('warehouse_props', JSON.stringify(propertiesData));
+      localStorage.setItem('warehouse_rems', JSON.stringify(remindersData));
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function toggleSettingsModal() {
+      const modal = document.getElementById('settingsModal');
+      modal.classList.toggle('hidden');
+    }
+
+    function saveGoogleScriptUrl() {
+      const url = document.getElementById('googleScriptUrlInput').value.trim();
+      googleScriptUrl = url;
+      localStorage.setItem('warehouse_script_url', url);
+      updateSyncBanner(!!url, url ? 'Connected to Google Sheets API' : 'Working on Local Database');
+      alert('Google Apps Script URL saved!');
+    }
+
+    function updateSyncBanner(isConnected, msg) {
+      const banner = document.getElementById('syncStatusBanner');
+      const badge = document.getElementById('syncBadge');
+      const text = document.getElementById('syncStatusText');
+
+      text.innerHTML = `<i class="fas fa-database text-blue-500 mr-1.5"></i> ${msg}`;
+      if (isConnected) {
+        badge.className = "bg-emerald-200 text-emerald-800 text-xs px-2 py-0.5 rounded font-mono";
+        badge.innerText = "GOOGLE SHEETS SYNC";
+      } else {
+        badge.className = "bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded font-mono";
+        badge.innerText = "LOCAL STATE";
+      }
+    }
+
+    async function syncWithBackend(action, payload) {
+      if (!googleScriptUrl) return;
+
+      try {
+        await fetch(googleScriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, payload })
+        });
+      } catch (err) {
+        console.warn('Google Sync request sent:', err);
+      }
+    }
+
+    async function syncDataFromBackend() {
+      if (!googleScriptUrl) {
+        alert('Please enter a valid Google Apps Script Web App URL first.');
+        return;
+      }
+
+      try {
+        const resp = await fetch(googleScriptUrl);
+        const data = await resp.json();
+        if (data.properties) propertiesData = data.properties;
+        if (data.reminders) remindersData = data.reminders;
+
+        saveStateLocally();
+        applyFilters();
+        renderReminders();
+        updateDashboardStats();
+        alert('Data synced successfully from Google Sheets!');
+      } catch (err) {
+        alert('Failed to fetch from Google Apps Script. Check endpoint URL and permissions.');
+      }
+    }
+
+    // CODE GENERATOR FOR GOOGLE APPS SCRIPT
+    function setupAppsScriptCode() {
+      const scriptCode = `// --- PASTE THIS CODE INTO GOOGLE SHEETS APPS SCRIPT --- //
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var propSheet = ss.getSheetByName('Properties') || ss.insertSheet('Properties');
+  var remSheet = ss.getSheetByName('Reminders') || ss.insertSheet('Reminders');
+  
+  var props = getRowsData(propSheet);
+  var rems = getRowsData(remSheet);
+  
+  return ContentService.createTextOutput(JSON.stringify({ properties: props, reminders: rems }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  if (data.action === 'ADD_PROPERTY' || data.action === 'UPDATE_PROPERTY') {
+    var sheet = ss.getSheetByName('Properties') || ss.insertSheet('Properties');
+    appendOrUpdateRow(sheet, data.payload);
+  } else if (data.action === 'ADD_REMINDER' || data.action === 'UPDATE_REMINDER') {
+    var sheet = ss.getSheetByName('Reminders') || ss.insertSheet('Reminders');
+    appendOrUpdateRow(sheet, data.payload);
   }
-</script>
+  
+  return ContentService.createTextOutput(JSON.stringify({ result: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function appendOrUpdateRow(sheet, obj) {
+  var data = sheet.getDataRange().getValues();
+  if (data.length === 0) {
+    sheet.appendRow(Object.keys(obj));
+    data = sheet.getDataRange().getValues();
+  }
+  var headers = data[0];
+  var rowIdx = -1;
+  
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] == obj.id) { rowIdx = i + 1; break; }
+  }
+  
+  var rowData = headers.map(function(h) { return obj[h] !== undefined ? obj[h] : ''; });
+  if (rowIdx > 0) {
+    sheet.getRange(rowIdx, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+  }
+}
+
+function getRowsData(sheet) {
+  var data = sheet.getDataRange().getValues();
+  if (data.length < 2) return [];
+  var headers = data[0];
+  var result = [];
+  for (var i = 1; i < data.length; i++) {
+    var item = {};
+    for (var j = 0; j < headers.length; j++) {
+      item[headers[j]] = data[i][j];
+    }
+    result.push(item);
+  }
+  return result;
+}`;
+
+      document.getElementById('appsScriptCodeText').value = scriptCode;
+    }
+
+    function copyAppsScriptCode() {
+      const codeArea = document.getElementById('appsScriptCodeText');
+      codeArea.select();
+      document.execCommand('copy');
+      alert('Google Apps Script code copied to clipboard!');
+    }
+  </script>
 </body>
 </html>
