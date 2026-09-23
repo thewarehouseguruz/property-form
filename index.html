@@ -2,37 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Warehouse Guruz - Property CRM & Reminders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Warehouse Guruz - CRM & Reminders</title>
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   
   <style>
-    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .header-card { background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%); color: #fff; border-radius: 12px; }
-    .card { border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .section-header { background-color: #2c3e50; color: #fff; padding: 10px 15px; border-radius: 8px; font-weight: 600; margin-bottom: 15px; }
-    .btn-whatsapp-save { background-color: #25d366; color: white; font-weight: 700; font-size: 1.1rem; border-radius: 8px; }
-    .btn-whatsapp-save:hover { background-color: #1ebc57; color: white; }
-    .timeline-step { border-left: 3px solid #0d6efd; padding-left: 15px; position: relative; margin-bottom: 20px; }
-    .timeline-step::before { content: ''; width: 12px; height: 12px; background: #0d6efd; border-radius: 50%; position: absolute; left: -7.5px; top: 4px; }
-    .badge-exec { font-size: 0.9rem; padding: 6px 12px; }
+    body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; }
+    .header-card { background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%); color: #fff; border-radius: 12px; padding: 12px 15px; }
+    .card { border-radius: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    
+    /* Mobile-Optimized Nav Pills */
+    .nav-pills { gap: 4px; display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 5px; }
+    .nav-pills .nav-link { white-space: nowrap; font-size: 0.85rem; padding: 8px 12px; border-radius: 20px; font-weight: 600; background-color: #e9ecef; color: #495057; }
+    .nav-pills .nav-link.active { background-color: #0d6efd; color: #fff; }
+    
+    .section-header { background-color: #2c3e50; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; }
+    .btn-whatsapp-save { background-color: #25d366; color: white; font-weight: 700; font-size: 1rem; width: 100%; border-radius: 8px; padding: 12px; border: none; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+    .btn-whatsapp-save:active { background-color: #1ebc57; transform: scale(0.98); }
+    
+    /* Responsive Table Styles */
+    .table-mobile-card { width: 100%; }
+    @media (max-width: 768px) {
+      .form-label { font-size: 0.8rem; margin-bottom: 2px; }
+      .form-control, .form-select { font-size: 0.85rem; padding: 6px 10px; }
+      .table-mobile-card thead { display: none; }
+      .table-mobile-card tr { display: block; margin-bottom: 10px; border: 1px solid #dee2e6; border-radius: 8px; padding: 8px; background: #fff; }
+      .table-mobile-card td { display: flex; justify-content: space-between; border: none !important; padding: 4px 0 !important; font-size: 0.85rem; }
+      .table-mobile-card td::before { content: attr(data-label); font-weight: bold; color: #6c757d; }
+    }
+    
+    .timeline-step { border-left: 3px solid #0d6efd; padding-left: 12px; position: relative; margin-bottom: 15px; }
+    .timeline-step::before { content: ''; width: 10px; height: 10px; background: #0d6efd; border-radius: 50%; position: absolute; left: -6.5px; top: 4px; }
   </style>
 </head>
-<body class="py-3">
+<body class="py-2">
 
-<div class="container-fluid px-md-4">
-  <!-- Header Block -->
-  <div class="card header-card p-3 mb-4">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+<div class="container-fluid px-2 px-md-3">
+
+  <!-- Mobile Friendly Header -->
+  <div class="header-card mb-2">
+    <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h3 class="mb-0 fw-bold text-warning">THE WAREHOUSE GURUZ</h3>
-        <small class="text-light">Property Inquiry, Database & Follow-up CRM</small>
+        <h5 class="mb-0 fw-bold text-warning" style="font-size: 1.1rem;">THE WAREHOUSE GURUZ</h5>
+        <small class="text-light" style="font-size: 0.75rem;">Property & Reminders CRM</small>
       </div>
-      <div class="d-flex align-items-center gap-2">
-        <label class="fw-bold text-light mb-0">Logged Executive:</label>
-        <select id="loggedExecutive" class="form-select fw-bold border-warning text-dark style="width: auto;">
+      <div>
+        <select id="loggedExecutive" class="form-select form-select-sm fw-bold border-warning text-dark style="width: auto;">
           <option value="Dipak Sir">Dipak Sir</option>
           <option value="Girish">Girish</option>
           <option value="Bhavik">Bhavik</option>
@@ -41,16 +59,16 @@
     </div>
   </div>
 
-  <!-- Navigation Tabs -->
-  <ul class="nav nav-pills mb-4 gap-2" id="crmTabs" role="tablist">
+  <!-- Horizontal Scrollable Nav Tabs -->
+  <ul class="nav nav-pills mb-2" id="crmTabs" role="tablist">
     <li class="nav-item">
-      <button class="nav-link active fw-bold px-4" id="inquiry-tab" data-bs-toggle="tab" data-bs-target="#inquiryView">📝 1. Inquiry Form</button>
+      <button class="nav-link active" id="inquiry-tab" data-bs-toggle="tab" data-bs-target="#inquiryView"><i class="bi bi-pencil-square"></i> 1. Inquiry</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link fw-bold px-4" id="search-tab" data-bs-toggle="tab" data-bs-target="#searchView" onclick="fetchSheetData()">🔍 2. Search Database</button>
+      <button class="nav-link" id="search-tab" data-bs-toggle="tab" data-bs-target="#searchView" onclick="fetchSheetData()"><i class="bi bi-search"></i> 2. Search DB</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link fw-bold px-4" id="flow-tab" data-bs-toggle="tab" data-bs-target="#flowView">📊 3. Follow-up Flowchart & Reminders</button>
+      <button class="nav-link" id="flow-tab" data-bs-toggle="tab" data-bs-target="#flowView"><i class="bi bi-diagram-3"></i> 3. Reminders Flow</button>
     </li>
   </ul>
 
@@ -58,82 +76,85 @@
     
     <!-- TAB 1: INQUIRY FORM -->
     <div class="tab-pane fade show active" id="inquiryView">
-      <div class="card p-4">
+      <div class="card p-3">
         <form id="mainForm" onsubmit="event.preventDefault(); handleSaveAndWhatsApp();">
           
-          <div class="section-header">1. BASIC DETAILS</div>
-          <div class="row g-3 mb-3">
-            <div class="col-md-3">
-              <label class="form-label fw-bold">Property ID</label>
+          <div class="section-header"><i class="bi bi-person-vcard"></i> BASIC DETAILS</div>
+          <div class="row g-2 mb-2">
+            <div class="col-6 col-md-3">
+              <label class="form-label fw-bold">Prop ID</label>
               <input type="text" id="propId" class="form-control bg-light" readonly>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3">
               <label class="form-label fw-bold">Inquiry Date</label>
               <input type="text" id="inquiryDate" class="form-control bg-light" readonly>
             </div>
-            <div class="col-md-3">
-              <label class="form-label fw-bold">Person Name *</label>
-              <input type="text" id="personName" class="form-control" required placeholder="Enter Client Name">
+            <div class="col-12 col-md-3">
+              <label class="form-label fw-bold">Client Name *</label>
+              <input type="text" id="personName" class="form-control" required placeholder="Enter Full Name">
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-md-3">
               <label class="form-label fw-bold">Contact Number *</label>
               <input type="tel" id="contactNumber" class="form-control" required placeholder="10-digit Mobile">
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
               <label class="form-label fw-bold">Company Name</label>
               <input type="text" id="companyName" class="form-control" placeholder="Company Name">
             </div>
-            <div class="col-md-4">
+            <div class="col-6 col-md-4">
               <label class="form-label fw-bold">Property Type</label>
               <select id="propertyType" class="form-select">
                 <option value="WAREHOUSE">WAREHOUSE</option>
-                <option value="INDUSTRIAL SHED">INDUSTRIAL SHED</option>
                 <option value="LAND">LAND</option>
-                <option value="COMMERCIAL OFFICE">COMMERCIAL OFFICE</option>
+                <option value="FACTORY">FACTORY</option>
+                <option value="BUNGLOW">BUNGLOW</option>
+                <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
               </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-6 col-md-4">
               <label class="form-label fw-bold">Deal For</label>
               <select id="dealFor" class="form-select">
                 <option value="BUYER">BUYER</option>
                 <option value="TENANT">TENANT</option>
                 <option value="LANDLORD">LANDLORD</option>
                 <option value="SELLER">SELLER</option>
+                <option value="BTS">BTS</option>
+                <option value="PRE-LEASE">PRE-LEASE</option>
               </select>
             </div>
           </div>
 
-          <div class="section-header">2. SPECIFICATIONS & LOCATION</div>
-          <div class="row g-3 mb-3">
-            <div class="col-md-4">
+          <div class="section-header"><i class="bi bi-geo-alt"></i> SPECIFICATIONS & AREA</div>
+          <div class="row g-2 mb-2">
+            <div class="col-12 col-md-4">
               <label class="form-label fw-bold">Property Size</label>
               <div class="input-group">
-                <input type="text" id="propertySize" class="form-control" placeholder="Size (e.g. 5000)">
-                <select id="sizeUnit" class="form-select" style="max-width: 120px;">
+                <input type="text" id="propertySize" class="form-control" placeholder="Size">
+                <select id="sizeUnit" class="form-select" style="max-width: 110px;">
                   <option value="SQ.FT.">SQ.FT.</option>
                   <option value="SQ.YARDS">SQ.YARDS</option>
                   <option value="ACRES">ACRES</option>
                 </select>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
               <label class="form-label fw-bold">Area / Location *</label>
-              <input type="text" id="area" class="form-control" required placeholder="e.g. Sanand GIDC, Aslali">
+              <input type="text" id="area" class="form-control" required placeholder="e.g. Aslali, Changodar">
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
               <label class="form-label fw-bold">Budget / Rate</label>
-              <input type="text" id="budget" class="form-control" placeholder="e.g. 3.5 Cr or 15/- Sqft">
+              <input type="text" id="budget" class="form-control" placeholder="e.g. 15 Per Sqft or 3.5 Cr">
             </div>
-            <div class="col-md-12">
+            <div class="col-12">
               <label class="form-label fw-bold">Remarks / Requirements</label>
-              <textarea id="remarks" class="form-control" rows="2" placeholder="Additional property requirement details..."></textarea>
+              <textarea id="remarks" class="form-control" rows="2" placeholder="Requirement details..."></textarea>
             </div>
           </div>
 
-          <!-- ONE SINGLE BUTTON FOR SAVE & WHATSAPP -->
-          <div class="mt-4 text-center">
-            <button type="submit" class="btn btn-whatsapp-save px-5 py-3 shadow">
-              📲 SAVE DATA & SEND WHATSAPP IN 1-CLICK
+          <!-- 1-CLICK SAVE & WHATSAPP BUTTON -->
+          <div class="mt-3">
+            <button type="submit" class="btn btn-whatsapp-save">
+              <i class="bi bi-whatsapp"></i> SAVE DATA & SEND WHATSAPP
             </button>
           </div>
 
@@ -143,82 +164,97 @@
 
     <!-- TAB 2: SEARCH DATABASE -->
     <div class="tab-pane fade" id="searchView">
-      <div class="card p-4">
-        <div class="row g-2 mb-3">
-          <div class="col-md-3">
-            <input type="text" id="filterType" class="form-control" placeholder="Property Type" onkeyup="applyFilters()">
+      <div class="card p-3">
+        
+        <!-- Search Filters matching Excel -->
+        <div class="row g-2 mb-2">
+          <div class="col-6 col-md-3">
+            <select id="filterType" class="form-select form-select-sm" onchange="applyFilters()">
+              <option value="">All Property Types</option>
+              <option value="WAREHOUSE">WAREHOUSE</option>
+              <option value="LAND">LAND</option>
+              <option value="FACTORY">FACTORY</option>
+              <option value="BUNGLOW">BUNGLOW</option>
+              <option value="INDUSTRIAL PLOT">INDUSTRIAL PLOT</option>
+            </select>
           </div>
-          <div class="col-md-3">
-            <input type="text" id="filterDeal" class="form-control" placeholder="Deal For" onkeyup="applyFilters()">
+          <div class="col-6 col-md-3">
+            <select id="filterDeal" class="form-select form-select-sm" onchange="applyFilters()">
+              <option value="">All Deal Types</option>
+              <option value="BUYER">BUYER</option>
+              <option value="TENANT">TENANT</option>
+              <option value="LANDLORD">LANDLORD</option>
+              <option value="SELLER">SELLER</option>
+              <option value="BTS">BTS</option>
+              <option value="PRE-LEASE">PRE-LEASE</option>
+            </select>
           </div>
-          <div class="col-md-3">
-            <input type="text" id="filterArea" class="form-control" placeholder="Area / Location" onkeyup="applyFilters()">
+          <div class="col-8 col-md-4">
+            <input type="text" id="filterKeyword" class="form-control form-control-sm" placeholder="Search ID, Name, Area..." onkeyup="applyFilters()">
           </div>
-          <div class="col-md-3 d-flex gap-1">
-            <input type="text" id="filterKeyword" class="form-control" placeholder="Search ID / Client / Phone" onkeyup="applyFilters()">
-            <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+          <div class="col-4 col-md-2">
+            <button class="btn btn-sm btn-secondary w-100" onclick="resetFilters()">Reset</button>
           </div>
         </div>
 
         <div id="searchStatus" class="small text-muted mb-2">⏳ Loading Google Sheets database...</div>
-        <div class="table-responsive" id="searchResultsContainer"></div>
+        <div id="searchResultsContainer"></div>
       </div>
     </div>
 
     <!-- TAB 3: FOLLOW-UP FLOWCHART & REMINDERS -->
     <div class="tab-pane fade" id="flowView">
-      <div class="card p-4">
-        <div class="section-header">APPLICATION EXECUTIVE FOLLOW-UP FLOWCHART</div>
+      <div class="card p-3">
+        <div class="section-header"><i class="bi bi-diagram-3-fill"></i> EXECUTIVE FOLLOW-UP FLOWCHART</div>
         
-        <!-- Flowchart Form -->
-        <div class="row g-3 mb-4 bg-light p-3 rounded border">
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Select Executive</label>
-            <select id="flowExec" class="form-select">
-              <option value="Dipak Sir">Dipak Sir</option>
-              <option value="Girish">Girish</option>
-              <option value="Bhavik">Bhavik</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Buyer / Tenant ID *</label>
-            <input type="text" id="flowBuyerId" class="form-control" placeholder="e.g. ID 7" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Matched Property IDs *</label>
-            <input type="text" id="flowPropIds" class="form-control" placeholder="e.g. 8, 25, 35, 205" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Visit Date</label>
-            <input type="date" id="flowVisitDate" class="form-control">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Status</label>
-            <select id="flowStatus" class="form-select">
-              <option value="Shown">Shown</option>
-              <option value="Pending Visit">Pending Visit</option>
-              <option value="Rejected">Rejected</option>
-              <option value="Finalized">Finalized</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Customer Response / Remarks</label>
-            <input type="text" id="flowResponse" class="form-control" placeholder="e.g. Will inform on 10/10/2026">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Next Follow-up Date Given *</label>
-            <input type="date" id="flowNextDate" class="form-control" required>
-          </div>
-          <div class="col-md-12 text-end">
-            <button class="btn btn-primary fw-bold px-4" onclick="addFollowupEntry()">➕ Add Follow-Up Node to Flowchart</button>
+        <!-- Reminder Entry Form -->
+        <div class="bg-light p-2 rounded border mb-3">
+          <div class="row g-2">
+            <div class="col-6 col-md-3">
+              <label class="form-label fw-bold">Executive</label>
+              <select id="flowExec" class="form-select form-select-sm">
+                <option value="Dipak Sir">Dipak Sir</option>
+                <option value="Girish">Girish</option>
+                <option value="Bhavik">Bhavik</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label fw-bold">Buyer/Tenant ID *</label>
+              <input type="text" id="flowBuyerId" class="form-control form-control-sm" placeholder="e.g. ID 7" required>
+            </div>
+            <div class="col-12 col-md-3">
+              <label class="form-label fw-bold">Matched Property IDs *</label>
+              <input type="text" id="flowPropIds" class="form-control form-control-sm" placeholder="e.g. 8, 25, 35, 205" required>
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label fw-bold">Visit Date</label>
+              <input type="date" id="flowVisitDate" class="form-control form-control-sm">
+            </div>
+            <div class="col-6 col-md-4">
+              <label class="form-label fw-bold">Status</label>
+              <select id="flowStatus" class="form-select form-select-sm">
+                <option value="Shown">Shown</option>
+                <option value="Pending Visit">Pending Visit</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Finalized">Finalized</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label fw-bold">Customer Response</label>
+              <input type="text" id="flowResponse" class="form-control form-control-sm" placeholder="e.g. Will inform on 10/10/2026">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label fw-bold">Next Follow-up Date *</label>
+              <input type="date" id="flowNextDate" class="form-control form-control-sm" required>
+            </div>
+            <div class="col-12 mt-2">
+              <button class="btn btn-sm btn-primary w-100 fw-bold" onclick="addFollowupEntry()">➕ Add to Follow-up Flowchart</button>
+            </div>
           </div>
         </div>
 
-        <!-- Live Timeline View -->
-        <h5 class="fw-bold mb-3">📍 Executive Follow-Up Flowchart Activity</h5>
-        <div id="timelineContainer" class="p-2">
-          <!-- Dynamically Generated Nodes -->
-        </div>
+        <h6 class="fw-bold mb-2">📍 Live Flowchart Activity & Reminders</h6>
+        <div id="timelineContainer"></div>
 
       </div>
     </div>
@@ -229,10 +265,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  // Sheet Configuration
+  // Sheet Configurations with Fallbacks
   const sheetId = "1zbB4PFbgtKpYc06MjkGqSTeAVOYpnRznDidvWoANEeA";
-  const tabName = encodeURIComponent("Property Database");
-  const sheetUri = `https://opensheet.elk.sh/${sheetId}/${tabName}`;
+  const sheetUriPrimary = `https://opensheet.elk.sh/${sheetId}/Property%20Database`;
+  const sheetUriFallback = `https://opensheet.elk.sh/${sheetId}/Sheet1`;
 
   let globalSheetData = [];
   let followUpNodes = JSON.parse(localStorage.getItem('twg_reminders') || '[]');
@@ -253,7 +289,7 @@
     renderTimeline();
   });
 
-  // SINGLE CLICK SAVE & WHATSAPP
+  // 1-CLICK SAVE & DIRECT WHATSAPP SENDER
   function handleSaveAndWhatsApp() {
     const execName = document.getElementById('loggedExecutive').value;
     const propId = document.getElementById('propId').value;
@@ -268,7 +304,7 @@
     const budget = document.getElementById('budget').value || 'N/A';
     const remarks = document.getElementById('remarks').value || 'None';
 
-    // 1. Save Locally
+    // Local Record Sync
     const newRecord = {
       'Property ID': propId,
       'INQUIRY DATE': date,
@@ -276,84 +312,100 @@
       'Name': name,
       'Contact Number': phone,
       'Company Name': company,
-      'DEAL FOR': deal,
+      'BUYER/SELLER/LANDLORD/TENANT/BTS': deal,
       'Property Size': size,
-      'AREA': area,
+      'Area': area,
       'Budget': budget,
       'Executive': execName,
       'Remarks': remarks
     };
     globalSheetData.unshift(newRecord);
 
-    // 2. Format WhatsApp Text
-    let waText = `*PROPERTY INQUIRY DETAILS*\n`;
-    waText += `*ID:* ${propId} | *Date:* ${date}\n`;
+    // Formatted WhatsApp Message
+    let waText = `*THE WAREHOUSE GURUZ*\n`;
+    waText += `*Inquiry ID:* ${propId} | *Date:* ${date}\n`;
     waText += `---------------------------------\n`;
-    waText += `👤 *Client:* ${name}\n`;
+    waText += `👤 *Client Name:* ${name}\n`;
     waText += `📞 *Contact:* ${phone}\n`;
     waText += `🏢 *Company:* ${company}\n`;
     waText += `🏗️ *Type:* ${type}\n`;
-    waText += `🤝 *Deal:* ${deal}\n`;
+    waText += `🤝 *Deal For:* ${deal}\n`;
     waText += `📐 *Size:* ${size}\n`;
     waText += `📍 *Area:* ${area}\n`;
     waText += `💰 *Budget:* ${budget}\n`;
     waText += `👨‍💼 *Executive:* ${execName}\n`;
     waText += `📝 *Remarks:* ${remarks}\n`;
-    waText += `---------------------------------\n`;
-    waText += `*The Warehouse Guruz*`;
 
     let cleanPhone = phone.replace(/\D/g, '');
     if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
 
-    // Reset Form
+    // Reset Form for next entry
     document.getElementById('mainForm').reset();
     document.getElementById('propId').value = generateID();
     document.getElementById('inquiryDate').value = getFormattedDate();
 
-    alert("✅ Record Saved! Redirecting to WhatsApp...");
+    // Trigger Direct WhatsApp Navigation
     const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(waText)}`;
-    window.open(waUrl, '_blank');
+    window.location.href = waUrl;
   }
 
-  // Google Sheet Data Fetch
+  // Fetch Google Sheet Data
   function fetchSheetData() {
     if (globalSheetData.length > 1) return;
-    document.getElementById('searchStatus').innerText = "⏳ Loading live Google Sheet records...";
+    document.getElementById('searchStatus').innerText = "⏳ Reading Google Sheets Database...";
 
-    fetch(sheetUri)
+    fetch(sheetUriPrimary)
       .then(res => res.json())
-      .then(data => {
-        globalSheetData = data;
-        document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} records.`;
-        renderSearchResults(data);
-      })
+      .then(data => handleDataLoad(data))
       .catch(err => {
-        document.getElementById('searchStatus').innerText = "⚠️ Showing local dataset.";
-        renderSearchResults(globalSheetData);
+        fetch(sheetUriFallback)
+          .then(res => res.json())
+          .then(data => handleDataLoad(data))
+          .catch(e => {
+            document.getElementById('searchStatus').innerText = "⚠️ Showing current session records.";
+            renderSearchResults(globalSheetData);
+          });
       });
+  }
+
+  function handleDataLoad(data) {
+    if(Array.isArray(data) && data.length > 0) {
+      globalSheetData = data;
+      document.getElementById('searchStatus').innerText = `✅ Loaded ${data.length} records from Google Sheet.`;
+      renderSearchResults(data);
+    }
   }
 
   function renderSearchResults(data) {
     const container = document.getElementById('searchResultsContainer');
     if (!data || data.length === 0) {
-      container.innerHTML = `<p class="text-center text-muted my-3">No matching records found.</p>`;
+      container.innerHTML = `<p class="text-center text-muted my-3">No matching properties found.</p>`;
       return;
     }
 
-    let html = `<table class="table table-hover table-bordered mb-0">
+    let html = `<table class="table table-sm table-hover table-mobile-card mb-0">
       <thead class="table-dark"><tr>
-        <th>ID</th><th>Type</th><th>Deal</th><th>Area / Location</th><th>Client Name</th><th>Contact</th><th>Executive</th>
+        <th>ID</th><th>Type</th><th>Deal For</th><th>Area</th><th>Client</th><th>Contact</th><th>Action</th>
       </tr></thead><tbody>`;
 
     data.forEach(row => {
+      const pId = row['Property ID'] || row['SR NO'] || '-';
+      const pType = row['Type of Property'] || row['TYPE'] || '-';
+      const pDeal = row['BUYER/SELLER/LANDLORD/TENANT/BTS'] || row['DEAL FOR'] || '-';
+      const pArea = row['Area'] || row['AREA'] || '-';
+      const pName = row['Name'] || row['PERSON NAME'] || '-';
+      const pPhone = row['Contact Number'] || row['Mobile'] || '-';
+
       html += `<tr>
-        <td class="fw-bold">${row['Property ID'] || row['SR NO'] || '-'}</td>
-        <td>${row['Type of Property'] || row['TYPE'] || '-'}</td>
-        <td><span class="badge bg-success">${row['DEAL FOR'] || row['Deal For'] || '-'}</span></td>
-        <td>${row['AREA'] || row['Area'] || '-'}</td>
-        <td>${row['Name'] || row['PERSON NAME'] || '-'}</td>
-        <td>${row['Contact Number'] || row['Mobile'] || '-'}</td>
-        <td>${row['Executive'] || 'Dipak Sir'}</td>
+        <td data-label="Prop ID" class="fw-bold">${pId}</td>
+        <td data-label="Type">${pType}</td>
+        <td data-label="Deal"><span class="badge bg-success">${pDeal}</span></td>
+        <td data-label="Area">${pArea}</td>
+        <td data-label="Client">${pName}</td>
+        <td data-label="Contact">${pPhone}</td>
+        <td data-label="Action">
+          <button class="btn btn-sm btn-outline-primary py-0" onclick="useInReminder('${pId}')">➕ Reminder</button>
+        </td>
       </tr>`;
     });
 
@@ -361,21 +413,24 @@
     container.innerHTML = html;
   }
 
+  function useInReminder(propId) {
+    document.getElementById('flowPropIds').value = propId;
+    const triggerTab = new bootstrap.Tab(document.getElementById('flow-tab'));
+    triggerTab.show();
+  }
+
   function applyFilters() {
     const typeVal = document.getElementById('filterType').value.toLowerCase();
     const dealVal = document.getElementById('filterDeal').value.toLowerCase();
-    const areaVal = document.getElementById('filterArea').value.toLowerCase();
     const keyVal = document.getElementById('filterKeyword').value.toLowerCase();
 
     const filtered = globalSheetData.filter(r => {
       const type = String(r['Type of Property'] || r['TYPE'] || '').toLowerCase();
-      const deal = String(r['DEAL FOR'] || r['Deal For'] || '').toLowerCase();
-      const area = String(r['AREA'] || r['Area'] || '').toLowerCase();
+      const deal = String(r['BUYER/SELLER/LANDLORD/TENANT/BTS'] || r['DEAL FOR'] || '').toLowerCase();
       const all = Object.values(r).join(' ').toLowerCase();
 
-      return (!typeVal || type.includes(typeVal)) &&
-             (!dealVal || deal.includes(dealVal)) &&
-             (!areaVal || area.includes(areaVal)) &&
+      return (!typeVal || type === typeVal) &&
+             (!dealVal || deal === dealVal) &&
              (!keyVal || all.includes(keyVal));
     });
 
@@ -385,12 +440,11 @@
   function resetFilters() {
     document.getElementById('filterType').value = '';
     document.getElementById('filterDeal').value = '';
-    document.getElementById('filterArea').value = '';
     document.getElementById('filterKeyword').value = '';
     renderSearchResults(globalSheetData);
   }
 
-  // FLOWCHART REMINDERS LOGIC
+  // REMINDERS FLOWCHART LOGIC
   function addFollowupEntry() {
     const exec = document.getElementById('flowExec').value;
     const buyerId = document.getElementById('flowBuyerId').value;
@@ -401,7 +455,7 @@
     const nextDate = document.getElementById('flowNextDate').value;
 
     if (!buyerId || !propIds || !nextDate) {
-      alert("Please fill Buyer ID, Property IDs, and Next Follow-up Date.");
+      alert("Please enter Buyer ID, Property ID, and Next Follow-up Date.");
       return;
     }
 
@@ -410,34 +464,34 @@
     localStorage.setItem('twg_reminders', JSON.stringify(followUpNodes));
 
     renderTimeline();
-    alert("✅ Follow-up flowchart node added successfully!");
+    alert("✅ Added to Follow-up Flowchart!");
   }
 
   function renderTimeline() {
     const container = document.getElementById('timelineContainer');
     if (followUpNodes.length === 0) {
-      container.innerHTML = `<p class="text-muted text-center">No active flowchart entries recorded yet.</p>`;
+      container.innerHTML = `<p class="text-muted text-center my-3">No follow-up reminders added yet.</p>`;
       return;
     }
 
     let html = '';
-    followUpNodes.forEach((node, idx) => {
+    followUpNodes.forEach(node => {
       html += `
       <div class="timeline-step">
         <div class="d-flex justify-content-between align-items-center">
-          <span class="badge bg-primary badge-exec">👨‍💼 Executive: ${node.exec}</span>
-          <small class="text-muted">Logged: ${node.created}</small>
+          <span class="badge bg-primary">👨‍💼 Executive: ${node.exec}</span>
+          <small class="text-muted">${node.created}</small>
         </div>
-        <div class="fw-bold mt-2">START: Buyer / Tenant ID: ${node.buyerId}</div>
-        <div class="text-success fw-semibold">MATCH LIST SELECTED: Property IDs: ${node.propIds}</div>
+        <div class="fw-bold mt-1">START: Buyer/Tenant ID: ${node.buyerId}</div>
+        <div class="text-success fw-semibold">MATCHED: Property IDs: ${node.propIds}</div>
         <div class="mt-1">
-          📅 <strong>Visit Date (${node.visitDate}):</strong> Action: Show Properties ${node.propIds} | Status: <span class="badge bg-info text-dark">${node.status}</span>
+          📅 <strong>Visit (${node.visitDate}):</strong> Status: <span class="badge bg-info text-dark">${node.status}</span>
         </div>
-        <div class="mt-1 text-secondary">
-          💬 <strong>Customer Response:</strong> "${node.response || 'No response recorded'}"
+        <div class="small text-secondary mt-1">
+          💬 <strong>Response:</strong> "${node.response || 'Pending'}"
         </div>
-        <div class="mt-2 bg-warning bg-opacity-25 p-2 rounded border border-warning">
-          🔔 <strong>FOLLOW-UP REMINDER SET:</strong> Date: <u>${node.nextDate}</u> | Call Buyer ID ${node.buyerId}
+        <div class="mt-1 bg-warning bg-opacity-25 p-2 rounded border border-warning">
+          🔔 <strong>REMINDER:</strong> <u>${node.nextDate}</u> | Call Buyer ID ${node.buyerId}
         </div>
       </div>`;
     });
